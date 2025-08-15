@@ -4,6 +4,10 @@ main = "src/index.js"
 compatibility_date = "2024-10-22"
 compatibility_flags = ["nodejs_compat"]
 workers_dev = false
+
+# 添加自定义域
+custom_domains = ["xget.103402.xyz"]
+
 [observability]
 enabled = true
 head_sampling_rate = 1
