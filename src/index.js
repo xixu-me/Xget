@@ -736,6 +736,8 @@ async function handleRequest(request, env, ctx) {
       }
     }
 
+
+
     // Prepare response headers
     const headers = new Headers(response.headers);
 
@@ -787,11 +789,11 @@ async function handleRequest(request, env, ctx) {
       const rangeHeader = request.headers.get('Range');
       const cacheKey = rangeHeader
         ? new Request(targetUrl, {
-            method: request.method,
-            headers: new Headers(
-              [...request.headers.entries()].filter(([k]) => k.toLowerCase() !== 'range')
-            )
-          })
+          method: request.method,
+          headers: new Headers(
+            [...request.headers.entries()].filter(([k]) => k.toLowerCase() !== 'range')
+          )
+        })
         : new Request(targetUrl, request);
 
       ctx.waitUntil(cache.put(cacheKey, finalResponse.clone()));
