@@ -708,6 +708,7 @@ async function handleRequest(request, env, ctx) {
 
     // Handle npm registry URL rewriting
     if (platform === 'npm' && response.headers.get('content-type')?.includes('application/json')) {
+      requestHeaders.set('Accept-Encoding', 'identity');
       const FROM = "https://registry.npmjs.org/";
       const TO = `${url.origin}/npm/`;
 
