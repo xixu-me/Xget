@@ -708,20 +708,36 @@ async function handleRequest(request, env, ctx) {
 
     // Handle npm registry URL rewriting
     if (platform === 'npm' && response.headers.get('content-type')?.includes('application/json')) {
-      const originalText = await response.text();
-      // Rewrite tarball URLs in npm registry responses to go through our npm endpoint
-      // https://registry.npmjs.org/package/-/package-version.tgz -> https://xget.xi-xu.me/npm/package/-/package-version.tgz
-      const rewrittenText = originalText.replace(
-        /https:\/\/registry\.npmjs\.org\/([^\/]+)/g,
-        `${url.origin}/npm/$1`
-      );
-      responseBody = new ReadableStream({
-        start(controller) {
-          controller.enqueue(new TextEncoder().encode(rewrittenText));
-          controller.close();
-        }
-      });
+      requestHeaders.set('Accept-Encoding', 'identity');
+      const FROM = "https://registry.npmjs.org/";
+      const TO = `${url.origin}/npm/`;
+
+      if (response.body) {
+        let tail = "";
+        const keep = FROM.length - 1;
+
+        const replaceTransform = new TransformStream({
+          transform(chunk, controller) {
+            const text = tail + chunk;
+            // 修复：支持 @scope/package 名称
+            const replaced = text.replace(/https:\/\/registry\.npmjs\.org\/(@?[^\/]+)/g, `${TO}$1`);
+            tail = replaced.slice(-keep);
+            const out = keep ? replaced.slice(0, -keep) : replaced;
+            if (out) controller.enqueue(out);
+          },
+          flush(controller) {
+            if (tail) controller.enqueue(tail);
+          }
+        });
+
+        responseBody = response.body
+          .pipeThrough(new TextDecoderStream())
+          .pipeThrough(replaceTransform)
+          .pipeThrough(new TextEncoderStream());
+      }
     }
+
+
 
     // Prepare response headers
     const headers = new Headers(response.headers);
@@ -774,11 +790,11 @@ async function handleRequest(request, env, ctx) {
       const rangeHeader = request.headers.get('Range');
       const cacheKey = rangeHeader
         ? new Request(targetUrl, {
-            method: request.method,
-            headers: new Headers(
-              [...request.headers.entries()].filter(([k]) => k.toLowerCase() !== 'range')
-            )
-          })
+          method: request.method,
+          headers: new Headers(
+            [...request.headers.entries()].filter(([k]) => k.toLowerCase() !== 'range')
+          )
+        })
         : new Request(targetUrl, request);
 
       ctx.waitUntil(cache.put(cacheKey, finalResponse.clone()));
