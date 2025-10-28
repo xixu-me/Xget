@@ -523,8 +523,14 @@ async function handleRequest(request, env, ctx) {
         monitor.mark(`attempt_${attempts}`);
 
         // Fetch with timeout
+        // 动态设置超时时间：npm 请求单独延长
+        const isNpm = platform === 'npm';
+        const timeoutMs = isNpm ? 30000 : config.TIMEOUT_SECONDS * 1000;
+        // 例子：npm 给 30 秒，其它保持默认
+
+        // Fetch with timeout
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), config.TIMEOUT_SECONDS * 1000);
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
         // For Git/Docker operations, don't use Cloudflare-specific options
         const finalFetchOptions =
@@ -705,7 +711,7 @@ async function handleRequest(request, env, ctx) {
         }
       });
     }
-
+  
     // Handle npm registry URL rewriting
     if (platform === 'npm' && response.headers.get('content-type')?.includes('application/json')) {
       requestHeaders.set('Accept-Encoding', 'identity');
@@ -713,20 +719,77 @@ async function handleRequest(request, env, ctx) {
       const TO = `${url.origin}/npm/`;
 
       if (response.body) {
-        let tail = "";
-        const keep = FROM.length - 1;
+        let state = 'normal';  // 'normal' 或 'string'
+        let tail = '';
+        let outputBuffer = '';
 
         const replaceTransform = new TransformStream({
           transform(chunk, controller) {
-            const text = tail + chunk;
-            // 修复：支持 @scope/package 名称
-            const replaced = text.replace(/https:\/\/registry\.npmjs\.org\/(@?[^\/]+)/g, `${TO}$1`);
-            tail = replaced.slice(-keep);
-            const out = keep ? replaced.slice(0, -keep) : replaced;
-            if (out) controller.enqueue(out);
+            let input = tail + chunk;
+            tail = '';
+            let pos = 0;
+
+            while (pos < input.length) {
+              if (state === 'normal') {
+                let quotePos = input.indexOf('"', pos);
+                if (quotePos === -1) {
+                  outputBuffer += input.substring(pos);
+                  pos = input.length;
+                } else {
+                  outputBuffer += input.substring(pos, quotePos);
+                  pos = quotePos;
+                  state = 'string';
+                }
+              } else {  // state === 'string'
+                let j = pos + 1;  // 跳过开头的 "
+                let escaped = false;
+                let strEnd = -1;
+                while (j < input.length) {
+                  if (escaped) {
+                    escaped = false;
+                  } else if (input.charAt(j) === '\\') {
+                    escaped = true;
+                  } else if (input.charAt(j) === '"') {
+                    strEnd = j;
+                    break;
+                  }
+                  j++;
+                }
+                if (strEnd === -1) {
+                  // 不完整字符串，tail 从 " 开始
+                  tail = input.substring(pos);
+                  state = 'string';
+                  pos = input.length;
+                } else {
+                  // 完整字符串
+                  let contentStart = pos + 1;
+                  let content = input.substring(contentStart, strEnd);
+                  // 在内容中替换（原始文本，包括任何转义）
+                  let replacedContent = content.replace(/https:\/\/registry\.npmjs\.org\/(@?[^\/]+)/g, `${TO}$1`);
+                  let replacedStr = '"' + replacedContent + '"';
+                  outputBuffer += replacedStr;
+                  pos = strEnd + 1;
+                  state = 'normal';
+                }
+              }
+            }
+
+            // 批量输出（>1024 字节时，避免小 chunk 过多）
+            if (outputBuffer.length > 1024) {
+              controller.enqueue(outputBuffer);
+              outputBuffer = '';
+            }
           },
           flush(controller) {
-            if (tail) controller.enqueue(tail);
+            // 结束时输出剩余
+            if (outputBuffer) {
+              controller.enqueue(outputBuffer);
+            }
+            if (tail) {
+              // 如果以字符串中结束，假设输入有效，直接输出（罕见）
+              controller.enqueue(tail);
+            }
+            // 如果 state === 'string' 且无 tail，输入无效，但 npm 响应通常完整
           }
         });
 
