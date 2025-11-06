@@ -653,6 +653,7 @@ Xget 支持众多主流 AI 推理提供商的 API 加速，使用 `ip/[AI 推理
 | Groq | `groq` | `https://api.groq.com/...` | `https://xget.xi-xu.me/ip/groq/...` |
 | Cerebras | `cerebras` | `https://api.cerebras.ai/...` | `https://xget.xi-xu.me/ip/cerebras/...` |
 | SambaNova | `sambanova` | `https://api.sambanova.ai/...` | `https://xget.xi-xu.me/ip/sambanova/...` |
+| Siray | `siray` | `https://api.siray.ai/...` | `https://xget.xi-xu.me/ip/siray/...` |
 | HF Inference | `huggingface` | `https://router.huggingface.co/...` | `https://xget.xi-xu.me/ip/huggingface/...` |
 | Together | `together` | `https://api.together.xyz/...` | `https://xget.xi-xu.me/ip/together/...` |
 | Replicate | `replicate` | `https://api.replicate.com/...` | `https://xget.xi-xu.me/ip/replicate/...` |

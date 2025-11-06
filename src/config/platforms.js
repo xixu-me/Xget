@@ -55,6 +55,7 @@ export const PLATFORMS = {
   'ip-groq': 'https://api.groq.com',
   'ip-cerebras': 'https://api.cerebras.ai',
   'ip-sambanova': 'https://api.sambanova.ai',
+  'ip-siray': 'https://api.siray.ai',
   'ip-huggingface': 'https://router.huggingface.co',
   'ip-together': 'https://api.together.xyz',
   'ip-replicate': 'https://api.replicate.com',

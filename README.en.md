@@ -644,6 +644,7 @@ Xget supports API acceleration for many mainstream AI inference providers, using
 | Groq | `groq` | `https://api.groq.com/...` | `https://xget.xi-xu.me/ip/groq/...` |
 | Cerebras | `cerebras` | `https://api.cerebras.ai/...` | `https://xget.xi-xu.me/ip/cerebras/...` |
 | SambaNova | `sambanova` | `https://api.sambanova.ai/...` | `https://xget.xi-xu.me/ip/sambanova/...` |
+| Siray | `siray` | `https://api.siray.ai/...` | `https://xget.xi-xu.me/ip/siray/...` |
 | HF Inference | `huggingface` | `https://router.huggingface.co/...` | `https://xget.xi-xu.me/ip/huggingface/...` |
 | Together | `together` | `https://api.together.xyz/...` | `https://xget.xi-xu.me/ip/together/...` |
 | Replicate | `replicate` | `https://api.replicate.com/...` | `https://xget.xi-xu.me/ip/replicate/...` |
