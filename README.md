@@ -2336,17 +2336,16 @@ sudo systemctl restart containerd
 
 ### 部署步骤
 
-1. **fork 本存储库**：点击 GitHub 页面右上角的 Fork 按钮
+1. **fork 本存储库**：[Fork xixu-me/Xget](https://github.com/xixu-me/Xget/fork)
 
 2. **获取 Cloudflare 凭证**：
-   - 访问 [Cloudflare Dashboard](https://dash.cloudflare.com/) → My Profile → API Tokens
-   - 创建一个具有 "Edit Cloudflare Workers" 权限的 API Token
-   - 记录你的 Account ID（在 Workers 页面右侧可见）
+   - 访问[帐户 API 令牌](https://dash.cloudflare.com/?to=/:account/api-tokens)创建并记录 API 令牌，使用“编辑 Cloudflare Workers”模板
+   - 访问 [Workers 和 Pages](https://dash.cloudflare.com/?to=/:account/workers-and-pages) 记录 Account ID
 
 3. **配置 GitHub Secrets**：
    - 进入你的 GitHub 存储库 → Settings → Secrets and variables → Actions
    - 添加以下 Secrets：
-     - `CLOUDFLARE_API_TOKEN`：你的 API Token
+     - `CLOUDFLARE_API_TOKEN`：你的 API 令牌
      - `CLOUDFLARE_ACCOUNT_ID`：你的 Account ID
 
 4. **触发部署**：

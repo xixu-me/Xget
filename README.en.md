@@ -2326,17 +2326,16 @@ sudo systemctl restart containerd
 
 ### Deployment Steps
 
-1. **Fork this repository**: Click the Fork button in the upper right corner of the GitHub page
+1. **Fork this repository**: [Fork xixu-me/Xget](https://github.com/xixu-me/Xget/fork)
 
 2. **Get Cloudflare credentials**:
-   - Visit [Cloudflare Dashboard](https://dash.cloudflare.com/) → My Profile → API Tokens
-   - Create an API Token with "Edit Cloudflare Workers" permission
-   - Note your Account ID (visible on the right side of the Workers page)
+   - Visit [Account API tokens](https://dash.cloudflare.com/?to=/:account/api-tokens) to create and note an API token, using the "Edit Cloudflare Workers" template.
+   - Visit [Workers and Pages](https://dash.cloudflare.com/?to=/:account/workers-and-pages) to note the Account ID.
 
 3. **Configure GitHub Secrets**:
    - Go to your GitHub repository → Settings → Secrets and variables → Actions
    - Add the following Secrets:
-     - `CLOUDFLARE_API_TOKEN`: Your API Token
+     - `CLOUDFLARE_API_TOKEN`: Your API token
      - `CLOUDFLARE_ACCOUNT_ID`: Your Account ID
 
 4. **Trigger deployment**:
