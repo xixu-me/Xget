@@ -2326,8 +2326,7 @@ sudo systemctl restart containerd
 
 ### Deployment Steps
 
-1. **Fork this repository**:
-   Click the Fork button in the upper right corner of the GitHub page
+1. **Fork this repository**: Click the Fork button in the upper right corner of the GitHub page
 
 2. **Get Cloudflare credentials**:
    - Visit [Cloudflare Dashboard](https://dash.cloudflare.com/) → My Profile → API Tokens
@@ -2345,8 +2344,7 @@ sudo systemctl restart containerd
    - Modifying only documentation files (`.md`), `LICENSE`, `.gitignore`, etc. will not trigger deployment
    - You can also manually trigger deployment in the GitHub Actions page
 
-5. **Bind custom domain** (optional):
-   Bind your custom domain in the Cloudflare Workers console
+5. **Bind custom domain** (optional): Bind your custom domain in the Cloudflare Workers console
 
 After deployment completes, your Xget service will be available at:
 

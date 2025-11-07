@@ -2336,8 +2336,7 @@ sudo systemctl restart containerd
 
 ### 部署步骤
 
-1. **fork 本存储库**：
-   点击 GitHub 页面右上角的 Fork 按钮
+1. **fork 本存储库**：点击 GitHub 页面右上角的 Fork 按钮
 
 2. **获取 Cloudflare 凭证**：
    - 访问 [Cloudflare Dashboard](https://dash.cloudflare.com/) → My Profile → API Tokens
@@ -2355,8 +2354,7 @@ sudo systemctl restart containerd
    - 仅修改文档文件（`.md`）、`LICENSE`、`.gitignore` 等不会触发部署
    - 也可以在 GitHub Actions 页面手动触发部署
 
-5. **绑定自定义域名**（可选）：
-   在 Cloudflare Workers 控制台中绑定你的自定义域名
+5. **绑定自定义域名**（可选）：在 Cloudflare Workers 控制台中绑定你的自定义域名
 
 部署完成后，你的 Xget 服务将在以下地址可用：
 
