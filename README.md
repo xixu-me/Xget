@@ -2347,37 +2347,26 @@ sudo systemctl restart containerd
 
 #### 部署步骤
 
-1. **注册 Cloudflare 账户**：访问 [Cloudflare Workers](https://workers.cloudflare.com/) 并注册账户
+1. **fork 本存储库**：
+   点击 GitHub 页面右上角的 Fork 按钮
 
-2. **安装 Wrangler CLI**：
+2. **获取 Cloudflare 凭证**：
+   - 访问 [Cloudflare Dashboard](https://dash.cloudflare.com/) → My Profile → API Tokens
+   - 创建一个具有 "Edit Cloudflare Workers" 权限的 API Token
+   - 记录你的 Account ID（在 Workers 页面右侧可见）
 
-   ```bash
-   npm install -g wrangler
-   wrangler login
-   ```
+3. **配置 GitHub Secrets**：
+   - 进入你的 GitHub 存储库 → Settings → Secrets and variables → Actions
+   - 添加以下 Secrets：
+     - `CLOUDFLARE_API_TOKEN`：你的 API Token
+     - `CLOUDFLARE_ACCOUNT_ID`：你的 Account ID
 
-3. **克隆存储库**：
+4. **触发部署**：
+   - 推送代码到 `main` 分支会自动触发部署
+   - 仅修改文档文件（`.md`）、`LICENSE`、`.gitignore` 等不会触发部署
+   - 也可以在 GitHub Actions 页面手动触发部署
 
-   ```bash
-   git clone https://github.com/xixu-me/Xget.git
-   cd Xget
-   npm install
-   ```
-
-4. **配置项目**：
-   编辑 `wrangler.toml` 文件，修改 `name` 字段为你的 Worker 名称：
-
-   ```toml
-   name = "your-xget-worker"
-   ```
-
-5. **部署到 Cloudflare Workers**：
-
-   ```bash
-   npm run deploy
-   ```
-
-6. **绑定自定义域名**（可选）：
+5. **绑定自定义域名**（可选）：
    在 Cloudflare Workers 控制台中绑定你的自定义域名
 
 部署完成后，你的 Xget 服务将在以下地址可用：

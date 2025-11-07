@@ -2337,37 +2337,26 @@ sudo systemctl restart containerd
 
 #### Deployment Steps
 
-1. **Register Cloudflare Account**: Visit [Cloudflare Workers](https://workers.cloudflare.com/) and register an account
+1. **Fork this repository**:
+   Click the Fork button in the upper right corner of the GitHub page
 
-2. **Installing Wrangler CLI**:
+2. **Get Cloudflare Credentials**:
+   - Visit [Cloudflare Dashboard](https://dash.cloudflare.com/) → My Profile → API Tokens
+   - Create an API Token with "Edit Cloudflare Workers" permission
+   - Note your Account ID (visible on the right side of the Workers page)
 
-   ```bash
-   npm install -g wrangler
-   wrangler login
-   ```
+3. **Configure GitHub Secrets**:
+   - Go to your GitHub repository → Settings → Secrets and variables → Actions
+   - Add the following Secrets:
+     - `CLOUDFLARE_API_TOKEN`: Your API Token
+     - `CLOUDFLARE_ACCOUNT_ID`: Your Account ID
 
-3. **Clone Repository**:
+4. **Trigger Deployment**:
+   - Pushing code to the `main` branch will automatically trigger deployment
+   - Changes only to documentation files (`.md`), `LICENSE`, `.gitignore`, etc. won't trigger deployment
+   - You can also manually trigger deployment from the GitHub Actions page
 
-   ```bash
-   git clone https://github.com/xixu-me/Xget.git
-   cd Xget
-   npm install
-   ```
-
-4. **Configuration Project**:
-   Edit the `wrangler.toml` file and modify the `name` field to your Worker name:
-
-   ```toml
-   name = "your-xget-worker"
-   ```
-
-5. **Deploy to Cloudflare Workers**:
-
-   ```bash
-   npm run deploy
-   ```
-
-6. **Bind custom domain name** (optional):
+5. **Bind custom domain name** (optional):
    Bind your custom domain name in the Cloudflare Workers console
 
 Once the deployment is complete, your Xget service will be available at the following address:
