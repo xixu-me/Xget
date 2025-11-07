@@ -1,4 +1,6 @@
 name: Deploy Worker
+permissions:
+  contents: read
 
 on:
   push:
