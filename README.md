@@ -46,7 +46,7 @@
 [![AI 推理提供商](https://img.shields.io/badge/AI%20推理提供商-412991?logo=openai&logoColor=white)](#ai-推理提供商)
 [![容器注册表](https://img.shields.io/badge/容器注册表-%23007EC6.svg?logo=docker&logoColor=white)](#容器注册表)
 
-超高性能、安全的一站式开发者资源加速引擎，其性能远超传统加速器，提供跨多个平台的统一高效的加速体验，涵盖代码储存库、包管理、AI 推理 API、容器镜像、模型及数据集等。
+面向开发者资源的超高性能、安全、一体化加速引擎，其性能显著优于传统解决方案，为代码存储库、软件包注册表、AI 推理 API、容器镜像、模型、数据集及更多资源提供统一且高效的加速。
 
 技术深度解析文章已发布：**[《深入剖析 Xget：一个高性能、多协议、高安全性的开发者资源加速引擎》](https://blog.xi-xu.me/2025/10/07/deep-dive-into-xget-technology.html)**。
 
@@ -2334,18 +2334,7 @@ sudo systemctl restart containerd
 
 ## 🚀 部署
 
-### Cloudflare Workers
-
-[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/xixu-me/Xget)
-
-**Xget 专为 Cloudflare Workers 设计并优化**，提供最佳的性能和体验：
-
-- **💰 成本优势**：除了注册域名的费用外，在大多数情况下是免费的
-- **🚀 性能最高**：全球边缘节点，响应速度最快
-- **🔧 维护简单**：无需服务器管理，自动扩展和更新
-- **🛡️ 安全可靠**：内置 DDoS 防护和安全特性
-
-#### 部署步骤
+### 部署步骤
 
 1. **fork 本存储库**：
    点击 GitHub 页面右上角的 Fork 按钮
@@ -2374,7 +2363,7 @@ sudo systemctl restart containerd
 - Worker 域名：`your-worker-name.your-subdomain.workers.dev`
 - 自定义域名：`your-domain.com`（如果已绑定）
 
-#### 环境变量配置
+### 环境变量配置
 
 你可以在 Cloudflare Workers 控制台中设置以下环境变量来自定义配置：
 
@@ -2547,6 +2536,8 @@ npx wrangler dev --log-level debug
 - **赞助**: [赞助 URL](https://xi-xu.me/#sponsorships)
 
 ## 📝 许可证
+
+版权所有 &copy; Xi Xu。
 
 本存储库采用 GPL-3.0 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
 
