@@ -523,8 +523,14 @@ async function handleRequest(request, env, ctx) {
         monitor.mark(`attempt_${attempts}`);
 
         // Fetch with timeout
+        // 动态设置超时时间：npm 请求单独延长
+        const isNpm = platform === 'npm';
+        const timeoutMs = isNpm ? 30000 : config.TIMEOUT_SECONDS * 1000;
+        // 例子：npm 给 30 秒，其它保持默认
+
+        // Fetch with timeout
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), config.TIMEOUT_SECONDS * 1000);
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
         // For Git/Docker operations, don't use Cloudflare-specific options
         const finalFetchOptions =
@@ -705,23 +711,96 @@ async function handleRequest(request, env, ctx) {
         }
       });
     }
-
+  
     // Handle npm registry URL rewriting
     if (platform === 'npm' && response.headers.get('content-type')?.includes('application/json')) {
-      const originalText = await response.text();
-      // Rewrite tarball URLs in npm registry responses to go through our npm endpoint
-      // https://registry.npmjs.org/package/-/package-version.tgz -> https://xget.xi-xu.me/npm/package/-/package-version.tgz
-      const rewrittenText = originalText.replace(
-        /https:\/\/registry\.npmjs\.org\/([^\/]+)/g,
-        `${url.origin}/npm/$1`
-      );
-      responseBody = new ReadableStream({
-        start(controller) {
-          controller.enqueue(new TextEncoder().encode(rewrittenText));
-          controller.close();
-        }
-      });
+      requestHeaders.set('Accept-Encoding', 'identity');
+      const FROM = "https://registry.npmjs.org/";
+      const TO = `${url.origin}/npm/`;
+
+      if (response.body) {
+        let state = 'normal';  // 'normal' 或 'string'
+        let tail = '';
+        let outputBuffer = '';
+
+        const replaceTransform = new TransformStream({
+          transform(chunk, controller) {
+            let input = tail + chunk;
+            tail = '';
+            let pos = 0;
+
+            while (pos < input.length) {
+              if (state === 'normal') {
+                let quotePos = input.indexOf('"', pos);
+                if (quotePos === -1) {
+                  outputBuffer += input.substring(pos);
+                  pos = input.length;
+                } else {
+                  outputBuffer += input.substring(pos, quotePos);
+                  pos = quotePos;
+                  state = 'string';
+                }
+              } else {  // state === 'string'
+                let j = pos + 1;  // 跳过开头的 "
+                let escaped = false;
+                let strEnd = -1;
+                while (j < input.length) {
+                  if (escaped) {
+                    escaped = false;
+                  } else if (input.charAt(j) === '\\') {
+                    escaped = true;
+                  } else if (input.charAt(j) === '"') {
+                    strEnd = j;
+                    break;
+                  }
+                  j++;
+                }
+                if (strEnd === -1) {
+                  // 不完整字符串，tail 从 " 开始
+                  tail = input.substring(pos);
+                  state = 'string';
+                  pos = input.length;
+                } else {
+                  // 完整字符串
+                  let contentStart = pos + 1;
+                  let content = input.substring(contentStart, strEnd);
+                  // 在内容中替换（原始文本，包括任何转义）
+                  let replacedContent = content.replace(/https:\/\/registry\.npmjs\.org\/(@?[^\/]+)/g, `${TO}$1`);
+                  let replacedStr = '"' + replacedContent + '"';
+                  outputBuffer += replacedStr;
+                  pos = strEnd + 1;
+                  state = 'normal';
+                }
+              }
+            }
+
+            // 批量输出（>1024 字节时，避免小 chunk 过多）
+            if (outputBuffer.length > 1024) {
+              controller.enqueue(outputBuffer);
+              outputBuffer = '';
+            }
+          },
+          flush(controller) {
+            // 结束时输出剩余
+            if (outputBuffer) {
+              controller.enqueue(outputBuffer);
+            }
+            if (tail) {
+              // 如果以字符串中结束，假设输入有效，直接输出（罕见）
+              controller.enqueue(tail);
+            }
+            // 如果 state === 'string' 且无 tail，输入无效，但 npm 响应通常完整
+          }
+        });
+
+        responseBody = response.body
+          .pipeThrough(new TextDecoderStream())
+          .pipeThrough(replaceTransform)
+          .pipeThrough(new TextEncoderStream());
+      }
     }
+
+
 
     // Prepare response headers
     const headers = new Headers(response.headers);
@@ -774,11 +853,11 @@ async function handleRequest(request, env, ctx) {
       const rangeHeader = request.headers.get('Range');
       const cacheKey = rangeHeader
         ? new Request(targetUrl, {
-            method: request.method,
-            headers: new Headers(
-              [...request.headers.entries()].filter(([k]) => k.toLowerCase() !== 'range')
-            )
-          })
+          method: request.method,
+          headers: new Headers(
+            [...request.headers.entries()].filter(([k]) => k.toLowerCase() !== 'range')
+          )
+        })
         : new Request(targetUrl, request);
 
       ctx.waitUntil(cache.put(cacheKey, finalResponse.clone()));
