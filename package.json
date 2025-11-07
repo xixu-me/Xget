@@ -1,14 +1,14 @@
 {
   "dependencies": {
-    "express": "^5.1.0",
+    "express": "^4.19.2",
     "xget": "file:"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.10.5",
+    "@cloudflare/vitest-pool-workers": "^0.8.71",
     "@cloudflare/workers-types": "^4.20250724.0",
-    "eslint": "^9.39.1",
+    "eslint": "^9.31.0",
     "prettier": "^3.6.2",
-    "vitest": "^4.0.7",
+    "vitest": "^3.1.4",
     "wrangler": "^4.26.0"
   },
   "name": "xget",
