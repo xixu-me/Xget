@@ -694,6 +694,7 @@ Xget supports multiple container registries, using the `cr/[Registry Prefix]` fo
 
 | Container Registry | Registry Prefix | Original URL Format | Accelerated URL Format |
 |-------------------|----------------|---------------------|------------------------|
+| Docker Hub | `docker` | `https://registry-1.docker.io/...` | `https://xget.xi-xu.me/cr/docker/...` |
 | Quay.io | `quay` | `https://quay.io/...` | `https://xget.xi-xu.me/cr/quay/...` |
 | Google Container Registry | `gcr` | `https://gcr.io/...` | `https://xget.xi-xu.me/cr/gcr/...` |
 | Microsoft Container Registry | `mcr` | `https://mcr.microsoft.com/...` | `https://xget.xi-xu.me/cr/mcr/...` |
@@ -712,6 +713,18 @@ Xget supports multiple container registries, using the `cr/[Registry Prefix]` fo
 | Gitpod Registry | `gitpod` | `https://registry.gitpod.io/...` | `https://xget.xi-xu.me/cr/gitpod/...` |
 
 ```url
+# Docker Hub original URL (official images)
+https://registry-1.docker.io/v2/library/nginx/manifests/latest
+
+# Converted (add cr/docker prefix)
+https://xget.xi-xu.me/cr/docker/v2/nginx/manifests/latest
+
+# Docker Hub original URL (user images)
+https://registry-1.docker.io/v2/nginxinc/nginx-unprivileged/manifests/latest
+
+# Converted (add cr/docker prefix)
+https://xget.xi-xu.me/cr/docker/v2/nginxinc/nginx-unprivileged/manifests/latest
+
 # GitHub Container Registry original URL
 https://ghcr.io/v2/nginxinc/nginx-unprivileged/manifests/latest
 

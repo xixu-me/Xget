@@ -207,6 +207,7 @@ describe('Container Registry Support', () => {
 
   describe('Container Registry Platform Support', () => {
     const containerRegistries = [
+      { name: 'Docker Hub', prefix: 'cr/docker', expectedStatus: [200, 301, 302, 401, 404] },
       { name: 'Quay.io', prefix: 'cr/quay', expectedStatus: [200, 301, 302, 401, 404] },
       {
         name: 'Google Container Registry',
@@ -233,6 +234,62 @@ describe('Container Registry Support', () => {
 
         expect(expectedStatus).toContain(response.status);
       });
+    });
+  });
+
+  describe('Docker Hub Specific Tests', () => {
+    it('should handle Docker Hub official images (single-name images)', async () => {
+      // Official images like nginx, redis are stored as library/nginx in Docker Hub
+      const testUrl = 'https://example.com/cr/docker/v2/nginx/manifests/latest';
+      const response = await SELF.fetch(testUrl, {
+        headers: {
+          Accept: 'application/vnd.docker.distribution.manifest.v2+json'
+        }
+      });
+
+      // Should attempt to proxy to Docker Hub
+      expect(response.status).not.toBe(400);
+    });
+
+    it('should handle Docker Hub user images (namespace/image format)', async () => {
+      // User images already have namespace prefix
+      const testUrl = 'https://example.com/cr/docker/v2/nginxinc/nginx-unprivileged/manifests/latest';
+      const response = await SELF.fetch(testUrl, {
+        headers: {
+          Accept: 'application/vnd.docker.distribution.manifest.v2+json'
+        }
+      });
+
+      // Should attempt to proxy to Docker Hub
+      expect(response.status).not.toBe(400);
+    });
+
+    it('should allow GET for Docker Hub manifest requests', async () => {
+      const response = await SELF.fetch(
+        'https://example.com/cr/docker/v2/nginx/manifests/latest',
+        {
+          method: 'GET',
+          headers: {
+            Accept: 'application/vnd.docker.distribution.manifest.v2+json'
+          }
+        }
+      );
+
+      expect(response.status).not.toBe(405);
+    });
+
+    it('should allow HEAD for Docker Hub manifest requests', async () => {
+      const response = await SELF.fetch(
+        'https://example.com/cr/docker/v2/nginx/manifests/latest',
+        {
+          method: 'HEAD',
+          headers: {
+            Accept: 'application/vnd.docker.distribution.manifest.v2+json'
+          }
+        }
+      );
+
+      expect(response.status).not.toBe(405);
     });
   });
 });

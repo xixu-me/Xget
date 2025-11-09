@@ -76,7 +76,7 @@ Xget is a high-performance, secure acceleration engine for developer resources, 
 
 1. **Code Repositories**: gh (GitHub), gl (GitLab), gitea, codeberg, sf (SourceForge), aosp
 2. **Package Managers**: npm, pypi, conda, maven, gradle, nuget, crates, etc.
-3. **Container Registries**: cr-ghcr, cr-gcr, cr-mcr, cr-quay, etc. (prefixed with `cr-`)
+3. **Container Registries**: cr-docker (Docker Hub), cr-ghcr, cr-gcr, cr-mcr, cr-quay, etc. (prefixed with `cr-`)
 4. **AI Inference Providers**: ip-openai, ip-anthropic, ip-gemini, etc. (prefixed with `ip-`)
 5. **Model/Dataset Platforms**: hf (Hugging Face), civitai
 6. **Linux Distributions**: debian, ubuntu, fedora, arch, etc.
@@ -95,6 +95,7 @@ Xget is a high-performance, secure acceleration engine for developer resources, 
 - Handles Docker authentication flow with token fetching
 - Supports anonymous access to public repositories
 - All requests must use `/cr/` prefix (e.g., `/cr/ghcr/owner/repo`)
+- **Docker Hub Special Handling** ([src/index.js](src/index.js):600-604): Official images (single-name like `nginx`) are automatically prefixed with `library/` for authentication scope, while user images (namespace/image) are passed through unchanged
 
 **AI Inference APIs** ([src/index.js](src/index.js):110-146)
 
