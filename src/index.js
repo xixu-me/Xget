@@ -102,6 +102,45 @@ function isGitRequest(request, url) {
 }
 
 /**
+ * Check if the request is a Git LFS operation
+ * @param {Request} request - The incoming request object
+ * @param {URL} url - Parsed URL object
+ * @returns {boolean} True if this is a Git LFS operation
+ */
+function isGitLFSRequest(request, url) {
+  // Check for LFS-specific endpoints
+  if (url.pathname.includes('/info/lfs')) {
+    return true;
+  }
+
+  if (url.pathname.includes('/objects/batch')) {
+    return true;
+  }
+
+  // Check for LFS object storage endpoints (SHA-256 hash is 64 hex characters)
+  if (url.pathname.match(/\/objects\/[a-fA-F0-9]{64}$/)) {
+    return true;
+  }
+
+  // Check for LFS-specific headers
+  const accept = request.headers.get('Accept') || '';
+  const contentType = request.headers.get('Content-Type') || '';
+  
+  if (accept.includes('application/vnd.git-lfs') || 
+      contentType.includes('application/vnd.git-lfs')) {
+    return true;
+  }
+
+  // Check for LFS user agent
+  const userAgent = request.headers.get('User-Agent') || '';
+  if (userAgent.includes('git-lfs')) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
  * Check if the request is for an AI inference provider
  * @param {Request} request - The incoming request object
  * @param {URL} url - Parsed URL object
@@ -153,13 +192,14 @@ function isAIInferenceRequest(request, url) {
  * @returns {{valid: boolean, error?: string, status?: number}} Validation result
  */
 function validateRequest(request, url, config = CONFIG) {
-  // Allow POST method for Git, Docker, and AI inference operations
+  // Allow POST method for Git, Git LFS, Docker, and AI inference operations
   const isGit = isGitRequest(request, url);
+  const isGitLFS = isGitLFSRequest(request, url);
   const isDocker = isDockerRequest(request, url);
   const isAI = isAIInferenceRequest(request, url);
 
   const allowedMethods =
-    isGit || isDocker || isAI
+    isGit || isGitLFS || isDocker || isAI
       ? ['GET', 'HEAD', 'POST', 'PUT', 'PATCH']
       : config.SECURITY.ALLOWED_METHODS;
 
@@ -373,16 +413,19 @@ async function handleRequest(request, env, ctx) {
     // Check if this is a Git operation
     const isGit = isGitRequest(request, url);
 
+    // Check if this is a Git LFS operation
+    const isGitLFS = isGitLFSRequest(request, url);
+
     // Check if this is an AI inference request
     const isAI = isAIInferenceRequest(request, url);
 
-    // Check cache first (skip cache for Git, Docker, and AI inference operations)
+    // Check cache first (skip cache for Git, Git LFS, Docker, and AI inference operations)
     /** @type {Cache} */
     // @ts-ignore - Cloudflare Workers cache API
     const cache = caches.default;
     let response;
 
-    if (!isGit && !isDocker && !isAI) {
+    if (!isGit && !isGitLFS && !isDocker && !isAI) {
       // For Range requests, try cache match first
       const cacheKey = new Request(targetUrl, request);
       response = await cache.match(cacheKey);
@@ -450,6 +493,30 @@ async function handleRequest(request, env, ctx) {
       if (isGit && request.method === 'POST' && url.pathname.endsWith('/git-receive-pack')) {
         if (!requestHeaders.has('Content-Type')) {
           requestHeaders.set('Content-Type', 'application/x-git-receive-pack-request');
+        }
+      }
+
+      // Set Git LFS-specific headers
+      if (isGitLFS) {
+        if (!requestHeaders.has('User-Agent')) {
+          requestHeaders.set('User-Agent', 'git-lfs/3.0.0 (GitHub; darwin amd64; go 1.17.2)');
+        }
+        
+        // For LFS batch API requests
+        if (url.pathname.includes('/objects/batch')) {
+          if (!requestHeaders.has('Accept')) {
+            requestHeaders.set('Accept', 'application/vnd.git-lfs+json');
+          }
+          if (request.method === 'POST' && !requestHeaders.has('Content-Type')) {
+            requestHeaders.set('Content-Type', 'application/vnd.git-lfs+json');
+          }
+        }
+        
+        // For LFS object transfers
+        if (url.pathname.match(/\/objects\/[a-fA-F0-9]{64}$/)) {
+          if (!requestHeaders.has('Accept')) {
+            requestHeaders.set('Accept', 'application/octet-stream');
+          }
         }
       }
 
@@ -766,11 +833,12 @@ async function handleRequest(request, env, ctx) {
       headers
     });
 
-    // Cache successful responses (skip caching for Git, Docker, and AI inference operations)
+    // Cache successful responses (skip caching for Git, Git LFS, Docker, and AI inference operations)
     // Only cache GET and HEAD requests to avoid "Cannot cache response to non-GET request" errors
     // IMPORTANT: Only cache 200 responses, NOT 206 responses (Cloudflare Workers Cache API rejects 206)
     if (
       !isGit &&
+      !isGitLFS &&
       !isDocker &&
       !isAI &&
       ['GET', 'HEAD'].includes(request.method) &&

@@ -89,6 +89,14 @@ Xget is a high-performance, secure acceleration engine for developer resources, 
 - Allows POST method, sets Git-specific headers
 - Skips caching to ensure real-time data
 
+**Git LFS (Large File Storage) Operations** ([src/index.js](src/index.js):104-141)
+
+- Detected via LFS-specific endpoints (`/info/lfs`, `/objects/batch`, `/objects/{oid}`)
+- Detected via LFS headers (`Accept: application/vnd.git-lfs+json`) or User-Agent (`git-lfs/`)
+- Supports batch API for efficient object transfers
+- Sets appropriate content-type headers for LFS operations
+- Skips caching to ensure real-time data synchronization
+
 **Docker/Container Registries** ([src/index.js](src/index.js):42-65)
 
 - Detected via `/v2/` paths, User-Agent, or Accept headers

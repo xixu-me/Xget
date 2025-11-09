@@ -34,6 +34,39 @@ function isGitRequest(request, url) {
   return false;
 }
 
+function isGitLFSRequest(request, url) {
+  // Check for LFS-specific endpoints
+  if (url.pathname.includes('/info/lfs')) {
+    return true;
+  }
+
+  if (url.pathname.includes('/objects/batch')) {
+    return true;
+  }
+
+  // Check for LFS object storage endpoints (SHA-256 hash is 64 hex characters)
+  if (url.pathname.match(/\/objects\/[a-fA-F0-9]{64}$/)) {
+    return true;
+  }
+
+  // Check for LFS-specific headers
+  const accept = request.headers.get('Accept') || '';
+  const contentType = request.headers.get('Content-Type') || '';
+  
+  if (accept.includes('application/vnd.git-lfs') || 
+      contentType.includes('application/vnd.git-lfs')) {
+    return true;
+  }
+
+  // Check for LFS user agent
+  const userAgent = request.headers.get('User-Agent') || '';
+  if (userAgent.includes('git-lfs')) {
+    return true;
+  }
+
+  return false;
+}
+
 function validateRequest(request, url) {
   const CONFIG = {
     SECURITY: {
@@ -129,6 +162,81 @@ describe('Utility Functions', () => {
       const url = new URL(request.url);
 
       expect(isGitRequest(request, url)).toBe(false);
+    });
+  });
+
+  describe('isGitLFSRequest', () => {
+    it('should identify LFS info/lfs requests', () => {
+      const request = new Request('https://example.com/repo.git/info/lfs');
+      const url = new URL(request.url);
+
+      expect(isGitLFSRequest(request, url)).toBe(true);
+    });
+
+    it('should identify LFS batch API requests', () => {
+      const request = new Request('https://example.com/repo.git/objects/batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/vnd.git-lfs+json' }
+      });
+      const url = new URL(request.url);
+
+      expect(isGitLFSRequest(request, url)).toBe(true);
+    });
+
+    it('should identify LFS object storage requests by path', () => {
+      const request = new Request('https://example.com/repo.git/objects/a1b2c3d4e5f6789012345678901234567890123456789012345678901234abcd');
+      const url = new URL(request.url);
+
+      expect(isGitLFSRequest(request, url)).toBe(true);
+    });
+
+    it('should identify LFS requests by Accept header', () => {
+      const request = new Request('https://example.com/repo.git/objects/batch', {
+        headers: { 'Accept': 'application/vnd.git-lfs+json' }
+      });
+      const url = new URL(request.url);
+
+      expect(isGitLFSRequest(request, url)).toBe(true);
+    });
+
+    it('should identify LFS requests by Content-Type header', () => {
+      const request = new Request('https://example.com/repo.git/objects/batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/vnd.git-lfs+json' }
+      });
+      const url = new URL(request.url);
+
+      expect(isGitLFSRequest(request, url)).toBe(true);
+    });
+
+    it('should identify LFS requests by User-Agent', () => {
+      const request = new Request('https://example.com/repo.git', {
+        headers: { 'User-Agent': 'git-lfs/3.0.0 (GitHub; darwin amd64; go 1.17.2)' }
+      });
+      const url = new URL(request.url);
+
+      expect(isGitLFSRequest(request, url)).toBe(true);
+    });
+
+    it('should not identify regular file requests as LFS', () => {
+      const request = new Request('https://example.com/repo/file.txt');
+      const url = new URL(request.url);
+
+      expect(isGitLFSRequest(request, url)).toBe(false);
+    });
+
+    it('should not identify standard Git requests as LFS', () => {
+      const request = new Request('https://example.com/repo.git/info/refs');
+      const url = new URL(request.url);
+
+      expect(isGitLFSRequest(request, url)).toBe(false);
+    });
+
+    it('should handle edge cases gracefully', () => {
+      const request = new Request('https://example.com/');
+      const url = new URL(request.url);
+
+      expect(isGitLFSRequest(request, url)).toBe(false);
     });
   });
 
