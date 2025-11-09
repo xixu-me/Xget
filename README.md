@@ -703,6 +703,7 @@ Xget 支持多个容器注册表，使用 `cr/[容器注册表前缀]` 格式：
 
 | 容器注册表 | 容器注册表前缀 | 原始 URL 格式 | 加速 URL 格式 |
 |----------|------|--------------|--------------|
+| Docker Hub | `docker` | `https://registry-1.docker.io/...` | `https://xget.xi-xu.me/cr/docker/...` |
 | Quay.io | `quay` | `https://quay.io/...` | `https://xget.xi-xu.me/cr/quay/...` |
 | 谷歌容器注册表 | `gcr` | `https://gcr.io/...` | `https://xget.xi-xu.me/cr/gcr/...` |
 | 微软容器注册表 | `mcr` | `https://mcr.microsoft.com/...` | `https://xget.xi-xu.me/cr/mcr/...` |
@@ -721,6 +722,18 @@ Xget 支持多个容器注册表，使用 `cr/[容器注册表前缀]` 格式：
 | Gitpod 注册表 | `gitpod` | `https://registry.gitpod.io/...` | `https://xget.xi-xu.me/cr/gitpod/...` |
 
 ```url
+# Docker Hub 原始 URL（官方镜像）
+https://registry-1.docker.io/v2/library/nginx/manifests/latest
+
+# 转换后（添加 cr/docker 前缀）
+https://xget.xi-xu.me/cr/docker/v2/nginx/manifests/latest
+
+# Docker Hub 原始 URL（用户镜像）
+https://registry-1.docker.io/v2/nginxinc/nginx-unprivileged/manifests/latest
+
+# 转换后（添加 cr/docker 前缀）
+https://xget.xi-xu.me/cr/docker/v2/nginxinc/nginx-unprivileged/manifests/latest
+
 # GitHub 容器注册表原始 URL
 https://ghcr.io/v2/nginxinc/nginx-unprivileged/manifests/latest
 
