@@ -459,7 +459,7 @@ async function handleRequest(request, env, ctx) {
     };
 
     // Add body for POST/PUT/PATCH requests (Git/Docker/AI inference operations)
-    if (['POST', 'PUT', 'PATCH'].includes(request.method) && (isGit || isDocker || isAI)) {
+    if (['POST', 'PUT', 'PATCH'].includes(request.method) && (isGit || isGitLFS || isDocker || isAI)) {
       fetchOptions.body = request.body;
     }
 
@@ -467,7 +467,7 @@ async function handleRequest(request, env, ctx) {
     const requestHeaders = /** @type {Headers} */ (fetchOptions.headers);
 
     // Set appropriate headers for Git/Docker/AI vs regular requests
-    if (isGit || isDocker || isAI) {
+    if (isGit || isGitLFS || isDocker || isAI) {
       // For Git/Docker/AI operations, copy all headers from the original request
       // This ensures protocol compliance
       for (const [key, value] of request.headers.entries()) {
@@ -870,7 +870,7 @@ async function handleRequest(request, env, ctx) {
     }
 
     monitor.mark('complete');
-    return isGit || isDocker || isAI
+    return isGit || isGitLFS || isDocker || isAI
       ? finalResponse
       : addPerformanceHeaders(finalResponse, monitor);
   } catch (error) {
