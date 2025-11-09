@@ -595,7 +595,14 @@ async function handleRequest(request, env, ctx) {
                 const repoPath = pathParts.slice(4).join('/'); // Skip /v2/cr/[registry]
                 const repoParts = repoPath.split('/');
                 if (repoParts.length >= 1) {
-                  const repoName = repoParts.slice(0, -2).join('/'); // Remove /manifests/tag or /blobs/sha
+                  let repoName = repoParts.slice(0, -2).join('/'); // Remove /manifests/tag or /blobs/sha
+
+                  // Special handling for Docker Hub: official images need 'library/' prefix
+                  // Docker Hub stores official images like nginx, redis, etc. as library/nginx, library/redis
+                  if (platform === 'cr-docker' && repoName && !repoName.includes('/')) {
+                    repoName = `library/${repoName}`;
+                  }
+
                   if (repoName) {
                     scope = `repository:${repoName}:pull`;
                   }
