@@ -4,6 +4,7 @@
  */
 export const PLATFORMS = {
   gh: 'https://github.com',
+  gist: 'https://gist.github.com',
   gl: 'https://gitlab.com',
   gitea: 'https://gitea.com',
   codeberg: 'https://codeberg.org',

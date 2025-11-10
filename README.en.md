@@ -139,6 +139,7 @@ Using the pre-deployed instance **`xget.xi-xu.me`** or your own deployed instanc
 | Platform | Platform Prefix | Original URL Format | Accelerated URL Format |
 |----------|----------------|---------------------|------------------------|
 | GitHub | `gh` | `https://github.com/...` | `https://xget.xi-xu.me/gh/...` |
+| GitHub Gist | `gist` | `https://gist.github.com/...` | `https://xget.xi-xu.me/gist/...` |
 | GitLab | `gl` | `https://gitlab.com/...` | `https://xget.xi-xu.me/gl/...` |
 | Gitea | `gitea` | `https://gitea.com/...` | `https://xget.xi-xu.me/gitea/...` |
 | Codeberg | `codeberg` | `https://codeberg.org/...` | `https://xget.xi-xu.me/codeberg/...` |
@@ -183,6 +184,16 @@ https://github.com/microsoft/vscode/archive/refs/heads/main.zip
 
 # Converted (add gh prefix)
 https://xget.xi-xu.me/gh/microsoft/vscode/archive/refs/heads/main.zip
+```
+
+#### GitHub Gist
+
+```url
+# Original URL
+https://gist.github.com/xixu-me/e2ea9db6b1f143892495f796fef18631/raw/3b8807172ee492d0da3a7e370b0fb88fc97b53e6/Free-ChatGPT-Paid-Plan.md
+
+# Converted (add gist prefix)
+https://xget.xi-xu.me/gist/xixu-me/e2ea9db6b1f143892495f796fef18631/raw/3b8807172ee492d0da3a7e370b0fb88fc97b53e6/Free-ChatGPT-Paid-Plan.md
 ```
 
 #### GitLab

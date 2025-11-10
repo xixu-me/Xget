@@ -148,6 +148,7 @@
 | 平台 | 平台前缀 | 原始 URL 格式 | 加速 URL 格式 |
 |------|----------|--------------|--------------|
 | GitHub | `gh` | `https://github.com/...` | `https://xget.xi-xu.me/gh/...` |
+| GitHub Gist | `gist` | `https://gist.github.com/...` | `https://xget.xi-xu.me/gist/...` |
 | GitLab | `gl` | `https://gitlab.com/...` | `https://xget.xi-xu.me/gl/...` |
 | Gitea | `gitea` | `https://gitea.com/...` | `https://xget.xi-xu.me/gitea/...` |
 | Codeberg | `codeberg` | `https://codeberg.org/...` | `https://xget.xi-xu.me/codeberg/...` |
@@ -192,6 +193,16 @@ https://github.com/microsoft/vscode/archive/refs/heads/main.zip
 
 # 转换后（添加 gh 前缀）
 https://xget.xi-xu.me/gh/microsoft/vscode/archive/refs/heads/main.zip
+```
+
+#### GitHub Gist
+
+```url
+# 原始 URL
+https://gist.github.com/xixu-me/e2ea9db6b1f143892495f796fef18631/raw/3b8807172ee492d0da3a7e370b0fb88fc97b53e6/Free-ChatGPT-Paid-Plan.md
+
+# 转换后（添加 gist 前缀）
+https://xget.xi-xu.me/gist/xixu-me/e2ea9db6b1f143892495f796fef18631/raw/3b8807172ee492d0da3a7e370b0fb88fc97b53e6/Free-ChatGPT-Paid-Plan.md
 ```
 
 #### GitLab

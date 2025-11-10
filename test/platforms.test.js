@@ -6,6 +6,7 @@ describe('Platform Configuration', () => {
     it('should have all required platforms defined', () => {
       const requiredPlatforms = [
         'gh',
+        'gist',
         'gl',
         'sf',
         'gitea',
@@ -44,6 +45,14 @@ describe('Platform Configuration', () => {
       );
 
       expect(transformPath('/gh/user/repo.git', 'gh')).toBe('/user/repo.git');
+    });
+
+    it('should transform GitHub Gist paths correctly', () => {
+      expect(transformPath('/gist/username/gist-id/raw/file.txt', 'gist')).toBe(
+        '/username/gist-id/raw/file.txt'
+      );
+
+      expect(transformPath('/gist/username/gist-id.git', 'gist')).toBe('/username/gist-id.git');
     });
 
     it('should transform GitLab paths correctly', () => {
@@ -139,6 +148,10 @@ describe('Platform Configuration', () => {
   describe('Platform Base URLs', () => {
     it('should have correct GitHub base URL', () => {
       expect(PLATFORMS.gh).toBe('https://github.com');
+    });
+
+    it('should have correct GitHub Gist base URL', () => {
+      expect(PLATFORMS.gist).toBe('https://gist.github.com');
     });
 
     it('should have correct GitLab base URL', () => {
