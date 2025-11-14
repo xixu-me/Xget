@@ -56,11 +56,9 @@ In-depth technical analysis article published: ***[Deep Dive into Xget: A High-P
 
 ## 🎯 Quick Start
 
-**Pre-deployed Instance (no reliability guarantee): `xget.xi-xu.me`** - Ready to use out of the box, no deployment required!
+**Pre-deployed Instance (no reliability guarantee): `xget.xi-xu.me`**
 
 **URL Converter:** [**`xuc.xi-xu.me`**](https://xuc.xi-xu.me) - Convert any supported platform URL to Xget's acceleration format with one click!
-
-> **⚡ Experience Lightning-Fast Downloads Now**: No registration, no configuration required, just start using to experience blazing-fast download speeds!
 
 ## 🌟 Core Advantages - Why Choose Xget?
 
