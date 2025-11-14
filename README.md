@@ -1,6 +1,6 @@
 <div align="center">
 
-# Xget
+# 🚀 Xget
 
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare%20Workers-F38020?&logo=cloudflare&logoColor=white)](#-部署)
 
