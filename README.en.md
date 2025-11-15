@@ -2511,16 +2511,16 @@ npx wrangler dev --log-level debug
 
 ## ⚠️ Disclaimer
 
-- **Legal and Compliant Use**: This repository is intended to accelerate access to legal public resources (such as file downloads, Git operations, AI inference APIs, container image pulls, and package management). Please strictly comply with the laws and regulations of your jurisdiction as well as the terms of service and usage agreements of relevant platforms. Any use beyond legal public resources is the user's own legal responsibility
-- **Non-Affiliation and Self-Responsibility**: Any fork, secondary development, redistribution, or derivative version based on this repository is independently responsible by its maintainer; the authors, maintainers, and contributors of this repository bear no legal or joint liability for their actions or consequences, nor does it constitute employment, cooperation, agency, endorsement, or guarantee
-- **No Warranty and Limitation of Liability**: To the maximum extent permitted by applicable law, this repository is provided "AS IS", and the authors, maintainers, and contributors provide no express or implied warranties (including but not limited to merchantability, fitness for a particular purpose, and non-infringement), nor are they responsible for any direct or indirect losses, data loss, business interruption, or other consequences caused by the use of this repository
-- **User Obligations**: Users should independently evaluate and control usage risks, ensuring their actions and purposes are legal, compliant, and do not infringe third-party rights, and not use this repository for illegal, infringing, or malicious purposes in any form
-- **Third-Party Platforms and Rate Limits**: Please comply with the terms of service, API usage limits, and rate controls of platforms such as GitHub, GitLab, Gitea, Codeberg, SourceForge, Hugging Face, various package management platforms, and container registries to avoid excessive load on source platforms
-- **Intellectual Property and Content Compliance**: Ensure that content accessed or distributed through this repository complies with relevant copyright and licensing requirements; for copyrighted content, please comply with its licensing agreements and terms of use
-- **Data and Security**: This repository adopts a no-log architecture and does not store, record, or analyze user request data. However, internet transmission has inherent risks. It is recommended to perform security scans on downloaded files, especially executable files and scripts, and handle sensitive information carefully
-- **Support and Maintenance**: This repository is an open source, community-driven work. Authors and contributors are not obligated to provide support, fixes, or continuous maintenance; merged external contributions do not constitute commitments or endorsements for their purposes, effects, or results
-- **Representation and Name Use**: Do not imply cooperation, endorsement, or guarantee from authors or contributors in any scenario. External display or promotion involving the repository name, author name, or logos should comply with applicable laws and common name/logo usage norms
-- **Updates and Applicability**: This disclaimer may be updated as the repository or legal environment changes without separate notice; by using, copying, distributing, or modifying this repository, you are deemed to have read and agreed to the latest version of this disclaimer
+- **Legal and Compliant Use**: This repository aims to provide unified acceleration services for code repositories, package registries, AI inference APIs, container images, models, datasets, and other legitimate developer resources. Users must strictly comply with the laws and regulations of their jurisdiction and the terms of service of relevant platforms. Any illegal use is the sole responsibility of the user
+- **Non-Affiliation and Independent Responsibility**: This repository has no affiliation, agency, or partnership relationship with any third-party platforms. Any fork, secondary development, redistribution, or derivative version based on this repository is solely the responsibility of its maintainer; authors, maintainers, and contributors bear no legal or joint liability for the actions or consequences of derivative repositories
+- **No Warranty and Limitation of Liability**: To the maximum extent permitted by applicable law, this repository is provided "AS IS" without any express or implied warranties (including but not limited to merchantability, fitness for a particular purpose, non-infringement, etc.). Authors, maintainers, and contributors assume no responsibility for any direct or indirect losses (including but not limited to data loss, business interruption, profit loss, etc.) resulting from the use of this repository
+- **Risk Assumption Principle**: Users should independently assess usage risks, ensure their use is legal and compliant, respect third-party rights, and must not use this repository for any illegal, infringing, malicious, or improper purposes
+- **Third-Party Platform Compliance**: Users must comply with the terms of service, API usage policies, rate limits, and copyright requirements of relevant platforms, and avoid causing overload or interference to source platforms. Each platform has the final interpretation right over its content, services, and policies
+- **Intellectual Property Protection**: Content obtained through this repository is protected by respective copyright laws. Users must comply with relevant licensing agreements, copyright notices, and terms of use, and must not engage in any activities that infringe intellectual property rights
+- **Security Recommendations**: Although this repository adopts a no-log architecture and does not store user request data, due to inherent risks of internet transmission, users are advised to perform security scans on downloaded content, especially for executable files and scripts
+- **Open Source Nature**: This repository is open source. Authors and contributors are not obligated to provide technical support, bug fixes, or continuous maintenance. The inclusion of external contributions does not constitute endorsement or commitment to specific uses or effects
+- **Name Usage Guidelines**: Any representations that may imply authors or contributors provide commercial cooperation, technical support, guarantees, or endorsements are strictly prohibited. The use of repository names or author identifiers must comply with relevant laws and regulations as well as general norms
+- **Disclaimer Updates**: This disclaimer may be updated and revised as the repository develops or legal environments change. Continued use, copying, distribution, or modification of this repository constitutes acceptance of the latest version of this disclaimer
 
 ## 🤝 Contributing
 
@@ -2540,12 +2540,6 @@ We welcome all forms of contribution! Please check the [Contributing Guide](CONT
    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=xixu-me/Xget&type=Date" />
  </picture>
 </a>
-
-## 📞 Contact
-
-- **Author**: [Xi Xu](https://xi-xu.me)
-- **Email**: [Contact Email](mailto:i@xi-xu.me)
-- **Sponsor**: [Sponsor URL](https://xi-xu.me/#sponsorships)
 
 ## 📝 License
 

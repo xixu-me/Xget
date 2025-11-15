@@ -12,7 +12,7 @@
 
 ### 提交代码
 
-- Fork 存储库到您的 GitHub 账户
+- fork 存储库到您的 GitHub 账户
 - 创建功能分支 (`git checkout -b feature/amazing-feature`)
 - 提交更改 (`git commit -m 'Add some amazing feature'`)
 - 推送到分支 (`git push origin feature/amazing-feature`)
@@ -204,7 +204,6 @@ perf(proxy): optimize request handling performance
 ### 沟通渠道
 
 - **GitHub Issues**: 报告问题和功能请求
-- **GitHub Discussions**: 一般讨论和问答
 - **Email**: 敏感问题可发送至维护者邮箱
 
 ### 常见问题
@@ -228,4 +227,4 @@ A: 检查 CORS 配置，确保允许的源和方法设置正确。
 
 ---
 
-如果您有任何问题或建议，请随时通过 GitHub Issues 或 Discussions 与我们联系。我们期待您的参与！
+如果您有任何问题或建议，请随时通过 GitHub Issues 与我们联系。我们期待您的参与！
