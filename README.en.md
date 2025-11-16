@@ -4,7 +4,7 @@
 
 <a href="https://trendshift.io/repositories/14768" target="_blank"><img src="https://trendshift.io/api/badge/repositories/14768" alt="xixu-me%2FXget | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
-[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare%20Workers-F38020?&logo=cloudflare&logoColor=white)](#deploy-to-cloudflare-workers)
+[![Cloudflare Pages](https://img.shields.io/badge/Cloudflare%20Pages-F38020?&logo=cloudflare&logoColor=white)](#deploy-to-cloudflare-pages)
 [![Docker](https://img.shields.io/badge/Docker-2496ED?&logo=docker&logoColor=white)](#self-hosted-deployment)
 [![Podman](https://img.shields.io/badge/Podman-892CA0?&logo=podman&logoColor=white)](#self-hosted-deployment)
 [![Chromium](https://img.shields.io/badge/Chromium-4285F4?logo=googlechrome&logoColor=white)](#-ecosystem-integration)
@@ -65,7 +65,7 @@ In-depth technical analysis article published: ***[Deep Dive into Xget: A High-P
 
 ### ⚡ Extreme Performance - Breaking Through Traditional Accelerator Bottlenecks
 
-- **⚡ Millisecond Response**: Cloudflare's global 330+ edge nodes, average response time < 50ms
+- **⚡ Millisecond Response**: Cloudflare Pages' global 330+ edge nodes, average response time < 50ms
 - **🌐 HTTP/3 Ultra-Fast Protocol**: Latest HTTP/3 protocol enabled, 40% reduction in connection latency, 30% increase in transmission speed
 - **📦 Intelligent Multi-Compression**: Triple compression algorithms (gzip, deflate, brotli), 60% improvement in transmission efficiency
 - **🔗 Zero-Latency Pre-Connection**: Connection warm-up and keep-alive, eliminating handshake overhead for second-level responses
@@ -2351,7 +2351,7 @@ client = OpenAI(
 
 ## 🚀 Deployment
 
-### Deploy to Cloudflare Workers
+### Deploy to Cloudflare Pages
 
 #### Deployment Steps
 
@@ -2372,16 +2372,16 @@ client = OpenAI(
    - Modifying only documentation files (`.md`), `LICENSE`, `.gitignore`, etc. will not trigger deployment
    - You can also manually trigger deployment in the GitHub Actions page
 
-5. **Bind custom domain** (optional): Bind your custom domain in the Cloudflare Workers console
+5. **Bind custom domain** (optional): Bind your custom domain in the Cloudflare Pages console
 
 After deployment completes, your Xget service will be available at:
 
-- Worker domain: `your-worker-name.your-subdomain.workers.dev`
+- Pages domain: `your-project-name.pages.dev`
 - Custom domain: `your-domain.com` (if bound)
 
 #### Environment Variable Configuration
 
-You can set the following environment variables in the Cloudflare Workers console to customize configuration:
+You can set the following environment variables in the Cloudflare Pages console (Settings → Environment variables) to customize configuration:
 
 - `TIMEOUT_SECONDS`: Request timeout (default: 30)
 - `MAX_RETRIES`: Maximum retry count (default: 3)

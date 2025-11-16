@@ -19,7 +19,7 @@ export default defineWorkersConfig({
         '*.config.js',
         '*.config.ts'
       ],
-      include: ['src/**/*.js', 'src/**/*.ts'],
+      include: ['src/**/*.js', 'src/**/*.ts', 'functions/**/*.js', 'functions/**/*.ts'],
       thresholds: {
         global: {
           branches: 80,

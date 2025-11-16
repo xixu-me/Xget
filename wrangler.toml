@@ -1,12 +1,12 @@
 #:schema node_modules/wrangler/config-schema.json
 name = "xget"
-main = "src/index.js"
+pages_build_output_dir = "public"
 compatibility_date = "2024-10-22"
 compatibility_flags = ["nodejs_compat"]
-workers_dev = false
 
-[placement]
-mode = "smart"
+# Pages-specific configuration
+# Functions are automatically loaded from the functions/ directory
+# Static assets are served from the public/ directory
 
 [observability]
 enabled = false

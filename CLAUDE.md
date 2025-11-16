@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Xget is a high-performance acceleration engine for developer resources built on Cloudflare Workers. It provides unified acceleration for code repositories, package managers, container registries, AI inference providers, and more. The application proxies requests to various platforms, applies intelligent caching, and implements security measures while maintaining protocol compliance (Git, Docker/OCI, AI APIs).
+Xget is a high-performance acceleration engine for developer resources built on Cloudflare Pages. It provides unified acceleration for code repositories, package managers, container registries, AI inference providers, and more. The application proxies requests to various platforms, applies intelligent caching, and implements security measures while maintaining protocol compliance (Git, Docker/OCI, AI APIs).
 
 **Key Features:**
 
@@ -65,12 +65,12 @@ npm run format:check
 ### Deployment
 
 ```bash
-# Deploy to Cloudflare Workers
+# Deploy to Cloudflare Pages
 npm run deploy
 # or
-wrangler deploy
+wrangler pages deploy
 
-# Start production preview
+# Start local development server
 npm start
 ```
 
@@ -114,6 +114,19 @@ podman run -p 8080:8080 xget
   - AI providers: `ip-openai`, `ip-anthropic`, `ip-gemini`, etc. (prefix: `ip-`)
   - Container registries: `cr-docker`, `cr-ghcr`, `cr-gcr`, etc. (prefix: `cr-`)
 - `transformPath()` - Converts prefixed URLs to actual platform URLs
+
+**`functions/[[path]].js`** - Cloudflare Pages Function handler
+
+- `onRequest()` - Pages Function entry point that wraps handleRequest
+- Catch-all route handler that processes all incoming requests
+- Converts Pages Function context to Workers-compatible format
+- Delegates to handleRequest for actual processing
+
+**`public/index.html`** - Landing page
+
+- Static HTML page served at the root URL
+- Provides information about Xget features and usage examples
+- Only served when accessing the root path directly
 
 ### Request Flow
 
@@ -186,7 +199,7 @@ podman run -p 8080:8080 xget
 
 ## Environment Variables
 
-Configure via Cloudflare Workers environment or `.dev.vars`:
+Configure via Cloudflare Pages environment variables or `.dev.vars`:
 
 - `TIMEOUT_SECONDS` - Request timeout (default: 30)
 - `MAX_RETRIES` - Max retry attempts (default: 3)
@@ -241,9 +254,9 @@ Configure via Cloudflare Workers environment or `.dev.vars`:
 
 ## Deployment Targets
 
-1. **Cloudflare Workers** (primary): Zero-config deployment with global edge network
+1. **Cloudflare Pages** (primary): Zero-config deployment with global edge network and built-in static asset hosting
 2. **Docker/Podman**: Self-hosted with workerd runtime (see Dockerfile)
-3. **Local development**: Wrangler dev server on localhost
+3. **Local development**: Wrangler Pages dev server on localhost
 
 ## License
 
