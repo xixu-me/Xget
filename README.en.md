@@ -74,7 +74,7 @@ In-depth technical analysis article published: ***[Deep Dive into Xget: A High-P
 
 ### 🌐 Deep Multi-Platform Integration
 
-- **All-in-One Multi-Platform Support**: Unified support for code repositories, package managers, AI inference providers, container registries, model and dataset hosting platforms
+- **All-in-One Multi-Platform Support**: Unified support for mainstream platforms in various development scenarios
 - **Intelligent Recognition and Conversion**: Automatically recognizes platform prefixes and converts to correct URL structures for target platforms
 - **Consistent Acceleration Experience**: Enjoy unified and stable ultra-fast download experience regardless of file type or source
 
