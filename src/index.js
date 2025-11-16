@@ -2,11 +2,35 @@ import { CONFIG, createConfig } from './config/index.js';
 import { transformPath } from './config/platforms.js';
 
 /**
- * Monitors performance metrics during request processing
+ * Monitors performance metrics during request processing.
+ *
+ * This class tracks timing information throughout request handling lifecycle,
+ * allowing measurement of cache hits, upstream fetch attempts, and total processing time.
+ *
+ * @example
+ * // Track request processing performance
+ * const monitor = new PerformanceMonitor();
+ * monitor.mark('cache_check');
+ * // ... check cache ...
+ * monitor.mark('upstream_fetch');
+ * // ... fetch from upstream ...
+ * monitor.mark('complete');
+ * const metrics = monitor.getMetrics();
+ * // { cache_check: 5, upstream_fetch: 120, complete: 150 }
+ *
+ * @example
+ * // Use with response headers
+ * const monitor = new PerformanceMonitor();
+ * monitor.mark('operation_complete');
+ * const response = addPerformanceHeaders(originalResponse, monitor);
+ * // Response will include X-Performance-Metrics header with timing data
  */
 class PerformanceMonitor {
   /**
-   * Initializes a new performance monitor
+   * Initializes a new performance monitor.
+   *
+   * Sets the start time to the current timestamp and creates an empty marks collection.
+   * All subsequent timing marks will be relative to this start time.
    */
   constructor() {
     this.startTime = Date.now();
@@ -14,8 +38,19 @@ class PerformanceMonitor {
   }
 
   /**
-   * Marks a timing point with the given name
-   * @param {string} name - The name of the timing mark
+   * Marks a timing point with the given name.
+   *
+   * Records the elapsed time (in milliseconds) since the monitor was created.
+   * If a mark with the same name already exists, logs a warning and overwrites it.
+   *
+   * @param {string} name - The name of the timing mark (e.g., 'cache_hit', 'attempt_0', 'success')
+   *
+   * @example
+   * const monitor = new PerformanceMonitor();
+   * monitor.mark('start_fetch');
+   * // ... perform fetch ...
+   * monitor.mark('fetch_complete');
+   * // Marks: { start_fetch: 0, fetch_complete: 245 }
    */
   mark(name) {
     if (this.marks.has(name)) {
@@ -25,8 +60,26 @@ class PerformanceMonitor {
   }
 
   /**
-   * Returns all collected metrics
-   * @returns {Object.<string, number>} Object containing name-timestamp pairs
+   * Returns all collected metrics as a plain object.
+   *
+   * Converts the internal Map of timing marks to a JavaScript object suitable for
+   * JSON serialization and inclusion in response headers.
+   *
+   * @returns {Object.<string, number>} Object containing name-timestamp pairs in milliseconds
+   *
+   * @example
+   * const monitor = new PerformanceMonitor();
+   * monitor.mark('cache_check');
+   * monitor.mark('upstream_fetch');
+   * const metrics = monitor.getMetrics();
+   * console.log(metrics);
+   * // { cache_check: 5, upstream_fetch: 120 }
+   *
+   * @example
+   * // Serialize metrics for logging
+   * const metrics = monitor.getMetrics();
+   * console.log(JSON.stringify(metrics));
+   * // '{"cache_check":5,"upstream_fetch":120}'
    */
   getMetrics() {
     return Object.fromEntries(this.marks.entries());
@@ -34,10 +87,44 @@ class PerformanceMonitor {
 }
 
 /**
- * Detects if a request is a container registry operation
+ * Detects if a request is a container registry operation (Docker/OCI).
+ *
+ * Identifies Docker and OCI registry requests by checking for:
+ * - Registry API endpoints (/v2/...)
+ * - Docker-specific User-Agent headers
+ * - Docker/OCI manifest Accept headers
+ *
  * @param {Request} request - The incoming request object
  * @param {URL} url - Parsed URL object
  * @returns {boolean} True if this is a container registry operation
+ *
+ * @example
+ * // Docker registry manifest request
+ * const req = new Request('https://example.com/v2/library/nginx/manifests/latest');
+ * const url = new URL(req.url);
+ * isDockerRequest(req, url); // true
+ *
+ * @example
+ * // Docker client User-Agent
+ * const req = new Request('https://example.com/some/path', {
+ *   headers: { 'User-Agent': 'docker/20.10.7' }
+ * });
+ * const url = new URL(req.url);
+ * isDockerRequest(req, url); // true
+ *
+ * @example
+ * // OCI manifest Accept header
+ * const req = new Request('https://example.com/some/path', {
+ *   headers: { 'Accept': 'application/vnd.oci.image.manifest.v1+json' }
+ * });
+ * const url = new URL(req.url);
+ * isDockerRequest(req, url); // true
+ *
+ * @example
+ * // Regular HTTP request (not Docker)
+ * const req = new Request('https://example.com/file.tar.gz');
+ * const url = new URL(req.url);
+ * isDockerRequest(req, url); // false
  */
 function isDockerRequest(request, url) {
   // Check for container registry API endpoints
@@ -65,10 +152,46 @@ function isDockerRequest(request, url) {
 }
 
 /**
- * Detects if a request is a Git operation
+ * Detects if a request is a Git protocol operation.
+ *
+ * Identifies Git requests by checking for:
+ * - Git-specific endpoints (/info/refs, /git-upload-pack, /git-receive-pack)
+ * - Git User-Agent headers
+ * - Git service query parameters
+ * - Git-specific Content-Type headers
+ *
  * @param {Request} request - The incoming request object
  * @param {URL} url - Parsed URL object
  * @returns {boolean} True if this is a Git operation
+ *
+ * @example
+ * // Git clone/fetch request (info/refs)
+ * const req = new Request('https://example.com/repo.git/info/refs?service=git-upload-pack');
+ * const url = new URL(req.url);
+ * isGitRequest(req, url); // true
+ *
+ * @example
+ * // Git push request (git-receive-pack)
+ * const req = new Request('https://example.com/repo.git/git-receive-pack', {
+ *   method: 'POST',
+ *   headers: { 'Content-Type': 'application/x-git-receive-pack-request' }
+ * });
+ * const url = new URL(req.url);
+ * isGitRequest(req, url); // true
+ *
+ * @example
+ * // Git client User-Agent
+ * const req = new Request('https://example.com/repo', {
+ *   headers: { 'User-Agent': 'git/2.34.1' }
+ * });
+ * const url = new URL(req.url);
+ * isGitRequest(req, url); // true
+ *
+ * @example
+ * // Regular HTTP request (not Git)
+ * const req = new Request('https://example.com/file.zip');
+ * const url = new URL(req.url);
+ * isGitRequest(req, url); // false
  */
 function isGitRequest(request, url) {
   // Check for Git-specific endpoints
@@ -102,10 +225,48 @@ function isGitRequest(request, url) {
 }
 
 /**
- * Check if the request is a Git LFS operation
+ * Detects if a request is a Git LFS (Large File Storage) operation.
+ *
+ * Identifies Git LFS requests by checking for:
+ * - LFS-specific endpoints (/info/lfs, /objects/batch)
+ * - LFS object storage paths (SHA-256 hash patterns)
+ * - Git LFS Accept/Content-Type headers
+ * - Git LFS User-Agent
+ *
  * @param {Request} request - The incoming request object
  * @param {URL} url - Parsed URL object
  * @returns {boolean} True if this is a Git LFS operation
+ *
+ * @example
+ * // Git LFS batch API request
+ * const req = new Request('https://example.com/repo.git/info/lfs/objects/batch', {
+ *   method: 'POST',
+ *   headers: { 'Accept': 'application/vnd.git-lfs+json' }
+ * });
+ * const url = new URL(req.url);
+ * isGitLFSRequest(req, url); // true
+ *
+ * @example
+ * // Git LFS object download (SHA-256 hash)
+ * const req = new Request(
+ *   'https://example.com/repo.git/info/lfs/objects/a1b2c3d4e5f67890123456789abcdef0123456789abcdef0123456789abcdef'
+ * );
+ * const url = new URL(req.url);
+ * isGitLFSRequest(req, url); // true
+ *
+ * @example
+ * // Git LFS client User-Agent
+ * const req = new Request('https://example.com/repo', {
+ *   headers: { 'User-Agent': 'git-lfs/3.0.0 (GitHub; darwin amd64; go 1.17.2)' }
+ * });
+ * const url = new URL(req.url);
+ * isGitLFSRequest(req, url); // true
+ *
+ * @example
+ * // Regular Git request (not LFS)
+ * const req = new Request('https://example.com/repo.git/info/refs');
+ * const url = new URL(req.url);
+ * isGitLFSRequest(req, url); // false
  */
 function isGitLFSRequest(request, url) {
   // Check for LFS-specific endpoints
@@ -125,9 +286,11 @@ function isGitLFSRequest(request, url) {
   // Check for LFS-specific headers
   const accept = request.headers.get('Accept') || '';
   const contentType = request.headers.get('Content-Type') || '';
-  
-  if (accept.includes('application/vnd.git-lfs') || 
-      contentType.includes('application/vnd.git-lfs')) {
+
+  if (
+    accept.includes('application/vnd.git-lfs') ||
+    contentType.includes('application/vnd.git-lfs')
+  ) {
     return true;
   }
 
@@ -141,10 +304,45 @@ function isGitLFSRequest(request, url) {
 }
 
 /**
- * Check if the request is for an AI inference provider
+ * Detects if a request is for an AI inference provider API.
+ *
+ * Identifies AI inference requests by checking for:
+ * - AI provider path prefix (/ip/{provider}/...)
+ * - Common AI API endpoints (chat, completions, embeddings, etc.)
+ * - AI-specific URL patterns with JSON POST requests
+ *
  * @param {Request} request - The incoming request object
  * @param {URL} url - Parsed URL object
  * @returns {boolean} True if this is an AI inference request
+ *
+ * @example
+ * // OpenAI chat completions request
+ * const req = new Request('https://example.com/ip/openai/v1/chat/completions', {
+ *   method: 'POST',
+ *   headers: { 'Content-Type': 'application/json' }
+ * });
+ * const url = new URL(req.url);
+ * isAIInferenceRequest(req, url); // true
+ *
+ * @example
+ * // Anthropic messages API request
+ * const req = new Request('https://example.com/ip/anthropic/v1/messages', {
+ *   method: 'POST'
+ * });
+ * const url = new URL(req.url);
+ * isAIInferenceRequest(req, url); // true
+ *
+ * @example
+ * // Generic AI embeddings endpoint
+ * const req = new Request('https://example.com/ip/cohere/v1/embeddings');
+ * const url = new URL(req.url);
+ * isAIInferenceRequest(req, url); // true
+ *
+ * @example
+ * // Regular API request (not AI)
+ * const req = new Request('https://example.com/api/users');
+ * const url = new URL(req.url);
+ * isAIInferenceRequest(req, url); // false
  */
 function isAIInferenceRequest(request, url) {
   // Check for AI inference provider paths (ip/{provider}/...)
@@ -185,11 +383,51 @@ function isAIInferenceRequest(request, url) {
 }
 
 /**
- * Validates incoming requests against security rules
+ * Validates incoming requests against security rules.
+ *
+ * Performs security validation including:
+ * - HTTP method validation (with special allowances for Git/Docker/AI operations)
+ * - URL path length limits
+ *
+ * Different protocols have different allowed methods:
+ * - Regular requests: GET, HEAD (configurable via SECURITY.ALLOWED_METHODS)
+ * - Git/LFS/Docker/AI: GET, HEAD, POST, PUT, PATCH
+ *
  * @param {Request} request - The incoming request object
  * @param {URL} url - Parsed URL object
  * @param {import('./config/index.js').ApplicationConfig} config - Configuration object
- * @returns {{valid: boolean, error?: string, status?: number}} Validation result
+ * @returns {{valid: boolean, error?: string, status?: number}} Validation result object
+ *
+ * @example
+ * // Valid GET request
+ * const req = new Request('https://example.com/gh/torvalds/linux');
+ * const url = new URL(req.url);
+ * const result = validateRequest(req, url);
+ * // { valid: true }
+ *
+ * @example
+ * // Invalid method for regular request
+ * const req = new Request('https://example.com/npm/lodash', { method: 'DELETE' });
+ * const url = new URL(req.url);
+ * const result = validateRequest(req, url);
+ * // { valid: false, error: 'Method not allowed', status: 405 }
+ *
+ * @example
+ * // Valid POST for Git operation
+ * const req = new Request('https://example.com/gh/user/repo.git/git-upload-pack', {
+ *   method: 'POST'
+ * });
+ * const url = new URL(req.url);
+ * const result = validateRequest(req, url);
+ * // { valid: true }
+ *
+ * @example
+ * // Path too long
+ * const longPath = '/npm/' + 'a'.repeat(3000);
+ * const req = new Request(`https://example.com${longPath}`);
+ * const url = new URL(req.url);
+ * const result = validateRequest(req, url);
+ * // { valid: false, error: 'Path too long', status: 414 }
  */
 function validateRequest(request, url, config = CONFIG) {
   // Allow POST method for Git, Git LFS, Docker, and AI inference operations
@@ -215,11 +453,30 @@ function validateRequest(request, url, config = CONFIG) {
 }
 
 /**
- * Creates a standardized error response
- * @param {string} message - Error message
- * @param {number} status - HTTP status code
- * @param {boolean} includeDetails - Whether to include detailed error information
- * @returns {Response} Error response
+ * Creates a standardized error response with security headers.
+ *
+ * Generates an HTTP error response with appropriate content type and security headers.
+ * Can return either plain text or detailed JSON error format.
+ *
+ * @param {string} message - Error message to display
+ * @param {number} status - HTTP status code (e.g., 400, 404, 500)
+ * @param {boolean} includeDetails - Whether to include detailed JSON error information
+ * @returns {Response} Error response with security headers
+ *
+ * @example
+ * // Simple text error
+ * const response = createErrorResponse('Not found', 404);
+ * // Response: "Not found" (text/plain) with status 404
+ *
+ * @example
+ * // Detailed JSON error
+ * const response = createErrorResponse('Internal error', 500, true);
+ * // Response: { "error": "Internal error", "status": 500, "timestamp": "2024-01-01T00:00:00.000Z" }
+ *
+ * @example
+ * // Validation error
+ * const response = createErrorResponse('Method not allowed', 405);
+ * // Response: "Method not allowed" (text/plain) with status 405
  */
 function createErrorResponse(message, status, includeDetails = false) {
   const errorBody = includeDetails
@@ -237,9 +494,33 @@ function createErrorResponse(message, status, includeDetails = false) {
 }
 
 /**
- * Adds security headers to the response
- * @param {Headers} headers - Headers object to modify
- * @returns {Headers} Modified headers object
+ * Adds comprehensive security headers to response headers.
+ *
+ * Applies industry-standard security headers including:
+ * - HSTS (HTTP Strict Transport Security)
+ * - X-Frame-Options (clickjacking protection)
+ * - X-XSS-Protection (XSS filter)
+ * - Referrer-Policy (referrer information control)
+ * - Content-Security-Policy (resource loading restrictions)
+ * - Permissions-Policy (privacy-invasive feature restrictions)
+ *
+ * @param {Headers} headers - Headers object to modify (mutates in place)
+ * @returns {Headers} Modified headers object (same reference)
+ *
+ * @example
+ * // Add security headers to a response
+ * const headers = new Headers({ 'Content-Type': 'text/html' });
+ * addSecurityHeaders(headers);
+ * // Headers now include HSTS, CSP, etc.
+ *
+ * @example
+ * // Use with error response
+ * const errorHeaders = new Headers({ 'Content-Type': 'application/json' });
+ * addSecurityHeaders(errorHeaders);
+ * const response = new Response(JSON.stringify({ error: 'Not found' }), {
+ *   status: 404,
+ *   headers: errorHeaders
+ * });
  */
 function addSecurityHeaders(headers) {
   headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
@@ -252,9 +533,34 @@ function addSecurityHeaders(headers) {
 }
 
 /**
- * Parses Docker WWW-Authenticate header
+ * Parses Docker/OCI registry WWW-Authenticate header.
+ *
+ * Extracts authentication realm and service information from the Bearer
+ * authentication challenge header returned by container registries.
+ *
  * @param {string} authenticateStr - The WWW-Authenticate header value
- * @returns {{realm: string, service: string}} Parsed authentication info
+ * @returns {{realm: string, service: string}} Parsed authentication info with realm URL and service name
+ * @throws {Error} If the header format is invalid or missing required fields
+ *
+ * @example
+ * // Parse Docker Hub authentication header
+ * const header = 'Bearer realm="https://auth.docker.io/token",service="registry.docker.io"';
+ * const auth = parseAuthenticate(header);
+ * // { realm: 'https://auth.docker.io/token', service: 'registry.docker.io' }
+ *
+ * @example
+ * // Parse GitHub Container Registry header
+ * const header = 'Bearer realm="https://ghcr.io/token",service="ghcr.io"';
+ * const auth = parseAuthenticate(header);
+ * // { realm: 'https://ghcr.io/token', service: 'ghcr.io' }
+ *
+ * @example
+ * // Invalid header throws error
+ * try {
+ *   parseAuthenticate('Basic realm="example"');
+ * } catch (error) {
+ *   console.error(error.message); // "invalid Www-Authenticate Header: Basic realm="example""
+ * }
  */
 function parseAuthenticate(authenticateStr) {
   // sample: Bearer realm="https://auth.ipv6.docker.com/token",service="registry.docker.io"
@@ -270,11 +576,35 @@ function parseAuthenticate(authenticateStr) {
 }
 
 /**
- * Fetches authentication token from container registry
- * @param {{realm: string, service: string}} wwwAuthenticate - Authentication info
- * @param {string} scope - The scope for the token
- * @param {string} authorization - Authorization header value
- * @returns {Promise<Response>} Token response
+ * Fetches authentication token from container registry token service.
+ *
+ * Requests a Bearer token from the registry's authentication service,
+ * optionally including scope (repository permissions) and authorization credentials.
+ *
+ * @param {{realm: string, service: string}} wwwAuthenticate - Authentication info from WWW-Authenticate header
+ * @param {string} scope - The scope for the token (e.g., "repository:library/nginx:pull")
+ * @param {string} authorization - Authorization header value (optional, for authenticated access)
+ * @returns {Promise<Response>} Token response containing JWT token
+ *
+ * @example
+ * // Fetch anonymous token for public repository
+ * const auth = { realm: 'https://auth.docker.io/token', service: 'registry.docker.io' };
+ * const scope = 'repository:library/nginx:pull';
+ * const response = await fetchToken(auth, scope, '');
+ * const data = await response.json();
+ * // { token: 'eyJhbGc...', expires_in: 300, issued_at: '...' }
+ *
+ * @example
+ * // Fetch authenticated token for private repository
+ * const auth = { realm: 'https://ghcr.io/token', service: 'ghcr.io' };
+ * const scope = 'repository:user/private-repo:pull';
+ * const authHeader = 'Basic dXNlcjpwYXNz';
+ * const response = await fetchToken(auth, scope, authHeader);
+ *
+ * @example
+ * // Fetch token without scope (for catalog access)
+ * const auth = { realm: 'https://registry.example.com/token', service: 'example.com' };
+ * const response = await fetchToken(auth, '', '');
  */
 async function fetchToken(wwwAuthenticate, scope, authorization) {
   const url = new URL(wwwAuthenticate.realm);
@@ -292,9 +622,27 @@ async function fetchToken(wwwAuthenticate, scope, authorization) {
 }
 
 /**
- * Creates unauthorized response for container registry
- * @param {URL} url - Request URL
- * @returns {Response} Unauthorized response
+ * Creates an unauthorized (401) response for container registry authentication.
+ *
+ * Generates a Docker/OCI registry-compliant 401 response with a WWW-Authenticate
+ * header that directs clients to the token authentication endpoint.
+ *
+ * @param {URL} url - Request URL used to construct authentication realm
+ * @returns {Response} Unauthorized response with WWW-Authenticate header
+ *
+ * @example
+ * // Create unauthorized response for registry request
+ * const url = new URL('https://example.com/v2/library/nginx/manifests/latest');
+ * const response = responseUnauthorized(url);
+ * // Response status: 401
+ * // Response headers: WWW-Authenticate: Bearer realm="https://example.com/v2/auth",service="Xget"
+ * // Response body: {"message":"UNAUTHORIZED"}
+ *
+ * @example
+ * // Docker client will follow authentication flow
+ * // 1. Receive 401 with WWW-Authenticate
+ * // 2. Request token from realm URL
+ * // 3. Retry original request with Bearer token
  */
 function responseUnauthorized(url) {
   const headers = new Headers();
@@ -306,11 +654,72 @@ function responseUnauthorized(url) {
 }
 
 /**
- * Handles incoming requests with caching, retries, and security measures
- * @param {Request} request - The incoming request
- * @param {Object} env - Environment variables
- * @param {ExecutionContext} ctx - Cloudflare Workers execution context
- * @returns {Promise<Response>} The response object
+ * Main request handler with comprehensive caching, retry logic, and security measures.
+ *
+ * This is the core request processing function that:
+ * 1. Validates requests against security rules
+ * 2. Detects protocol type (Git, Docker, AI, or regular HTTP)
+ * 3. Transforms URLs based on platform configuration
+ * 4. Implements intelligent caching strategies
+ * 5. Handles upstream fetches with retry logic and timeouts
+ * 6. Performs protocol-specific operations (Docker auth, URL rewriting)
+ * 7. Adds security and performance headers
+ *
+ * **Request Flow:**
+ * ```
+ * Request → Validate → Detect Protocol → Transform URL → Check Cache
+ *   → Fetch Upstream (with retries) → Handle Auth → Rewrite Response
+ *   → Add Security Headers → Cache → Return with Performance Metrics
+ * ```
+ *
+ * **Caching Strategy:**
+ * - Git, Git LFS, Docker, AI inference: No caching (protocol compliance)
+ * - Regular downloads: 30-minute cache (configurable)
+ * - Range requests: Intelligent full-content caching
+ *
+ * **Retry Logic:**
+ * - Max 3 attempts (configurable)
+ * - 30-second timeout per attempt
+ * - Exponential backoff between retries
+ * - No retry on 4xx client errors
+ *
+ * @param {Request} request - The incoming HTTP request
+ * @param {Object} env - Cloudflare Workers environment variables for runtime config overrides
+ * @param {ExecutionContext} ctx - Cloudflare Workers execution context for background tasks
+ * @returns {Promise<Response>} The HTTP response with appropriate headers and body
+ *
+ * @example
+ * // Regular file download (cached)
+ * const request = new Request('https://example.com/npm/lodash');
+ * const response = await handleRequest(request, {}, ctx);
+ * // Returns: Package data with 30-minute cache
+ *
+ * @example
+ * // Git clone operation (not cached)
+ * const request = new Request('https://example.com/gh/torvalds/linux/info/refs?service=git-upload-pack');
+ * const response = await handleRequest(request, {}, ctx);
+ * // Returns: Git protocol response, bypasses cache
+ *
+ * @example
+ * // Docker image pull (with authentication)
+ * const request = new Request('https://example.com/v2/cr/docker/library/nginx/manifests/latest');
+ * const response = await handleRequest(request, {}, ctx);
+ * // Returns: Docker manifest, handles token auth automatically
+ *
+ * @example
+ * // AI inference request (proxied)
+ * const request = new Request('https://example.com/ip/openai/v1/chat/completions', {
+ *   method: 'POST',
+ *   body: JSON.stringify({ model: 'gpt-4', messages: [...] })
+ * });
+ * const response = await handleRequest(request, {}, ctx);
+ * // Returns: AI API response, bypasses cache
+ *
+ * @example
+ * // With environment variable overrides
+ * const env = { TIMEOUT_SECONDS: '60', CACHE_DURATION: '3600' };
+ * const response = await handleRequest(request, env, ctx);
+ * // Uses 60s timeout and 1-hour cache instead of defaults
  */
 async function handleRequest(request, env, ctx) {
   try {
@@ -459,7 +868,10 @@ async function handleRequest(request, env, ctx) {
     };
 
     // Add body for POST/PUT/PATCH requests (Git/Docker/AI inference operations)
-    if (['POST', 'PUT', 'PATCH'].includes(request.method) && (isGit || isGitLFS || isDocker || isAI)) {
+    if (
+      ['POST', 'PUT', 'PATCH'].includes(request.method) &&
+      (isGit || isGitLFS || isDocker || isAI)
+    ) {
       fetchOptions.body = request.body;
     }
 
@@ -501,7 +913,7 @@ async function handleRequest(request, env, ctx) {
         if (!requestHeaders.has('User-Agent')) {
           requestHeaders.set('User-Agent', 'git-lfs/3.0.0 (GitHub; darwin amd64; go 1.17.2)');
         }
-        
+
         // For LFS batch API requests
         if (url.pathname.includes('/objects/batch')) {
           if (!requestHeaders.has('Accept')) {
@@ -511,7 +923,7 @@ async function handleRequest(request, env, ctx) {
             requestHeaders.set('Content-Type', 'application/vnd.git-lfs+json');
           }
         }
-        
+
         // For LFS object transfers
         if (url.pathname.match(/\/objects\/[a-fA-F0-9]{64}$/)) {
           if (!requestHeaders.has('Accept')) {
@@ -881,10 +1293,33 @@ async function handleRequest(request, env, ctx) {
 }
 
 /**
- * Adds performance metrics to response headers
- * @param {Response} response - The response object
- * @param {PerformanceMonitor} monitor - Performance monitor instance
- * @returns {Response} New response with performance headers
+ * Adds performance metrics to response headers.
+ *
+ * Creates a new response with an X-Performance-Metrics header containing
+ * timing data from the PerformanceMonitor instance. Also ensures security
+ * headers are included.
+ *
+ * **Note:** This header is only added to non-protocol responses (not Git/Docker/AI).
+ *
+ * @param {Response} response - The original response object
+ * @param {PerformanceMonitor} monitor - Performance monitor instance with collected metrics
+ * @returns {Response} New response with added performance and security headers
+ *
+ * @example
+ * // Add performance metrics to response
+ * const monitor = new PerformanceMonitor();
+ * monitor.mark('cache_hit');
+ * monitor.mark('complete');
+ * const response = new Response('data', { status: 200 });
+ * const enhancedResponse = addPerformanceHeaders(response, monitor);
+ * // Response headers include: X-Performance-Metrics: {"cache_hit":5,"complete":150}
+ *
+ * @example
+ * // Check performance metrics from client side
+ * const response = await fetch('https://example.com/npm/lodash');
+ * const metrics = response.headers.get('X-Performance-Metrics');
+ * console.log(JSON.parse(metrics));
+ * // { cache_check: 2, attempt_0: 10, success: 245, complete: 250 }
  */
 function addPerformanceHeaders(response, monitor) {
   const headers = new Headers(response.headers);
@@ -896,13 +1331,49 @@ function addPerformanceHeaders(response, monitor) {
   });
 }
 
+/**
+ * Cloudflare Workers module export.
+ *
+ * This is the entry point for the Xget acceleration engine deployed on
+ * Cloudflare Workers. The fetch handler receives all incoming HTTP requests
+ * and delegates processing to the handleRequest function.
+ *
+ * **Deployment:** This module is deployed as a Cloudflare Worker and handles
+ * requests at the edge for optimal performance and global distribution.
+ *
+ * @example
+ * // Cloudflare Workers runtime calls this automatically
+ * // Worker receives request → export.fetch() → handleRequest() → Response
+ *
+ * @example
+ * // Local testing with Wrangler
+ * // npm run dev
+ * // Wrangler dev server simulates Cloudflare Workers environment
+ */
 export default {
   /**
-   * Main entry point for the Cloudflare Worker
-   * @param {Request} request - The incoming request
-   * @param {Object} env - Environment variables
-   * @param {ExecutionContext} ctx - Cloudflare Workers execution context
-   * @returns {Promise<Response>} The response object
+   * Main entry point for the Cloudflare Worker fetch event.
+   *
+   * This method is automatically invoked by the Cloudflare Workers runtime
+   * for every incoming HTTP request. It delegates all request processing
+   * to the handleRequest function.
+   *
+   * @param {Request} request - The incoming HTTP request from Cloudflare Workers runtime
+   * @param {Object} env - Environment variables and bindings (KV, Durable Objects, secrets, etc.)
+   * @param {ExecutionContext} ctx - Execution context for waitUntil() and passThroughOnException()
+   * @returns {Promise<Response>} The HTTP response to return to the client
+   *
+   * @example
+   * // This is called automatically by Cloudflare Workers
+   * // User requests: https://xget.example.com/npm/lodash
+   * // Runtime invokes: export.default.fetch(request, env, ctx)
+   * // Returns: Response with package data
+   *
+   * @example
+   * // Environment variables usage
+   * // wrangler.toml: [vars] TIMEOUT_SECONDS = "60"
+   * // env object contains: { TIMEOUT_SECONDS: "60" }
+   * // handleRequest uses createConfig(env) to override defaults
    */
   fetch(request, env, ctx) {
     return handleRequest(request, env, ctx);
