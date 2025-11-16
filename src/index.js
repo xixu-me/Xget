@@ -847,34 +847,44 @@ async function handleRequest(request, env, ctx) {
     const isAI = isAIInferenceRequest(request, url);
 
     // Check cache first (skip cache for Git, Git LFS, Docker, and AI inference operations)
-    /** @type {Cache} */
+    // Note: caches API is only available in Cloudflare Workers, not in standard environments
+    /** @type {Cache | null} */
     // @ts-ignore - Cloudflare Workers cache API
-    const cache = caches.default;
+    const cache = typeof caches !== 'undefined' && caches.default ? caches.default : null;
     let response;
 
-    if (!isGit && !isGitLFS && !isDocker && !isAI) {
-      // For Range requests, try cache match first
-      const cacheKey = new Request(targetUrl, request);
-      response = await cache.match(cacheKey);
-      if (response) {
-        monitor.mark('cache_hit');
-        return response;
-      }
-
-      // If Range request missed cache, try with original request to see if we have full content cached
-      const rangeHeader = request.headers.get('Range');
-      if (rangeHeader) {
-        const fullContentKey = new Request(targetUrl, {
-          method: request.method,
-          headers: new Headers(
-            [...request.headers.entries()].filter(([k]) => k.toLowerCase() !== 'range')
-          )
+    if (cache && !isGit && !isGitLFS && !isDocker && !isAI) {
+      try {
+        // For Range requests, try cache match first
+        // Always use GET method for cache key to match how we store (cache.put only accepts GET)
+        const cacheKey = new Request(targetUrl, {
+          method: 'GET',
+          headers: request.headers
         });
-        response = await cache.match(fullContentKey);
+        response = await cache.match(cacheKey);
         if (response) {
-          monitor.mark('cache_hit_full_content');
+          monitor.mark('cache_hit');
           return response;
         }
+
+        // If Range request missed cache, try with original request to see if we have full content cached
+        const rangeHeader = request.headers.get('Range');
+        if (rangeHeader) {
+          const fullContentKey = new Request(targetUrl, {
+            method: 'GET', // Always use GET method for cache key consistency
+            headers: new Headers(
+              [...request.headers.entries()].filter(([k]) => k.toLowerCase() !== 'range')
+            )
+          });
+          response = await cache.match(fullContentKey);
+          if (response) {
+            monitor.mark('cache_hit_full_content');
+            return response;
+          }
+        }
+      } catch (cacheError) {
+        // Cache API not available or failed - continue without caching
+        console.warn('Cache API unavailable:', cacheError);
       }
     }
 
@@ -1264,38 +1274,61 @@ async function handleRequest(request, env, ctx) {
     });
 
     // Cache successful responses (skip caching for Git, Git LFS, Docker, and AI inference operations)
-    // Only cache GET and HEAD requests to avoid "Cannot cache response to non-GET request" errors
+    // Only cache GET requests (HEAD requests cannot be cached due to Cache API limitations)
     // IMPORTANT: Only cache 200 responses, NOT 206 responses (Cloudflare Workers Cache API rejects 206)
+    // Note: caching only works in Cloudflare Workers environment
     if (
+      cache &&
       !isGit &&
       !isGitLFS &&
       !isDocker &&
       !isAI &&
-      ['GET', 'HEAD'].includes(request.method) &&
+      request.method === 'GET' && // Only cache GET requests, not HEAD
       response.ok &&
       response.status === 200 // Only cache complete responses (200), not partial content (206)
     ) {
       // For Range requests that resulted in 200, cache the full response
       const rangeHeader = request.headers.get('Range');
+      // Always use GET method for cache key
       const cacheKey = rangeHeader
         ? new Request(targetUrl, {
-            method: request.method,
+            method: 'GET',
             headers: new Headers(
               [...request.headers.entries()].filter(([k]) => k.toLowerCase() !== 'range')
             )
           })
-        : new Request(targetUrl, request);
+        : new Request(targetUrl, { method: 'GET' });
 
-      ctx.waitUntil(cache.put(cacheKey, finalResponse.clone()));
-
-      // If this was originally a Range request and we got a 200 (full content),
-      // try cache.match again with the original Range request to get 206 response
-      if (rangeHeader && response.status === 200) {
-        const rangedResponse = await cache.match(new Request(targetUrl, request));
-        if (rangedResponse) {
-          monitor.mark('range_cache_hit_after_full_cache');
-          return rangedResponse;
+      // Use waitUntil if available (Cloudflare Workers), otherwise cache synchronously
+      // Wrap in try-catch in case cache API fails
+      try {
+        if (ctx && typeof ctx.waitUntil === 'function') {
+          ctx.waitUntil(cache.put(cacheKey, finalResponse.clone()));
+        } else {
+          // In non-Workers environment, cache put happens synchronously
+          cache.put(cacheKey, finalResponse.clone()).catch(error => {
+            console.warn('Cache put failed:', error);
+          });
         }
+
+        // If this was originally a Range request and we got a 200 (full content),
+        // try cache.match again with the original Range request to get 206 response
+        if (rangeHeader && response.status === 200) {
+          // Always use GET method for cache match, even for Range requests
+          const rangedResponse = await cache.match(
+            new Request(targetUrl, {
+              method: 'GET',
+              headers: request.headers
+            })
+          );
+          if (rangedResponse) {
+            monitor.mark('range_cache_hit_after_full_cache');
+            return rangedResponse;
+          }
+        }
+      } catch (cacheError) {
+        // Cache API not available or failed - continue without caching
+        console.warn('Cache put/match failed:', cacheError);
       }
     }
 
