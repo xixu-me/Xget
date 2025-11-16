@@ -46,10 +46,10 @@
 [![arXiv](https://img.shields.io/badge/arXiv-B31B1B?logo=arxiv&logoColor=white)](#arxiv-paper-download)
 [![F-Droid](https://img.shields.io/badge/F--Droid-1976D2?logo=f-droid&logoColor=white)](#f-droid-repository-mirror)
 [![Jenkins](https://img.shields.io/badge/Jenkins-D33833?logo=jenkins&logoColor=white)](#jenkins-plugin-download)
-[![AI Inference Providers](https://img.shields.io/badge/AI%20Inference%20Providers-412991?logo=openai&logoColor=white)](#ai-inference-providers)
 [![Container Registries](https://img.shields.io/badge/Container%20Registries-%23007EC6.svg?logo=docker&logoColor=white)](#container-registries)
+[![AI Inference Providers](https://img.shields.io/badge/AI%20Inference%20Providers-412991?logo=openai&logoColor=white)](#ai-inference-providers)
 
-Ultra-high-performance, secure, all-in-one acceleration engine for developer resources that significantly outperforms traditional solutions, delivering unified, efficient acceleration across code repositories, package registries, AI inference APIs, container images, models, datasets, and more.
+Ultra-high-performance, secure, all-in-one acceleration engine for developer resources that significantly outperforms traditional solutions, delivering unified, efficient acceleration across code repositories, model and dataset hubs, package registries, container registries, AI inference providers and more.
 
 In-depth technical analysis article published: ***[Deep Dive into Xget: A High-Performance, Multi-Protocol, and Secure Acceleration Engine for Developer Resources](https://blog.xi-xu.me/2025/10/07/deep-dive-into-xget-technology-en.html)***.
 
@@ -172,8 +172,8 @@ Using the pre-deployed instance **`xget.xi-xu.me`** or your own deployed instanc
 | arXiv | `arxiv` | `https://arxiv.org/...` | `https://xget.xi-xu.me/arxiv/...` |
 | F-Droid | `fdroid` | `https://f-droid.org/...` | `https://xget.xi-xu.me/fdroid/...` |
 | Jenkins Plugins | `jenkins` | `https://updates.jenkins.io/...` | `https://xget.xi-xu.me/jenkins/...` |
-| AI Inference Providers | `ip` | See [AI Inference Providers](#ai-inference-providers) | See [AI Inference Providers](#ai-inference-providers) |
 | Container Registries | `cr` | See [Container Registries](#container-registries) | See [Container Registries](#container-registries) |
+| AI Inference Providers | `ip` | See [AI Inference Providers](#ai-inference-providers) | See [AI Inference Providers](#ai-inference-providers) |
 
 ### Platform Conversion Examples
 
@@ -637,6 +637,58 @@ https://updates.jenkins.io/download/plugins/maven-plugin/3.27/maven-plugin.hpi
 https://xget.xi-xu.me/jenkins/download/plugins/maven-plugin/3.27/maven-plugin.hpi
 ```
 
+#### Container Registries
+
+Xget supports multiple container registries, using the `cr/[Registry Prefix]` format:
+
+| Container Registry | Registry Prefix | Original URL Format | Accelerated URL Format |
+|-------------------|----------------|---------------------|------------------------|
+| Docker Hub | `docker` | `https://registry-1.docker.io/...` | `https://xget.xi-xu.me/cr/docker/...` |
+| Quay.io | `quay` | `https://quay.io/...` | `https://xget.xi-xu.me/cr/quay/...` |
+| Google Container Registry | `gcr` | `https://gcr.io/...` | `https://xget.xi-xu.me/cr/gcr/...` |
+| Microsoft Container Registry | `mcr` | `https://mcr.microsoft.com/...` | `https://xget.xi-xu.me/cr/mcr/...` |
+| Amazon Public ECR | `ecr` | `https://public.ecr.aws/...` | `https://xget.xi-xu.me/cr/ecr/...` |
+| GitHub Container Registry | `ghcr` | `https://ghcr.io/...` | `https://xget.xi-xu.me/cr/ghcr/...` |
+| GitLab Container Registry | `gitlab` | `https://registry.gitlab.com/...` | `https://xget.xi-xu.me/cr/gitlab/...` |
+| Red Hat Registry | `redhat` | `https://registry.redhat.io/...` | `https://xget.xi-xu.me/cr/redhat/...` |
+| Oracle Container Registry | `oracle` | `https://container-registry.oracle.com/...` | `https://xget.xi-xu.me/cr/oracle/...` |
+| Cloudsmith | `cloudsmith` | `https://docker.cloudsmith.io/...` | `https://xget.xi-xu.me/cr/cloudsmith/...` |
+| DigitalOcean Registry | `digitalocean` | `https://registry.digitalocean.com/...` | `https://xget.xi-xu.me/cr/digitalocean/...` |
+| VMware Registry | `vmware` | `https://projects.registry.vmware.com/...` | `https://xget.xi-xu.me/cr/vmware/...` |
+| Kubernetes Registry | `k8s` | `https://registry.k8s.io/...` | `https://xget.xi-xu.me/cr/k8s/...` |
+| Heroku Registry | `heroku` | `https://registry.heroku.com/...` | `https://xget.xi-xu.me/cr/heroku/...` |
+| SUSE Registry | `suse` | `https://registry.suse.com/...` | `https://xget.xi-xu.me/cr/suse/...` |
+| openSUSE Registry | `opensuse` | `https://registry.opensuse.org/...` | `https://xget.xi-xu.me/cr/opensuse/...` |
+| Gitpod Registry | `gitpod` | `https://registry.gitpod.io/...` | `https://xget.xi-xu.me/cr/gitpod/...` |
+
+```url
+# Docker Hub original URL (official images)
+https://registry-1.docker.io/v2/library/nginx/manifests/latest
+
+# Converted (add cr/docker prefix)
+https://xget.xi-xu.me/cr/docker/v2/nginx/manifests/latest
+
+# Docker Hub original URL (user images)
+https://registry-1.docker.io/v2/nginxinc/nginx-unprivileged/manifests/latest
+
+# Converted (add cr/docker prefix)
+https://xget.xi-xu.me/cr/docker/v2/nginxinc/nginx-unprivileged/manifests/latest
+
+# GitHub Container Registry original URL
+https://ghcr.io/v2/nginxinc/nginx-unprivileged/manifests/latest
+
+# Converted (add cr/ghcr prefix)
+https://xget.xi-xu.me/cr/ghcr/v2/nginxinc/nginx-unprivileged/manifests/latest
+
+# Google Container Registry original URL
+https://gcr.io/v2/distroless/base/manifests/latest
+
+# Converted (add cr/gcr prefix)
+https://xget.xi-xu.me/cr/gcr/v2/distroless/base/manifests/latest
+```
+
+For use cases, see [Container Image Acceleration](#container-image-acceleration).
+
 #### AI Inference Providers
 
 Xget supports API acceleration for many mainstream AI inference providers, using the `ip/[AI Provider Prefix]` format:
@@ -699,58 +751,6 @@ https://xget.xi-xu.me/ip/huggingface/hf-inference/models/openai/whisper-large-v3
 ```
 
 For use cases, see [AI Inference API Acceleration](#ai-inference-api-acceleration).
-
-#### Container Registries
-
-Xget supports multiple container registries, using the `cr/[Registry Prefix]` format:
-
-| Container Registry | Registry Prefix | Original URL Format | Accelerated URL Format |
-|-------------------|----------------|---------------------|------------------------|
-| Docker Hub | `docker` | `https://registry-1.docker.io/...` | `https://xget.xi-xu.me/cr/docker/...` |
-| Quay.io | `quay` | `https://quay.io/...` | `https://xget.xi-xu.me/cr/quay/...` |
-| Google Container Registry | `gcr` | `https://gcr.io/...` | `https://xget.xi-xu.me/cr/gcr/...` |
-| Microsoft Container Registry | `mcr` | `https://mcr.microsoft.com/...` | `https://xget.xi-xu.me/cr/mcr/...` |
-| Amazon Public ECR | `ecr` | `https://public.ecr.aws/...` | `https://xget.xi-xu.me/cr/ecr/...` |
-| GitHub Container Registry | `ghcr` | `https://ghcr.io/...` | `https://xget.xi-xu.me/cr/ghcr/...` |
-| GitLab Container Registry | `gitlab` | `https://registry.gitlab.com/...` | `https://xget.xi-xu.me/cr/gitlab/...` |
-| Red Hat Registry | `redhat` | `https://registry.redhat.io/...` | `https://xget.xi-xu.me/cr/redhat/...` |
-| Oracle Container Registry | `oracle` | `https://container-registry.oracle.com/...` | `https://xget.xi-xu.me/cr/oracle/...` |
-| Cloudsmith | `cloudsmith` | `https://docker.cloudsmith.io/...` | `https://xget.xi-xu.me/cr/cloudsmith/...` |
-| DigitalOcean Registry | `digitalocean` | `https://registry.digitalocean.com/...` | `https://xget.xi-xu.me/cr/digitalocean/...` |
-| VMware Registry | `vmware` | `https://projects.registry.vmware.com/...` | `https://xget.xi-xu.me/cr/vmware/...` |
-| Kubernetes Registry | `k8s` | `https://registry.k8s.io/...` | `https://xget.xi-xu.me/cr/k8s/...` |
-| Heroku Registry | `heroku` | `https://registry.heroku.com/...` | `https://xget.xi-xu.me/cr/heroku/...` |
-| SUSE Registry | `suse` | `https://registry.suse.com/...` | `https://xget.xi-xu.me/cr/suse/...` |
-| openSUSE Registry | `opensuse` | `https://registry.opensuse.org/...` | `https://xget.xi-xu.me/cr/opensuse/...` |
-| Gitpod Registry | `gitpod` | `https://registry.gitpod.io/...` | `https://xget.xi-xu.me/cr/gitpod/...` |
-
-```url
-# Docker Hub original URL (official images)
-https://registry-1.docker.io/v2/library/nginx/manifests/latest
-
-# Converted (add cr/docker prefix)
-https://xget.xi-xu.me/cr/docker/v2/nginx/manifests/latest
-
-# Docker Hub original URL (user images)
-https://registry-1.docker.io/v2/nginxinc/nginx-unprivileged/manifests/latest
-
-# Converted (add cr/docker prefix)
-https://xget.xi-xu.me/cr/docker/v2/nginxinc/nginx-unprivileged/manifests/latest
-
-# GitHub Container Registry original URL
-https://ghcr.io/v2/nginxinc/nginx-unprivileged/manifests/latest
-
-# Converted (add cr/ghcr prefix)
-https://xget.xi-xu.me/cr/ghcr/v2/nginxinc/nginx-unprivileged/manifests/latest
-
-# Google Container Registry original URL
-https://gcr.io/v2/distroless/base/manifests/latest
-
-# Converted (add cr/gcr prefix)
-https://xget.xi-xu.me/cr/gcr/v2/distroless/base/manifests/latest
-```
-
-For use cases, see [Container Image Acceleration](#container-image-acceleration).
 
 ## 🎯 Use Cases
 
@@ -1970,6 +1970,181 @@ pipeline {
 }
 ```
 
+### Container Image Acceleration
+
+#### Docker Configuration
+
+```bash
+# Configure Docker to use Xget image acceleration
+# Edit /etc/docker/daemon.json (Linux) or ~/.docker/daemon.json (macOS/Windows)
+{
+  "registry-mirrors": [
+    "https://xget.xi-xu.me/cr/ghcr"
+  ]
+}
+
+# Restart Docker service
+sudo systemctl restart docker  # Linux
+# Or restart service in Docker Desktop
+
+# Verify configuration
+docker info | grep -A 10 "Registry Mirrors"
+```
+
+#### Pull Images Directly
+
+```bash
+# Pull GitHub Container Registry images
+docker pull xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
+
+# Pull Google Container Registry images
+docker pull xget.xi-xu.me/cr/gcr/distroless/base:latest
+
+# Pull Microsoft Container Registry images
+docker pull xget.xi-xu.me/cr/mcr/dotnet/runtime:8.0
+```
+
+#### Kubernetes Deployment Configuration
+
+```yaml
+# deployment.yaml - Use Xget's images
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
+        ports:
+        - containerPort: 80
+      - name: redis
+        image: xget.xi-xu.me/cr/ghcr/bitnami/redis:alpine
+        ports:
+        - containerPort: 6379
+```
+
+#### Docker Compose Configuration
+
+```yaml
+# docker-compose.yml - Use Xget accelerated images
+version: '3.8'
+services:
+  web:
+    image: xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./html:/usr/share/nginx/html
+
+  database:
+    image: xget.xi-xu.me/cr/mcr/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: "MyStrongPassword123!"
+    volumes:
+      - mssql_data:/var/opt/mssql
+
+  cache:
+    image: xget.xi-xu.me/cr/ghcr/bitnami/redis:alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  mssql_data:
+```
+
+#### Dockerfile Optimization
+
+```dockerfile
+# Use Xget accelerated base images in Dockerfile
+FROM xget.xi-xu.me/cr/ghcr/nodejs/node:18-alpine AS builder
+
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+RUN npm run build
+
+# Production stage
+FROM xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Use Microsoft Container Registry's .NET image
+FROM xget.xi-xu.me/cr/mcr/dotnet/aspnet:8.0 AS runtime
+WORKDIR /app
+COPY --from=builder /app/publish .
+ENTRYPOINT ["dotnet", "MyApp.dll"]
+```
+
+#### CI/CD Integration
+
+```yaml
+# GitHub Actions - Use Xget to accelerate container builds
+name: Build and Deploy
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build with accelerated base images
+        run: |
+          # Build using Xget's base images
+          docker build -t myapp:latest \
+            --build-arg BASE_IMAGE=xget.xi-xu.me/cr/ghcr/nodejs/node:18-alpine .
+
+      - name: Test with accelerated images
+        run: |
+          # Test using accelerated images
+          docker run --rm \
+            xget.xi-xu.me/cr/mcr/dotnet/runtime:8.0 \
+            dotnet --version
+```
+
+#### Podman Configuration
+
+```bash
+# Configure Podman to use Xget image acceleration
+# Edit /etc/containers/registries.conf
+[[registry]]
+prefix = "ghcr.io"
+location = "xget.xi-xu.me/cr/ghcr"
+
+# Or pull directly
+podman pull xget.xi-xu.me/cr/ghcr/alpine/alpine:latest
+podman pull xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
+```
+
+#### containerd Configuration
+
+```toml
+# Configure containerd to use Xget
+# Edit /etc/containerd/config.toml
+[plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."ghcr.io"]
+    endpoint = ["https://xget.xi-xu.me/cr/ghcr"]
+  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."gcr.io"]
+    endpoint = ["https://xget.xi-xu.me/cr/gcr"]
+```
+
+```bash
+# Restart containerd
+sudo systemctl restart containerd
+```
+
 ### AI Inference API Acceleration
 
 #### OpenAI API
@@ -2172,184 +2347,11 @@ client = OpenAI(
 )
 ```
 
-### Container Image Acceleration
-
-#### Docker Configuration
-
-```bash
-# Configure Docker to use Xget image acceleration
-# Edit /etc/docker/daemon.json (Linux) or ~/.docker/daemon.json (macOS/Windows)
-{
-  "registry-mirrors": [
-    "https://xget.xi-xu.me/cr/ghcr"
-  ]
-}
-
-# Restart Docker service
-sudo systemctl restart docker  # Linux
-# Or restart service in Docker Desktop
-
-# Verify configuration
-docker info | grep -A 10 "Registry Mirrors"
-```
-
-#### Pull Images Directly
-
-```bash
-# Pull GitHub Container Registry images
-docker pull xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
-
-# Pull Google Container Registry images
-docker pull xget.xi-xu.me/cr/gcr/distroless/base:latest
-
-# Pull Microsoft Container Registry images
-docker pull xget.xi-xu.me/cr/mcr/dotnet/runtime:8.0
-```
-
-#### Kubernetes Deployment Configuration
-
-```yaml
-# deployment.yaml - Use Xget's images
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx-deployment
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: nginx
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      containers:
-      - name: nginx
-        image: xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
-        ports:
-        - containerPort: 80
-      - name: redis
-        image: xget.xi-xu.me/cr/ghcr/bitnami/redis:alpine
-        ports:
-        - containerPort: 6379
-```
-
-#### Docker Compose Configuration
-
-```yaml
-# docker-compose.yml - Use Xget accelerated images
-version: '3.8'
-services:
-  web:
-    image: xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
-    ports:
-      - "80:80"
-    volumes:
-      - ./html:/usr/share/nginx/html
-
-  database:
-    image: xget.xi-xu.me/cr/mcr/mssql/server:2022-latest
-    environment:
-      ACCEPT_EULA: Y
-      SA_PASSWORD: "MyStrongPassword123!"
-    volumes:
-      - mssql_data:/var/opt/mssql
-
-  cache:
-    image: xget.xi-xu.me/cr/ghcr/bitnami/redis:alpine
-    ports:
-      - "6379:6379"
-
-volumes:
-  mssql_data:
-```
-
-#### Dockerfile Optimization
-
-```dockerfile
-# Use Xget accelerated base images in Dockerfile
-FROM xget.xi-xu.me/cr/ghcr/nodejs/node:18-alpine AS builder
-
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-
-COPY . .
-RUN npm run build
-
-# Production stage
-FROM xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Use Microsoft Container Registry's .NET image
-FROM xget.xi-xu.me/cr/mcr/dotnet/aspnet:8.0 AS runtime
-WORKDIR /app
-COPY --from=builder /app/publish .
-ENTRYPOINT ["dotnet", "MyApp.dll"]
-```
-
-#### CI/CD Integration
-
-```yaml
-# GitHub Actions - Use Xget to accelerate container builds
-name: Build and Deploy
-on: [push]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Build with accelerated base images
-        run: |
-          # Build using Xget's base images
-          docker build -t myapp:latest \
-            --build-arg BASE_IMAGE=xget.xi-xu.me/cr/ghcr/nodejs/node:18-alpine .
-
-      - name: Test with accelerated images
-        run: |
-          # Test using accelerated images
-          docker run --rm \
-            xget.xi-xu.me/cr/mcr/dotnet/runtime:8.0 \
-            dotnet --version
-```
-
-#### Podman Configuration
-
-```bash
-# Configure Podman to use Xget image acceleration
-# Edit /etc/containers/registries.conf
-[[registry]]
-prefix = "ghcr.io"
-location = "xget.xi-xu.me/cr/ghcr"
-
-# Or pull directly
-podman pull xget.xi-xu.me/cr/ghcr/alpine/alpine:latest
-podman pull xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
-```
-
-#### containerd Configuration
-
-```toml
-# Configure containerd to use Xget
-# Edit /etc/containerd/config.toml
-[plugins."io.containerd.grpc.v1.cri".registry.mirrors]
-  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."ghcr.io"]
-    endpoint = ["https://xget.xi-xu.me/cr/ghcr"]
-  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."gcr.io"]
-    endpoint = ["https://xget.xi-xu.me/cr/gcr"]
-```
-
-```bash
-# Restart containerd
-sudo systemctl restart containerd
-```
-
 ## 🚀 Deployment
 
-### Deployment Steps
+### Deploy to Cloudflare Workers
+
+#### Deployment Steps
 
 1. **Fork this repository**: [Fork xixu-me/Xget](https://github.com/xixu-me/Xget/fork)
 
@@ -2375,7 +2377,7 @@ After deployment completes, your Xget service will be available at:
 - Worker domain: `your-worker-name.your-subdomain.workers.dev`
 - Custom domain: `your-domain.com` (if bound)
 
-### Environment Variable Configuration
+#### Environment Variable Configuration
 
 You can set the following environment variables in the Cloudflare Workers console to customize configuration:
 
@@ -2386,6 +2388,70 @@ You can set the following environment variables in the Cloudflare Workers consol
 - `ALLOWED_METHODS`: Allowed HTTP methods (default: GET,HEAD)
 - `ALLOWED_ORIGINS`: Allowed CORS origins (default: *)
 - `MAX_PATH_LENGTH`: Maximum path length (default: 2048)
+
+### Self-Hosted Deployment
+
+If you prefer to run Xget on your own server, you can use Docker deployment:
+
+#### Using Pre-built Image
+
+Pull and run the pre-built image from GitHub Container Registry:
+
+```bash
+# Pull the latest image
+docker pull ghcr.io/xixu-me/xget:latest
+
+# Run the container
+docker run -d \
+  --name xget \
+  -p 8080:8080 \
+  ghcr.io/xixu-me/xget:latest
+```
+
+#### Building Locally
+
+Build the Docker image from source:
+
+```bash
+# Clone the repository
+git clone https://github.com/xixu-me/Xget.git
+cd Xget
+
+# Build the image
+docker build -t xget:local .
+
+# Run the container
+docker run -d \
+  --name xget \
+  -p 8080:8080 \
+  xget:local
+```
+
+#### Using Docker Compose
+
+Create a `docker-compose.yml` file:
+
+```yaml
+version: '3.8'
+
+services:
+  xget:
+    image: ghcr.io/xixu-me/xget:latest
+    container_name: xget
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+```
+
+Then run:
+
+```bash
+docker-compose up -d
+```
+
+After deployment, Xget will be available at `http://localhost:8080`.
+
+**Note**: Self-hosted deployment does not include Cloudflare Workers' global edge network acceleration. Performance depends on your server configuration and network environment.
 
 ## 🔧 Configuration
 

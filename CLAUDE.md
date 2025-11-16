@@ -4,151 +4,226 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Xget is a high-performance, secure acceleration engine for developer resources, built on Cloudflare Workers. It provides a unified proxy for accessing code repositories, package managers, AI inference APIs, container registries, and more with enhanced performance through Cloudflare's global edge network.
+**Xget** is a high-performance acceleration engine for developer resources deployed on Cloudflare Workers. It acts as a unified proxy/acceleration layer for 40+ platforms including code repositories (GitHub, GitLab, Gitea), package managers (npm, PyPI, conda, Maven, etc.), AI inference providers (OpenAI, Anthropic, Gemini), container registries (Docker Hub, GHCR), and Linux distributions.
 
-**Key Features:**
+**Primary purpose**: Accelerate access to developer resources for users in regions with connectivity challenges, particularly mainland China.
 
-- Multi-platform support (50+ platforms including GitHub, npm, PyPI, Docker registries, AI APIs)
-- Intelligent caching with 30-minute default TTL
-- Automatic retry mechanism (3 retries with linear backoff)
-- Enterprise-grade security headers
-- HTTP/3 and multi-compression support
-- Special handling for Git, Docker, and AI inference protocols
+## Technology Stack
+
+- **Runtime**: Cloudflare Workers (serverless edge computing)
+- **Language**: JavaScript (ES2022) with JSDoc type annotations
+- **Testing**: Vitest with `@cloudflare/vitest-pool-workers`
+- **Deployment**: Wrangler CLI + GitHub Actions
+- **Code Quality**: ESLint + Prettier
+- **Type Checking**: TypeScript via JSDoc (no build step)
 
 ## Development Commands
 
-### Testing
+```bash
+# Development
+npm run dev          # Start Wrangler dev server (same as npm start)
 
-- `npm test` - Run all tests with Vitest (uses Cloudflare Workers test environment)
-- `npm run test:run` - Run tests once without watch mode
-- `npm run test:watch` - Run tests in watch mode
-- `npm run test:ui` - Run tests with Vitest UI
-- `npm run test:coverage` - Generate test coverage report (80% threshold for branches/functions/lines/statements)
+# Testing
+npm test             # Run Vitest in watch mode
+npm run test:run     # Run tests once (CI mode)
+npm run test:coverage # Run tests with coverage report
+npm run test:ui      # Open Vitest UI
 
-### Code Quality
+# Code Quality
+npm run lint         # Run ESLint
+npm run lint:fix     # Fix ESLint errors automatically
+npm run format       # Format code with Prettier
+npm run format:check # Check formatting without changes
+npm run type-check   # TypeScript/JSDoc type checking (no emit)
 
-- `npm run lint` - Run ESLint on src/ and test/ directories
-- `npm run lint:fix` - Auto-fix ESLint issues
-- `npm run format` - Format code with Prettier
-- `npm run format:check` - Check code formatting without making changes
-- `npm run type-check` - Run TypeScript type checking (noEmit mode)
-
-### Development & Deployment
-
-- `npm run dev` or `npm start` - Start local development server with Wrangler
-- `npm run deploy` - Deploy to Cloudflare Workers
+# Deployment
+npm run deploy       # Deploy to Cloudflare Workers
+```
 
 ## Architecture
 
-### Request Flow
-
-1. **Request Reception** ([src/index.js](src/index.js):275-806) - `handleRequest()` is the main entry point
-2. **Validation** ([src/index.js](src/index.js):155-175) - Security validation via `validateRequest()`
-3. **Platform Detection** ([src/index.js](src/index.js):320-338) - Identifies platform from URL prefix
-4. **Path Transformation** ([src/config/platforms.js](src/config/platforms.js):99-191) - Converts proxy path to target platform path
-5. **Cache Check** ([src/index.js](src/index.js):379-409) - Checks Cloudflare cache (skipped for Git/Docker/AI)
-6. **Upstream Fetch** ([src/index.js](src/index.js):519-662) - Fetches from origin with retry logic
-7. **Response Processing** ([src/index.js](src/index.js):689-724) - URL rewriting for npm/PyPI responses
-8. **Cache Storage** ([src/index.js](src/index.js):762-795) - Stores successful 200 responses in cache
-
 ### Core Components
 
-**[src/index.js](src/index.js)** - Main worker logic
+1. **Main Request Handler** ([src/index.js](src/index.js))
+   - Entry point with `fetch()` event handler
+   - Protocol detection (Git, Git LFS, Docker, AI inference)
+   - Request validation, retry logic, timeout handling
+   - Performance monitoring (`PerformanceMonitor` class)
+   - Security header management
 
-- `handleRequest()` - Primary request handler with caching, retries, security
-- `isGitRequest()`, `isDockerRequest()`, `isAIInferenceRequest()` - Protocol detection functions
-- `validateRequest()` - Security validation (method whitelist, path length limits)
-- `PerformanceMonitor` - Tracks request performance metrics
-- Docker authentication handling ([src/index.js](src/index.js):219-266, 354-371, 579-634)
+2. **Configuration** ([src/config/index.js](src/config/index.js))
+   - `createConfig(env)` - runtime config with environment overrides
+   - `CONFIG` object with defaults (cache TTL, timeouts, retries)
 
-**[src/config/platforms.js](src/config/platforms.js)** - Platform definitions and URL transformations
+3. **Platform Definitions** ([src/config/platforms.js](src/config/platforms.js))
+   - `PLATFORMS` object mapping prefixes to base URLs (40+ entries)
+   - `transformPath()` function for URL transformations
+   - Platform-specific special cases (crates.io API, Jenkins paths, etc.)
 
-- `PLATFORMS` object - Maps platform keys to base URLs (50+ platforms)
-- `transformPath()` - Unified path transformation logic for all platforms
-- Special transformations for crates.io, Homebrew, Jenkins
+### Request Flow
 
-**[src/config/index.js](src/config/index.js)** - Configuration management
+```
+Request → Validate → Detect Protocol → Transform URL → Check Cache
+  → Fetch Upstream (with retries) → Handle Docker Auth → Rewrite Response
+  → Add Security Headers → Cache → Return with Performance Metrics
+```
 
-- `createConfig()` - Merges environment variables with defaults
-- Default values: 30s timeout, 3 retries, 1800s cache, 2048 char max path length
+### Protocol Detection
 
-### Platform Categories
+The system handles different protocols with specialized logic:
 
-1. **Code Repositories**: gh (GitHub), gl (GitLab), gitea, codeberg, sf (SourceForge), aosp
-2. **Package Managers**: npm, pypi, conda, maven, gradle, nuget, crates, etc.
-3. **Container Registries**: cr-docker (Docker Hub), cr-ghcr, cr-gcr, cr-mcr, cr-quay, etc. (prefixed with `cr-`)
-4. **AI Inference Providers**: ip-openai, ip-anthropic, ip-gemini, etc. (prefixed with `ip-`)
-5. **Model/Dataset Platforms**: hf (Hugging Face), civitai
-6. **Linux Distributions**: debian, ubuntu, fedora, arch, etc.
+- **Git requests**: Via `/info/refs`, `/git-upload-pack` endpoints, User-Agent patterns
+- **Git LFS**: LFS-specific headers and endpoints
+- **Docker/OCI registries**: `/v2/` prefix, Docker headers, token auth flow
+- **AI inference**: `/ip/` prefix for AI API proxying
+- **Regular downloads**: Default behavior with intelligent caching
 
-### Special Handling
+### Security Features
 
-**Git Operations** ([src/index.js](src/index.js):73-102)
+All responses include security headers:
 
-- Detected via User-Agent, endpoints (`/info/refs`, `/git-upload-pack`, `/git-receive-pack`), or query params
-- Allows POST method, sets Git-specific headers
-- Skips caching to ensure real-time data
+- `Strict-Transport-Security` (HSTS)
+- `X-Frame-Options: DENY`
+- `X-XSS-Protection`
+- `Content-Security-Policy`
+- `Referrer-Policy`
+- `Permissions-Policy`
 
-**Git LFS (Large File Storage) Operations** ([src/index.js](src/index.js):104-141)
+Request validation:
 
-- Detected via LFS-specific endpoints (`/info/lfs`, `/objects/batch`, `/objects/{oid}`)
-- Detected via LFS headers (`Accept: application/vnd.git-lfs+json`) or User-Agent (`git-lfs/`)
-- Supports batch API for efficient object transfers
-- Sets appropriate content-type headers for LFS operations
-- Skips caching to ensure real-time data synchronization
+- Method whitelist (GET/HEAD default, POST/PUT/PATCH for Git/Docker/AI)
+- Path length limit (2048 characters)
+- 30-second timeout protection
 
-**Docker/Container Registries** ([src/index.js](src/index.js):42-65)
+### Caching Strategy
 
-- Detected via `/v2/` paths, User-Agent, or Accept headers
-- Handles Docker authentication flow with token fetching
-- Supports anonymous access to public repositories
-- All requests must use `/cr/` prefix (e.g., `/cr/ghcr/owner/repo`)
-- **Docker Hub Special Handling** ([src/index.js](src/index.js):600-604): Official images (single-name like `nginx`) are automatically prefixed with `library/` for authentication scope, while user images (namespace/image) are passed through unchanged
+- **Cache bypass**: Git, Git LFS, Docker, AI inference requests skip cache
+- **Cache TTL**: 1800 seconds (30 minutes) default
+- **Range requests**: Full support for HTTP 206 partial content
+- **Smart cache keys**: Different keys for Range vs full-content requests
 
-**AI Inference APIs** ([src/index.js](src/index.js):110-146)
+### Content Transformation
 
-- Detected via `/ip/` paths or common AI endpoints
-- Allows POST/PUT/PATCH methods
-- Sets JSON content-type and preserves all request headers
-- Skips caching for real-time inference
+- **PyPI URLs**: Rewrites `files.pythonhosted.org` URLs in HTML responses
+- **npm URLs**: Rewrites tarball URLs in JSON registry responses
+- **Streaming**: Uses `ReadableStream` for efficient large file handling
 
-**URL Rewriting** ([src/index.js](src/index.js):689-724)
+## Testing
 
-- PyPI: Rewrites `files.pythonhosted.org` URLs to go through `/pypi/files`
-- npm: Rewrites `registry.npmjs.org` tarball URLs to go through `/npm/`
+### Test Structure
 
-## Testing Practices
+Tests are organized by functionality in `test/`:
 
-- Tests use Cloudflare Workers test environment via `@cloudflare/vitest-pool-workers`
-- Use `SELF.fetch()` to make requests to the worker in tests
-- Test files are organized by functionality: platforms, security, integration, performance, range-cache
-- Fixtures in [test/fixtures/responses.js](test/fixtures/responses.js)
-- Test utilities in [test/helpers/test-utils.js](test/helpers/test-utils.js)
+- `index.test.js` - Core request handling
+- `integration.test.js` - End-to-end platform tests
+- `security.test.js` - Security headers and validation
+- `performance.test.js` - Performance monitoring
+- `platforms.test.js` - URL transformation logic
+- `container-registry.test.js` - Docker/OCI registry flows
+- `range-cache.test.js` - HTTP Range requests
+- Platform-specific: `npm-fix.test.js`, `crates.test.js`, `homebrew.test.js`, `opensuse.test.js`, `cran.test.js`, `jenkins.test.js`
 
-## Configuration
+### Coverage Requirements
 
-Runtime configuration can be overridden via Cloudflare Workers environment variables:
+Minimum 80% coverage for:
 
-- `TIMEOUT_SECONDS` - Request timeout (default: 30)
-- `MAX_RETRIES` - Max retry attempts (default: 3)
-- `RETRY_DELAY_MS` - Delay between retries (default: 1000)
-- `CACHE_DURATION` - Cache TTL in seconds (default: 1800)
-- `ALLOWED_METHODS` - Comma-separated HTTP methods (default: GET,HEAD)
-- `MAX_PATH_LENGTH` - Maximum URL path length (default: 2048)
+- Branches
+- Functions
+- Lines
+- Statements
 
-## Adding New Platforms
+### Running Specific Tests
 
-To add a new platform:
+```bash
+# Run specific test file
+npm test -- index.test.js
 
-1. Add entry to `PLATFORMS` object in [src/config/platforms.js](src/config/platforms.js)
-2. Add path transformation logic in `transformPath()` if needed (most platforms don't need special handling)
-3. Update tests in [test/platforms.test.js](test/platforms.test.js)
-4. For platforms requiring special protocol handling (like Git/Docker), add detection function in [src/index.js](src/index.js)
+# Run tests matching pattern
+npm test -- --grep "Docker"
 
-## Security Considerations
+# Run with coverage
+npm run test:coverage
+```
 
-- All responses include strict security headers (HSTS, X-Frame-Options, CSP, etc.)
-- HTTP method whitelist enforced (except for Git/Docker/AI operations)
-- Path length validation to prevent excessively long URLs
-- 30-second request timeout to prevent resource exhaustion
-- Input sanitization in URL transformations
+## Code Style
+
+- **JSDoc annotations**: All functions must have JSDoc type annotations
+- **ES modules**: Use `import/export`, not `require()`
+- **Async/await**: Prefer over Promise chains
+- **Error handling**: All fetch operations must have retry logic and timeout protection
+
+## Important Patterns
+
+### Adding a New Platform
+
+1. Add entry to `PLATFORMS` object in [src/config/platforms.js](src/config/platforms.js):
+
+   ```js
+   'prefix': 'https://example.com'
+   ```
+
+2. If special URL transformation needed, add case in `transformPath()`:
+
+   ```js
+   if (platform === 'prefix' && /* condition */) {
+     // Custom transformation
+   }
+   ```
+
+3. Add integration test in [test/integration.test.js](test/integration.test.js)
+
+4. Update README.md with usage examples
+
+### Retry Logic Pattern
+
+All upstream fetches use:
+
+```js
+for (let attempt = 1; attempt <= maxRetries; attempt++) {
+  try {
+    // Fetch with AbortController for timeout
+    const response = await fetch(url, { signal: controller.signal });
+    // Handle response
+    break;
+  } catch (error) {
+    // Only retry on 5xx or network errors, not 4xx
+    if (attempt === maxRetries || isClientError(response)) throw error;
+  }
+}
+```
+
+### Performance Monitoring
+
+Use `PerformanceMonitor` class to track timing:
+
+```js
+const perfMon = new PerformanceMonitor();
+perfMon.mark('operation_start');
+// ... do work ...
+perfMon.mark('operation_complete');
+const metrics = perfMon.getMetrics(); // Returns timing data
+```
+
+## Deployment
+
+- **Target**: Cloudflare Workers
+- **Config**: [wrangler.toml](wrangler.toml)
+- **CI/CD**: GitHub Actions ([.github/workflows/depoly.yml](.github/workflows/depoly.yml))
+- **Secrets required**: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
+
+## Environment Variables
+
+Configuration can be overridden via Cloudflare Workers environment variables:
+
+- `CACHE_TTL` - Cache time-to-live in seconds (default: 1800)
+- `MAX_RETRIES` - Maximum retry attempts (default: 3)
+- `TIMEOUT` - Request timeout in milliseconds (default: 30000)
+- Platform-specific base URLs can be overridden by setting env var matching platform key
+
+## Key Files to Reference
+
+- [src/index.js](src/index.js) - Main application logic (~900 lines)
+- [src/config/platforms.js](src/config/platforms.js) - All platform definitions and transformations
+- [src/config/index.js](src/config/index.js) - Configuration management
+- [wrangler.toml](wrangler.toml) - Cloudflare Workers deployment config
+- [vitest.config.js](vitest.config.js) - Test configuration

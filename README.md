@@ -46,10 +46,10 @@
 [![arXiv](https://img.shields.io/badge/arXiv-B31B1B?logo=arxiv&logoColor=white)](#arxiv-论文下载)
 [![F-Droid](https://img.shields.io/badge/F--Droid-1976D2?logo=f-droid&logoColor=white)](#f-droid-存储库镜像)
 [![Jenkins](https://img.shields.io/badge/Jenkins-D33833?logo=jenkins&logoColor=white)](#jenkins-插件下载)
-[![AI 推理提供商](https://img.shields.io/badge/AI%20推理提供商-412991?logo=openai&logoColor=white)](#ai-推理提供商)
 [![容器注册表](https://img.shields.io/badge/容器注册表-%23007EC6.svg?logo=docker&logoColor=white)](#容器注册表)
+[![AI 推理提供商](https://img.shields.io/badge/AI%20推理提供商-412991?logo=openai&logoColor=white)](#ai-推理提供商)
 
-面向开发者资源的超高性能、安全、一体化加速引擎，其性能显著优于传统解决方案，为代码存储库、软件包注册表、AI 推理 API、容器镜像、模型、数据集及更多资源提供统一且高效的加速。
+面向开发者资源的超高性能、安全、一体化加速引擎，其性能显著优于传统解决方案，为代码存储库、模型和数据集中心、软件包注册表、容器注册表、AI 推理提供商等提供统一、高效的加速。
 
 技术深度解析文章已发布：**[《深入剖析 Xget：一个高性能、多协议、高安全性的开发者资源加速引擎》](https://blog.xi-xu.me/2025/10/07/deep-dive-into-xget-technology.html)**。
 
@@ -181,8 +181,8 @@
 | arXiv | `arxiv` | `https://arxiv.org/...` | `https://xget.xi-xu.me/arxiv/...` |
 | F-Droid | `fdroid` | `https://f-droid.org/...` | `https://xget.xi-xu.me/fdroid/...` |
 | Jenkins 插件 | `jenkins` | `https://updates.jenkins.io/...` | `https://xget.xi-xu.me/jenkins/...` |
-| AI 推理提供商 | `ip` | 见 [AI 推理提供商](#ai-推理提供商) | 见 [AI 推理提供商](#ai-推理提供商) |
 | 容器注册表 | `cr` | 见[容器注册表](#容器注册表) | 见[容器注册表](#容器注册表) |
+| AI 推理提供商 | `ip` | 见 [AI 推理提供商](#ai-推理提供商) | 见 [AI 推理提供商](#ai-推理提供商) |
 
 ### 各平台转换示例
 
@@ -646,6 +646,58 @@ https://updates.jenkins.io/download/plugins/maven-plugin/3.27/maven-plugin.hpi
 https://xget.xi-xu.me/jenkins/download/plugins/maven-plugin/3.27/maven-plugin.hpi
 ```
 
+#### 容器注册表
+
+Xget 支持多个容器注册表，使用 `cr/[容器注册表前缀]` 格式：
+
+| 容器注册表 | 容器注册表前缀 | 原始 URL 格式 | 加速 URL 格式 |
+|----------|------|--------------|--------------|
+| Docker Hub | `docker` | `https://registry-1.docker.io/...` | `https://xget.xi-xu.me/cr/docker/...` |
+| Quay.io | `quay` | `https://quay.io/...` | `https://xget.xi-xu.me/cr/quay/...` |
+| 谷歌容器注册表 | `gcr` | `https://gcr.io/...` | `https://xget.xi-xu.me/cr/gcr/...` |
+| 微软容器注册表 | `mcr` | `https://mcr.microsoft.com/...` | `https://xget.xi-xu.me/cr/mcr/...` |
+| 亚马逊公共弹性容器注册表 | `ecr` | `https://public.ecr.aws/...` | `https://xget.xi-xu.me/cr/ecr/...` |
+| GitHub 容器注册表 | `ghcr` | `https://ghcr.io/...` | `https://xget.xi-xu.me/cr/ghcr/...` |
+| GitLab 容器注册表 | `gitlab` | `https://registry.gitlab.com/...` | `https://xget.xi-xu.me/cr/gitlab/...` |
+| 红帽注册表 | `redhat` | `https://registry.redhat.io/...` | `https://xget.xi-xu.me/cr/redhat/...` |
+| 甲骨文容器注册表 | `oracle` | `https://container-registry.oracle.com/...` | `https://xget.xi-xu.me/cr/oracle/...` |
+| Cloudsmith | `cloudsmith` | `https://docker.cloudsmith.io/...` | `https://xget.xi-xu.me/cr/cloudsmith/...` |
+| DigitalOcean 注册表 | `digitalocean` | `https://registry.digitalocean.com/...` | `https://xget.xi-xu.me/cr/digitalocean/...` |
+| VMware 注册表 | `vmware` | `https://projects.registry.vmware.com/...` | `https://xget.xi-xu.me/cr/vmware/...` |
+| Kubernetes 注册表 | `k8s` | `https://registry.k8s.io/...` | `https://xget.xi-xu.me/cr/k8s/...` |
+| Heroku 注册表 | `heroku` | `https://registry.heroku.com/...` | `https://xget.xi-xu.me/cr/heroku/...` |
+| SUSE 注册表 | `suse` | `https://registry.suse.com/...` | `https://xget.xi-xu.me/cr/suse/...` |
+| openSUSE 注册表 | `opensuse` | `https://registry.opensuse.org/...` | `https://xget.xi-xu.me/cr/opensuse/...` |
+| Gitpod 注册表 | `gitpod` | `https://registry.gitpod.io/...` | `https://xget.xi-xu.me/cr/gitpod/...` |
+
+```url
+# Docker Hub 原始 URL（官方镜像）
+https://registry-1.docker.io/v2/library/nginx/manifests/latest
+
+# 转换后（添加 cr/docker 前缀）
+https://xget.xi-xu.me/cr/docker/v2/nginx/manifests/latest
+
+# Docker Hub 原始 URL（用户镜像）
+https://registry-1.docker.io/v2/nginxinc/nginx-unprivileged/manifests/latest
+
+# 转换后（添加 cr/docker 前缀）
+https://xget.xi-xu.me/cr/docker/v2/nginxinc/nginx-unprivileged/manifests/latest
+
+# GitHub 容器注册表原始 URL
+https://ghcr.io/v2/nginxinc/nginx-unprivileged/manifests/latest
+
+# 转换后（添加 cr/ghcr 前缀）
+https://xget.xi-xu.me/cr/ghcr/v2/nginxinc/nginx-unprivileged/manifests/latest
+
+# 谷歌容器注册表原始 URL
+https://gcr.io/v2/distroless/base/manifests/latest
+
+# 转换后（添加 cr/gcr 前缀）
+https://xget.xi-xu.me/cr/gcr/v2/distroless/base/manifests/latest
+```
+
+应用场景见[容器镜像加速](#容器镜像加速)。
+
 #### AI 推理提供商
 
 Xget 支持众多主流 AI 推理提供商的 API 加速，使用 `ip/[AI 推理提供商前缀]` 格式：
@@ -708,58 +760,6 @@ https://xget.xi-xu.me/ip/huggingface/hf-inference/models/openai/whisper-large-v3
 ```
 
 应用场景见 [AI 推理 API 加速](#ai-推理-api-加速)。
-
-#### 容器注册表
-
-Xget 支持多个容器注册表，使用 `cr/[容器注册表前缀]` 格式：
-
-| 容器注册表 | 容器注册表前缀 | 原始 URL 格式 | 加速 URL 格式 |
-|----------|------|--------------|--------------|
-| Docker Hub | `docker` | `https://registry-1.docker.io/...` | `https://xget.xi-xu.me/cr/docker/...` |
-| Quay.io | `quay` | `https://quay.io/...` | `https://xget.xi-xu.me/cr/quay/...` |
-| 谷歌容器注册表 | `gcr` | `https://gcr.io/...` | `https://xget.xi-xu.me/cr/gcr/...` |
-| 微软容器注册表 | `mcr` | `https://mcr.microsoft.com/...` | `https://xget.xi-xu.me/cr/mcr/...` |
-| 亚马逊公共弹性容器注册表 | `ecr` | `https://public.ecr.aws/...` | `https://xget.xi-xu.me/cr/ecr/...` |
-| GitHub 容器注册表 | `ghcr` | `https://ghcr.io/...` | `https://xget.xi-xu.me/cr/ghcr/...` |
-| GitLab 容器注册表 | `gitlab` | `https://registry.gitlab.com/...` | `https://xget.xi-xu.me/cr/gitlab/...` |
-| 红帽注册表 | `redhat` | `https://registry.redhat.io/...` | `https://xget.xi-xu.me/cr/redhat/...` |
-| 甲骨文容器注册表 | `oracle` | `https://container-registry.oracle.com/...` | `https://xget.xi-xu.me/cr/oracle/...` |
-| Cloudsmith | `cloudsmith` | `https://docker.cloudsmith.io/...` | `https://xget.xi-xu.me/cr/cloudsmith/...` |
-| DigitalOcean 注册表 | `digitalocean` | `https://registry.digitalocean.com/...` | `https://xget.xi-xu.me/cr/digitalocean/...` |
-| VMware 注册表 | `vmware` | `https://projects.registry.vmware.com/...` | `https://xget.xi-xu.me/cr/vmware/...` |
-| Kubernetes 注册表 | `k8s` | `https://registry.k8s.io/...` | `https://xget.xi-xu.me/cr/k8s/...` |
-| Heroku 注册表 | `heroku` | `https://registry.heroku.com/...` | `https://xget.xi-xu.me/cr/heroku/...` |
-| SUSE 注册表 | `suse` | `https://registry.suse.com/...` | `https://xget.xi-xu.me/cr/suse/...` |
-| openSUSE 注册表 | `opensuse` | `https://registry.opensuse.org/...` | `https://xget.xi-xu.me/cr/opensuse/...` |
-| Gitpod 注册表 | `gitpod` | `https://registry.gitpod.io/...` | `https://xget.xi-xu.me/cr/gitpod/...` |
-
-```url
-# Docker Hub 原始 URL（官方镜像）
-https://registry-1.docker.io/v2/library/nginx/manifests/latest
-
-# 转换后（添加 cr/docker 前缀）
-https://xget.xi-xu.me/cr/docker/v2/nginx/manifests/latest
-
-# Docker Hub 原始 URL（用户镜像）
-https://registry-1.docker.io/v2/nginxinc/nginx-unprivileged/manifests/latest
-
-# 转换后（添加 cr/docker 前缀）
-https://xget.xi-xu.me/cr/docker/v2/nginxinc/nginx-unprivileged/manifests/latest
-
-# GitHub 容器注册表原始 URL
-https://ghcr.io/v2/nginxinc/nginx-unprivileged/manifests/latest
-
-# 转换后（添加 cr/ghcr 前缀）
-https://xget.xi-xu.me/cr/ghcr/v2/nginxinc/nginx-unprivileged/manifests/latest
-
-# 谷歌容器注册表原始 URL
-https://gcr.io/v2/distroless/base/manifests/latest
-
-# 转换后（添加 cr/gcr 前缀）
-https://xget.xi-xu.me/cr/gcr/v2/distroless/base/manifests/latest
-```
-
-应用场景见[容器镜像加速](#容器镜像加速)。
 
 ## 🎯 应用场景
 
@@ -1980,6 +1980,181 @@ pipeline {
 }
 ```
 
+### 容器镜像加速
+
+#### Docker 配置
+
+```bash
+# 配置 Docker 使用 Xget 镜像加速
+# 编辑 /etc/docker/daemon.json（Linux）或 ~/.docker/daemon.json（macOS/Windows）
+{
+  "registry-mirrors": [
+    "https://xget.xi-xu.me/cr/ghcr"
+  ]
+}
+
+# 重启 Docker 服务
+sudo systemctl restart docker  # Linux
+# 或在 Docker Desktop 中重启服务
+
+# 验证配置
+docker info | grep -A 10 "Registry Mirrors"
+```
+
+#### 直接拉取镜像
+
+```bash
+# 拉取 GitHub 容器注册表镜像
+docker pull xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
+
+# 拉取谷歌容器注册表镜像
+docker pull xget.xi-xu.me/cr/gcr/distroless/base:latest
+
+# 拉取微软容器注册表镜像
+docker pull xget.xi-xu.me/cr/mcr/dotnet/runtime:8.0
+```
+
+#### Kubernetes 部署配置
+
+```yaml
+# deployment.yaml - 使用 Xget 的镜像
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
+        ports:
+        - containerPort: 80
+      - name: redis
+        image: xget.xi-xu.me/cr/ghcr/bitnami/redis:alpine
+        ports:
+        - containerPort: 6379
+```
+
+#### Docker Compose 配置
+
+```yaml
+# docker-compose.yml - 使用 Xget 加速镜像
+version: '3.8'
+services:
+  web:
+    image: xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./html:/usr/share/nginx/html
+
+  database:
+    image: xget.xi-xu.me/cr/mcr/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: "MyStrongPassword123!"
+    volumes:
+      - mssql_data:/var/opt/mssql
+
+  cache:
+    image: xget.xi-xu.me/cr/ghcr/bitnami/redis:alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  mssql_data:
+```
+
+#### Dockerfile 优化
+
+```dockerfile
+# 在 Dockerfile 中使用 Xget 加速基础镜像
+FROM xget.xi-xu.me/cr/ghcr/nodejs/node:18-alpine AS builder
+
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+RUN npm run build
+
+# 生产阶段
+FROM xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# 使用微软容器注册表的 .NET 镜像
+FROM xget.xi-xu.me/cr/mcr/dotnet/aspnet:8.0 AS runtime
+WORKDIR /app
+COPY --from=builder /app/publish .
+ENTRYPOINT ["dotnet", "MyApp.dll"]
+```
+
+#### CI/CD 集成
+
+```yaml
+# GitHub Actions - 使用 Xget 加速容器构建
+name: Build and Deploy
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build with accelerated base images
+        run: |
+          # 构建时使用 Xget 的基础镜像
+          docker build -t myapp:latest \
+            --build-arg BASE_IMAGE=xget.xi-xu.me/cr/ghcr/nodejs/node:18-alpine .
+
+      - name: Test with accelerated images
+        run: |
+          # 使用加速镜像进行测试
+          docker run --rm \
+            xget.xi-xu.me/cr/mcr/dotnet/runtime:8.0 \
+            dotnet --version
+```
+
+#### Podman 配置
+
+```bash
+# 配置 Podman 使用 Xget 镜像加速
+# 编辑 /etc/containers/registries.conf
+[[registry]]
+prefix = "ghcr.io"
+location = "xget.xi-xu.me/cr/ghcr"
+
+# 或者直接拉取
+podman pull xget.xi-xu.me/cr/ghcr/alpine/alpine:latest
+podman pull xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
+```
+
+#### containerd 配置
+
+```toml
+# 配置 containerd 使用 Xget
+# 编辑 /etc/containerd/config.toml
+[plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."ghcr.io"]
+    endpoint = ["https://xget.xi-xu.me/cr/ghcr"]
+  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."gcr.io"]
+    endpoint = ["https://xget.xi-xu.me/cr/gcr"]
+```
+
+```bash
+# 重启 containerd
+sudo systemctl restart containerd
+```
+
 ### AI 推理 API 加速
 
 #### OpenAI API
@@ -2182,184 +2357,11 @@ client = OpenAI(
 )
 ```
 
-### 容器镜像加速
-
-#### Docker 配置
-
-```bash
-# 配置 Docker 使用 Xget 镜像加速
-# 编辑 /etc/docker/daemon.json（Linux）或 ~/.docker/daemon.json（macOS/Windows）
-{
-  "registry-mirrors": [
-    "https://xget.xi-xu.me/cr/ghcr"
-  ]
-}
-
-# 重启 Docker 服务
-sudo systemctl restart docker  # Linux
-# 或在 Docker Desktop 中重启服务
-
-# 验证配置
-docker info | grep -A 10 "Registry Mirrors"
-```
-
-#### 直接拉取镜像
-
-```bash
-# 拉取 GitHub 容器注册表镜像
-docker pull xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
-
-# 拉取谷歌容器注册表镜像
-docker pull xget.xi-xu.me/cr/gcr/distroless/base:latest
-
-# 拉取微软容器注册表镜像
-docker pull xget.xi-xu.me/cr/mcr/dotnet/runtime:8.0
-```
-
-#### Kubernetes 部署配置
-
-```yaml
-# deployment.yaml - 使用 Xget 的镜像
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx-deployment
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: nginx
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      containers:
-      - name: nginx
-        image: xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
-        ports:
-        - containerPort: 80
-      - name: redis
-        image: xget.xi-xu.me/cr/ghcr/bitnami/redis:alpine
-        ports:
-        - containerPort: 6379
-```
-
-#### Docker Compose 配置
-
-```yaml
-# docker-compose.yml - 使用 Xget 加速镜像
-version: '3.8'
-services:
-  web:
-    image: xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
-    ports:
-      - "80:80"
-    volumes:
-      - ./html:/usr/share/nginx/html
-
-  database:
-    image: xget.xi-xu.me/cr/mcr/mssql/server:2022-latest
-    environment:
-      ACCEPT_EULA: Y
-      SA_PASSWORD: "MyStrongPassword123!"
-    volumes:
-      - mssql_data:/var/opt/mssql
-
-  cache:
-    image: xget.xi-xu.me/cr/ghcr/bitnami/redis:alpine
-    ports:
-      - "6379:6379"
-
-volumes:
-  mssql_data:
-```
-
-#### Dockerfile 优化
-
-```dockerfile
-# 在 Dockerfile 中使用 Xget 加速基础镜像
-FROM xget.xi-xu.me/cr/ghcr/nodejs/node:18-alpine AS builder
-
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-
-COPY . .
-RUN npm run build
-
-# 生产阶段
-FROM xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-# 使用微软容器注册表的 .NET 镜像
-FROM xget.xi-xu.me/cr/mcr/dotnet/aspnet:8.0 AS runtime
-WORKDIR /app
-COPY --from=builder /app/publish .
-ENTRYPOINT ["dotnet", "MyApp.dll"]
-```
-
-#### CI/CD 集成
-
-```yaml
-# GitHub Actions - 使用 Xget 加速容器构建
-name: Build and Deploy
-on: [push]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Build with accelerated base images
-        run: |
-          # 构建时使用 Xget 的基础镜像
-          docker build -t myapp:latest \
-            --build-arg BASE_IMAGE=xget.xi-xu.me/cr/ghcr/nodejs/node:18-alpine .
-
-      - name: Test with accelerated images
-        run: |
-          # 使用加速镜像进行测试
-          docker run --rm \
-            xget.xi-xu.me/cr/mcr/dotnet/runtime:8.0 \
-            dotnet --version
-```
-
-#### Podman 配置
-
-```bash
-# 配置 Podman 使用 Xget 镜像加速
-# 编辑 /etc/containers/registries.conf
-[[registry]]
-prefix = "ghcr.io"
-location = "xget.xi-xu.me/cr/ghcr"
-
-# 或者直接拉取
-podman pull xget.xi-xu.me/cr/ghcr/alpine/alpine:latest
-podman pull xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
-```
-
-#### containerd 配置
-
-```toml
-# 配置 containerd 使用 Xget
-# 编辑 /etc/containerd/config.toml
-[plugins."io.containerd.grpc.v1.cri".registry.mirrors]
-  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."ghcr.io"]
-    endpoint = ["https://xget.xi-xu.me/cr/ghcr"]
-  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."gcr.io"]
-    endpoint = ["https://xget.xi-xu.me/cr/gcr"]
-```
-
-```bash
-# 重启 containerd
-sudo systemctl restart containerd
-```
-
 ## 🚀 部署
 
-### 部署步骤
+### 部署到 Cloudflare Workers
+
+#### 部署步骤
 
 1. **fork 本存储库**：[Fork xixu-me/Xget](https://github.com/xixu-me/Xget/fork)
 
@@ -2385,7 +2387,7 @@ sudo systemctl restart containerd
 - Worker 域名：`your-worker-name.your-subdomain.workers.dev`
 - 自定义域名：`your-domain.com`（如果已绑定）
 
-### 环境变量配置
+#### 环境变量配置
 
 你可以在 Cloudflare Workers 控制台中设置以下环境变量来自定义配置：
 
@@ -2396,6 +2398,70 @@ sudo systemctl restart containerd
 - `ALLOWED_METHODS`：允许的 HTTP 方法（默认：GET,HEAD）
 - `ALLOWED_ORIGINS`：允许的 CORS 源（默认：*）
 - `MAX_PATH_LENGTH`：最大路径长度（默认：2048）
+
+### 自托管部署
+
+如果你希望在自己的服务器上运行 Xget，可以使用 Docker 部署：
+
+#### 使用预构建镜像
+
+从 GitHub Container Registry 拉取并运行预构建的镜像：
+
+```bash
+# 拉取最新镜像
+docker pull ghcr.io/xixu-me/xget:latest
+
+# 运行容器
+docker run -d \
+  --name xget \
+  -p 8080:8080 \
+  ghcr.io/xixu-me/xget:latest
+```
+
+#### 本地构建
+
+从源码构建 Docker 镜像：
+
+```bash
+# 克隆存储库
+git clone https://github.com/xixu-me/Xget.git
+cd Xget
+
+# 构建镜像
+docker build -t xget:local .
+
+# 运行容器
+docker run -d \
+  --name xget \
+  -p 8080:8080 \
+  xget:local
+```
+
+#### 使用 Docker Compose
+
+创建 `docker-compose.yml` 文件：
+
+```yaml
+version: '3.8'
+
+services:
+  xget:
+    image: ghcr.io/xixu-me/xget:latest
+    container_name: xget
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+```
+
+然后运行：
+
+```bash
+docker-compose up -d
+```
+
+部署完成后，Xget 将在 `http://localhost:8080` 可用。
+
+**注意**：自托管部署不包括 Cloudflare Workers 的全球边缘网络加速，性能取决于你的服务器配置和网络环境。
 
 ## 🔧 配置
 
