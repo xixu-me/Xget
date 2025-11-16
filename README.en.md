@@ -1,15 +1,20 @@
-# Xget
+<div align="center">
 
-***[汉语](README.md)***
+# Xget 🚀
 
 <a href="https://trendshift.io/repositories/14768" target="_blank"><img src="https://trendshift.io/api/badge/repositories/14768" alt="xixu-me%2FXget | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
+[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare%20Workers-F38020?&logo=cloudflare&logoColor=white)](#deploy-to-cloudflare-workers)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?&logo=docker&logoColor=white)](#self-hosted-deployment)
+[![Podman](https://img.shields.io/badge/Podman-892CA0?&logo=podman&logoColor=white)](#self-hosted-deployment)
+[![Chromium](https://img.shields.io/badge/Chromium-4285F4?logo=googlechrome&logoColor=white)](#-ecosystem-integration)
+[![Firefox](https://img.shields.io/badge/Firefox-FF7139?logo=Firefox&logoColor=white)](#-ecosystem-integration)
 [![Ask Zread](https://img.shields.io/badge/Ask_Zread-_.svg?style=flat&color=00b0aa&labelColor=000000&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQuOTYxNTYgMS42MDAxSDIuMjQxNTZDMS44ODgxIDEuNjAwMSAxLjYwMTU2IDEuODg2NjQgMS42MDE1NiAyLjI0MDFWNC45NjAxQzEuNjAxNTYgNS4zMTM1NiAxLjg4ODEgNS42MDAxIDIuMjQxNTYgNS42MDAxSDQuOTYxNTZDNS4zMTUwMiA1LjYwMDEgNS42MDE1NiA1LjMxMzU2IDUuNjAxNTYgNC45NjAxVjIuMjQwMUM1LjYwMTU2IDEuODg2NjQgNS4zMTUwMiAxLjYwMDEgNC45NjE1NiAxLjYwMDFaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik00Ljk2MTU2IDEwLjM5OTlIMi4yNDE1NkMxLjg4ODEgMTAuMzk5OSAxLjYwMTU2IDEwLjY4NjQgMS42MDE1NiAxMS4wMzk5VjEzLjc1OTlDMS42MDE1NiAxNC4xMTM0IDEuODg4MSAxNC4zOTk5IDIuMjQxNTYgMTQuMzk5OUg0Ljk2MTU2QzUuMzE1MDIgMTQuMzk5OSA1LjYwMTU2IDE0LjExMzQgNS42MDE1NiAxMy43NTk5VjExLjAzOTlDNS42MDE1NiAxMC42ODY0IDUuMzE1MDIgMTAuMzk5OSA0Ljk2MTU2IDEwLjM5OTlaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik0xMy43NTg0IDEuNjAwMUgxMS4wMzg0QzEwLjY4NSAxLjYwMDEgMTAuMzk4NCAxLjg4NjY0IDEwLjM5ODQgMi4yNDAxVjQuOTYwMUMxMC4zOTg0IDUuMzEzNTYgMTAuNjg1IDUuNjAwMSAxMS4wMzg0IDUuNjAwMUgxMy43NTg0QzE0LjExMTkgNS42MDAxIDE0LjM5ODQgNS4zMTM1NiAxNC4zOTg0IDQuOTYwMVYyLjI0MDFDMTQuMzk4NCAxLjg4NjY0IDE0LjExMTkgMS42MDAxIDEzLjc1ODQgMS42MDAxWiIgZmlsbD0iI2ZmZiIvPgo8cGF0aCBkPSJNNCAxMkwxMiA0TDQgMTJaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik00IDEyTDEyIDQiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K&logoColor=ffffff)](https://zread.ai/xixu-me/Xget)
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/xixu-me/Xget)
 
-[![Chromium Extension](https://img.shields.io/badge/Chromium%20Extension-4285F4?logo=googlechrome&logoColor=white)](#-ecosystem-integration)
-[![Firefox Extension](https://img.shields.io/badge/Firefox%20Extension-582ACB?logo=Firefox&logoColor=white)](#-ecosystem-integration)
-[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare%20Workers-F38020?&logo=cloudflare&logoColor=white)](#-deployment)
+</div>
+
+***[汉语](README.md)***
 
 [![GitHub](https://img.shields.io/badge/GitHub-181717?&logo=github&logoColor=white)](#github)
 [![GitLab](https://img.shields.io/badge/GitLab-FC6D26?&logo=gitlab&logoColor=white)](#gitlab)
@@ -18,7 +23,7 @@
 [![SourceForge](https://img.shields.io/badge/SourceForge-FF6600?&logo=sourceforge&logoColor=white)](#sourceforge)
 [![AOSP](https://img.shields.io/badge/AOSP-3DDC84?&logo=android&logoColor=white)](#aosp-android-open-source-project)
 [![Hugging Face](https://img.shields.io/badge/Hugging%20Face-FFD21E?&logo=huggingface&logoColor=white)](#hugging-face-mirror)
-[![Civitai](https://img.shields.io/badge/Civitai-0066CC)](#civitai-ai-model-platform)
+[![Civitai](https://img.shields.io/badge/Civitai-1971C2)](#civitai-ai-model-platform)
 [![npm](https://img.shields.io/badge/npm-CB3837?logo=npm&logoColor=white)](#npm-package-acceleration)
 [![PyPI](https://img.shields.io/badge/PyPI-3775A9?logo=pypi&logoColor=white)](#python-package-acceleration)
 [![conda](https://img.shields.io/badge/conda-44A833?logo=anaconda&logoColor=white)](#conda-package-acceleration)
@@ -26,9 +31,9 @@
 [![Apache](https://img.shields.io/badge/Apache-D22128?logo=apache&logoColor=white)](#apache-software-download-acceleration)
 [![Gradle](https://img.shields.io/badge/Gradle-02303A?logo=gradle&logoColor=white)](#gradle-package-acceleration)
 [![Homebrew](https://img.shields.io/badge/Homebrew-FBB040?logo=homebrew&logoColor=black)](#homebrew-package-acceleration)
-[![RubyGems](https://img.shields.io/badge/RubyGems-CC342D?logo=rubygems&logoColor=white)](#ruby-package-acceleration)
+[![RubyGems](https://img.shields.io/badge/RubyGems-E9573F?logo=rubygems&logoColor=white)](#ruby-package-acceleration)
 [![CRAN](https://img.shields.io/badge/CRAN-276DC3?logo=r&logoColor=white)](#r-package-acceleration)
-[![CPAN](https://img.shields.io/badge/CPAN-39457E?logo=perl&logoColor=white)](#perl-package-acceleration)
+[![CPAN](https://img.shields.io/badge/CPAN-0073A1?logo=perl&logoColor=white)](#perl-package-acceleration)
 [![CTAN](https://img.shields.io/badge/CTAN-008080?logo=latex&logoColor=white)](#texlatex-package-acceleration)
 [![Go](https://img.shields.io/badge/Go-00ADD8?logo=go&logoColor=white)](#go-module-acceleration)
 [![NuGet](https://img.shields.io/badge/NuGet-004880?logo=nuget&logoColor=white)](#nuget-package-acceleration)
@@ -36,27 +41,25 @@
 [![Packagist](https://img.shields.io/badge/Packagist-F28D1A?logo=packagist&logoColor=white)](#php-package-acceleration)
 [![Debian](https://img.shields.io/badge/Debian-A81D33?logo=debian&logoColor=white)](#debianubuntu-apt-configuration)
 [![Ubuntu](https://img.shields.io/badge/Ubuntu-E95420?logo=ubuntu&logoColor=white)](#debianubuntu-apt-configuration)
-[![Fedora](https://img.shields.io/badge/Fedora-294172?logo=fedora&logoColor=white)](#fedora-dnf-configuration)
+[![Fedora](https://img.shields.io/badge/Fedora-51A2DA?logo=fedora&logoColor=white)](#fedora-dnf-configuration)
 [![Rocky Linux](https://img.shields.io/badge/Rocky%20Linux-10B981?logo=rockylinux&logoColor=white)](#rocky-linux-dnf-configuration)
 [![openSUSE](https://img.shields.io/badge/openSUSE-73BA25?logo=opensuse&logoColor=white)](#opensuse-zypper-configuration)
 [![Arch Linux](https://img.shields.io/badge/Arch%20Linux-1793D1?logo=archlinux&logoColor=white)](#arch-linux-pacman-configuration)
 [![arXiv](https://img.shields.io/badge/arXiv-B31B1B?logo=arxiv&logoColor=white)](#arxiv-paper-download)
 [![F-Droid](https://img.shields.io/badge/F--Droid-1976D2?logo=f-droid&logoColor=white)](#f-droid-repository-mirror)
-[![Jenkins](https://img.shields.io/badge/Jenkins-D33833?logo=jenkins&logoColor=white)](#jenkins-plugin-download)
-[![AI Inference Providers](https://img.shields.io/badge/AI%20Inference%20Providers-412991?logo=openai&logoColor=white)](#ai-inference-providers)
+[![Jenkins](https://img.shields.io/badge/Jenkins-D24939?logo=jenkins&logoColor=white)](#jenkins-plugin-download)
 [![Container Registries](https://img.shields.io/badge/Container%20Registries-%23007EC6.svg?logo=docker&logoColor=white)](#container-registries)
+[![AI Inference Providers](https://img.shields.io/badge/AI%20Inference%20Providers-412991?logo=openai&logoColor=white)](#ai-inference-providers)
 
-Ultra-high-performance, secure, all-in-one acceleration engine for developer resources that significantly outperforms traditional solutions, delivering unified, efficient acceleration across code repositories, package registries, AI inference APIs, container images, models, datasets, and more.
+Ultra-high-performance, secure, all-in-one acceleration engine for developer resources that significantly outperforms traditional solutions, delivering unified, efficient acceleration across code repositories, model and dataset hubs, package registries, container registries, AI inference providers, and more.
 
 In-depth technical analysis article published: ***[Deep Dive into Xget: A High-Performance, Multi-Protocol, and Secure Acceleration Engine for Developer Resources](https://blog.xi-xu.me/2025/10/07/deep-dive-into-xget-technology-en.html)***.
 
 ## 🎯 Quick Start
 
-**Pre-deployed Instance (no reliability guarantee): `xget.xi-xu.me`** - Ready to use out of the box, no deployment required!
+**Pre-deployed Instance (no reliability guarantee): `xget.xi-xu.me`**
 
 **URL Converter:** [**`xuc.xi-xu.me`**](https://xuc.xi-xu.me) - Convert any supported platform URL to Xget's acceleration format with one click!
-
-> **⚡ Experience Lightning-Fast Downloads Now**: No registration, no configuration required, just start using to experience blazing-fast download speeds!
 
 ## 🌟 Core Advantages - Why Choose Xget?
 
@@ -71,7 +74,7 @@ In-depth technical analysis article published: ***[Deep Dive into Xget: A High-P
 
 ### 🌐 Deep Multi-Platform Integration
 
-- **All-in-One Multi-Platform Support**: Unified support for code repositories, package managers, AI inference providers, container registries, model and dataset hosting platforms
+- **All-in-One Multi-Platform Support**: Unified support for mainstream platforms in various development scenarios
 - **Intelligent Recognition and Conversion**: Automatically recognizes platform prefixes and converts to correct URL structures for target platforms
 - **Consistent Acceleration Experience**: Enjoy unified and stable ultra-fast download experience regardless of file type or source
 
@@ -171,8 +174,8 @@ Using the pre-deployed instance **`xget.xi-xu.me`** or your own deployed instanc
 | arXiv | `arxiv` | `https://arxiv.org/...` | `https://xget.xi-xu.me/arxiv/...` |
 | F-Droid | `fdroid` | `https://f-droid.org/...` | `https://xget.xi-xu.me/fdroid/...` |
 | Jenkins Plugins | `jenkins` | `https://updates.jenkins.io/...` | `https://xget.xi-xu.me/jenkins/...` |
-| AI Inference Providers | `ip` | See [AI Inference Providers](#ai-inference-providers) | See [AI Inference Providers](#ai-inference-providers) |
 | Container Registries | `cr` | See [Container Registries](#container-registries) | See [Container Registries](#container-registries) |
+| AI Inference Providers | `ip` | See [AI Inference Providers](#ai-inference-providers) | See [AI Inference Providers](#ai-inference-providers) |
 
 ### Platform Conversion Examples
 
@@ -636,6 +639,58 @@ https://updates.jenkins.io/download/plugins/maven-plugin/3.27/maven-plugin.hpi
 https://xget.xi-xu.me/jenkins/download/plugins/maven-plugin/3.27/maven-plugin.hpi
 ```
 
+#### Container Registries
+
+Xget supports multiple container registries, using the `cr/[Registry Prefix]` format:
+
+| Container Registry | Registry Prefix | Original URL Format | Accelerated URL Format |
+|-------------------|----------------|---------------------|------------------------|
+| Docker Hub | `docker` | `https://registry-1.docker.io/...` | `https://xget.xi-xu.me/cr/docker/...` |
+| Quay.io | `quay` | `https://quay.io/...` | `https://xget.xi-xu.me/cr/quay/...` |
+| Google Container Registry | `gcr` | `https://gcr.io/...` | `https://xget.xi-xu.me/cr/gcr/...` |
+| Microsoft Container Registry | `mcr` | `https://mcr.microsoft.com/...` | `https://xget.xi-xu.me/cr/mcr/...` |
+| Amazon Public ECR | `ecr` | `https://public.ecr.aws/...` | `https://xget.xi-xu.me/cr/ecr/...` |
+| GitHub Container Registry | `ghcr` | `https://ghcr.io/...` | `https://xget.xi-xu.me/cr/ghcr/...` |
+| GitLab Container Registry | `gitlab` | `https://registry.gitlab.com/...` | `https://xget.xi-xu.me/cr/gitlab/...` |
+| Red Hat Registry | `redhat` | `https://registry.redhat.io/...` | `https://xget.xi-xu.me/cr/redhat/...` |
+| Oracle Container Registry | `oracle` | `https://container-registry.oracle.com/...` | `https://xget.xi-xu.me/cr/oracle/...` |
+| Cloudsmith | `cloudsmith` | `https://docker.cloudsmith.io/...` | `https://xget.xi-xu.me/cr/cloudsmith/...` |
+| DigitalOcean Registry | `digitalocean` | `https://registry.digitalocean.com/...` | `https://xget.xi-xu.me/cr/digitalocean/...` |
+| VMware Registry | `vmware` | `https://projects.registry.vmware.com/...` | `https://xget.xi-xu.me/cr/vmware/...` |
+| Kubernetes Registry | `k8s` | `https://registry.k8s.io/...` | `https://xget.xi-xu.me/cr/k8s/...` |
+| Heroku Registry | `heroku` | `https://registry.heroku.com/...` | `https://xget.xi-xu.me/cr/heroku/...` |
+| SUSE Registry | `suse` | `https://registry.suse.com/...` | `https://xget.xi-xu.me/cr/suse/...` |
+| openSUSE Registry | `opensuse` | `https://registry.opensuse.org/...` | `https://xget.xi-xu.me/cr/opensuse/...` |
+| Gitpod Registry | `gitpod` | `https://registry.gitpod.io/...` | `https://xget.xi-xu.me/cr/gitpod/...` |
+
+```url
+# Docker Hub original URL (official images)
+https://registry-1.docker.io/v2/library/nginx/manifests/latest
+
+# Converted (add cr/docker prefix)
+https://xget.xi-xu.me/cr/docker/v2/nginx/manifests/latest
+
+# Docker Hub original URL (user images)
+https://registry-1.docker.io/v2/nginxinc/nginx-unprivileged/manifests/latest
+
+# Converted (add cr/docker prefix)
+https://xget.xi-xu.me/cr/docker/v2/nginxinc/nginx-unprivileged/manifests/latest
+
+# GitHub Container Registry original URL
+https://ghcr.io/v2/nginxinc/nginx-unprivileged/manifests/latest
+
+# Converted (add cr/ghcr prefix)
+https://xget.xi-xu.me/cr/ghcr/v2/nginxinc/nginx-unprivileged/manifests/latest
+
+# Google Container Registry original URL
+https://gcr.io/v2/distroless/base/manifests/latest
+
+# Converted (add cr/gcr prefix)
+https://xget.xi-xu.me/cr/gcr/v2/distroless/base/manifests/latest
+```
+
+For use cases, see [Container Image Acceleration](#container-image-acceleration).
+
 #### AI Inference Providers
 
 Xget supports API acceleration for many mainstream AI inference providers, using the `ip/[AI Provider Prefix]` format:
@@ -698,58 +753,6 @@ https://xget.xi-xu.me/ip/huggingface/hf-inference/models/openai/whisper-large-v3
 ```
 
 For use cases, see [AI Inference API Acceleration](#ai-inference-api-acceleration).
-
-#### Container Registries
-
-Xget supports multiple container registries, using the `cr/[Registry Prefix]` format:
-
-| Container Registry | Registry Prefix | Original URL Format | Accelerated URL Format |
-|-------------------|----------------|---------------------|------------------------|
-| Docker Hub | `docker` | `https://registry-1.docker.io/...` | `https://xget.xi-xu.me/cr/docker/...` |
-| Quay.io | `quay` | `https://quay.io/...` | `https://xget.xi-xu.me/cr/quay/...` |
-| Google Container Registry | `gcr` | `https://gcr.io/...` | `https://xget.xi-xu.me/cr/gcr/...` |
-| Microsoft Container Registry | `mcr` | `https://mcr.microsoft.com/...` | `https://xget.xi-xu.me/cr/mcr/...` |
-| Amazon Public ECR | `ecr` | `https://public.ecr.aws/...` | `https://xget.xi-xu.me/cr/ecr/...` |
-| GitHub Container Registry | `ghcr` | `https://ghcr.io/...` | `https://xget.xi-xu.me/cr/ghcr/...` |
-| GitLab Container Registry | `gitlab` | `https://registry.gitlab.com/...` | `https://xget.xi-xu.me/cr/gitlab/...` |
-| Red Hat Registry | `redhat` | `https://registry.redhat.io/...` | `https://xget.xi-xu.me/cr/redhat/...` |
-| Oracle Container Registry | `oracle` | `https://container-registry.oracle.com/...` | `https://xget.xi-xu.me/cr/oracle/...` |
-| Cloudsmith | `cloudsmith` | `https://docker.cloudsmith.io/...` | `https://xget.xi-xu.me/cr/cloudsmith/...` |
-| DigitalOcean Registry | `digitalocean` | `https://registry.digitalocean.com/...` | `https://xget.xi-xu.me/cr/digitalocean/...` |
-| VMware Registry | `vmware` | `https://projects.registry.vmware.com/...` | `https://xget.xi-xu.me/cr/vmware/...` |
-| Kubernetes Registry | `k8s` | `https://registry.k8s.io/...` | `https://xget.xi-xu.me/cr/k8s/...` |
-| Heroku Registry | `heroku` | `https://registry.heroku.com/...` | `https://xget.xi-xu.me/cr/heroku/...` |
-| SUSE Registry | `suse` | `https://registry.suse.com/...` | `https://xget.xi-xu.me/cr/suse/...` |
-| openSUSE Registry | `opensuse` | `https://registry.opensuse.org/...` | `https://xget.xi-xu.me/cr/opensuse/...` |
-| Gitpod Registry | `gitpod` | `https://registry.gitpod.io/...` | `https://xget.xi-xu.me/cr/gitpod/...` |
-
-```url
-# Docker Hub original URL (official images)
-https://registry-1.docker.io/v2/library/nginx/manifests/latest
-
-# Converted (add cr/docker prefix)
-https://xget.xi-xu.me/cr/docker/v2/nginx/manifests/latest
-
-# Docker Hub original URL (user images)
-https://registry-1.docker.io/v2/nginxinc/nginx-unprivileged/manifests/latest
-
-# Converted (add cr/docker prefix)
-https://xget.xi-xu.me/cr/docker/v2/nginxinc/nginx-unprivileged/manifests/latest
-
-# GitHub Container Registry original URL
-https://ghcr.io/v2/nginxinc/nginx-unprivileged/manifests/latest
-
-# Converted (add cr/ghcr prefix)
-https://xget.xi-xu.me/cr/ghcr/v2/nginxinc/nginx-unprivileged/manifests/latest
-
-# Google Container Registry original URL
-https://gcr.io/v2/distroless/base/manifests/latest
-
-# Converted (add cr/gcr prefix)
-https://xget.xi-xu.me/cr/gcr/v2/distroless/base/manifests/latest
-```
-
-For use cases, see [Container Image Acceleration](#container-image-acceleration).
 
 ## 🎯 Use Cases
 
@@ -1969,6 +1972,181 @@ pipeline {
 }
 ```
 
+### Container Image Acceleration
+
+#### Docker Configuration
+
+```bash
+# Configure Docker to use Xget image acceleration
+# Edit /etc/docker/daemon.json (Linux) or ~/.docker/daemon.json (macOS/Windows)
+{
+  "registry-mirrors": [
+    "https://xget.xi-xu.me/cr/ghcr"
+  ]
+}
+
+# Restart Docker service
+sudo systemctl restart docker  # Linux
+# Or restart service in Docker Desktop
+
+# Verify configuration
+docker info | grep -A 10 "Registry Mirrors"
+```
+
+#### Pull Images Directly
+
+```bash
+# Pull GitHub Container Registry images
+docker pull xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
+
+# Pull Google Container Registry images
+docker pull xget.xi-xu.me/cr/gcr/distroless/base:latest
+
+# Pull Microsoft Container Registry images
+docker pull xget.xi-xu.me/cr/mcr/dotnet/runtime:8.0
+```
+
+#### Kubernetes Deployment Configuration
+
+```yaml
+# deployment.yaml - Use Xget's images
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
+        ports:
+        - containerPort: 80
+      - name: redis
+        image: xget.xi-xu.me/cr/ghcr/bitnami/redis:alpine
+        ports:
+        - containerPort: 6379
+```
+
+#### Docker Compose Configuration
+
+```yaml
+# docker-compose.yml - Use Xget accelerated images
+version: '3.8'
+services:
+  web:
+    image: xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./html:/usr/share/nginx/html
+
+  database:
+    image: xget.xi-xu.me/cr/mcr/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: "MyStrongPassword123!"
+    volumes:
+      - mssql_data:/var/opt/mssql
+
+  cache:
+    image: xget.xi-xu.me/cr/ghcr/bitnami/redis:alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  mssql_data:
+```
+
+#### Dockerfile Optimization
+
+```dockerfile
+# Use Xget accelerated base images in Dockerfile
+FROM xget.xi-xu.me/cr/ghcr/nodejs/node:18-alpine AS builder
+
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+RUN npm run build
+
+# Production stage
+FROM xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Use Microsoft Container Registry's .NET image
+FROM xget.xi-xu.me/cr/mcr/dotnet/aspnet:8.0 AS runtime
+WORKDIR /app
+COPY --from=builder /app/publish .
+ENTRYPOINT ["dotnet", "MyApp.dll"]
+```
+
+#### CI/CD Integration
+
+```yaml
+# GitHub Actions - Use Xget to accelerate container builds
+name: Build and Deploy
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build with accelerated base images
+        run: |
+          # Build using Xget's base images
+          docker build -t myapp:latest \
+            --build-arg BASE_IMAGE=xget.xi-xu.me/cr/ghcr/nodejs/node:18-alpine .
+
+      - name: Test with accelerated images
+        run: |
+          # Test using accelerated images
+          docker run --rm \
+            xget.xi-xu.me/cr/mcr/dotnet/runtime:8.0 \
+            dotnet --version
+```
+
+#### Podman Configuration
+
+```bash
+# Configure Podman to use Xget image acceleration
+# Edit /etc/containers/registries.conf
+[[registry]]
+prefix = "ghcr.io"
+location = "xget.xi-xu.me/cr/ghcr"
+
+# Or pull directly
+podman pull xget.xi-xu.me/cr/ghcr/alpine/alpine:latest
+podman pull xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
+```
+
+#### containerd Configuration
+
+```toml
+# Configure containerd to use Xget
+# Edit /etc/containerd/config.toml
+[plugins."io.containerd.grpc.v1.cri".registry.mirrors]
+  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."ghcr.io"]
+    endpoint = ["https://xget.xi-xu.me/cr/ghcr"]
+  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."gcr.io"]
+    endpoint = ["https://xget.xi-xu.me/cr/gcr"]
+```
+
+```bash
+# Restart containerd
+sudo systemctl restart containerd
+```
+
 ### AI Inference API Acceleration
 
 #### OpenAI API
@@ -2171,184 +2349,11 @@ client = OpenAI(
 )
 ```
 
-### Container Image Acceleration
-
-#### Docker Configuration
-
-```bash
-# Configure Docker to use Xget image acceleration
-# Edit /etc/docker/daemon.json (Linux) or ~/.docker/daemon.json (macOS/Windows)
-{
-  "registry-mirrors": [
-    "https://xget.xi-xu.me/cr/ghcr"
-  ]
-}
-
-# Restart Docker service
-sudo systemctl restart docker  # Linux
-# Or restart service in Docker Desktop
-
-# Verify configuration
-docker info | grep -A 10 "Registry Mirrors"
-```
-
-#### Pull Images Directly
-
-```bash
-# Pull GitHub Container Registry images
-docker pull xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
-
-# Pull Google Container Registry images
-docker pull xget.xi-xu.me/cr/gcr/distroless/base:latest
-
-# Pull Microsoft Container Registry images
-docker pull xget.xi-xu.me/cr/mcr/dotnet/runtime:8.0
-```
-
-#### Kubernetes Deployment Configuration
-
-```yaml
-# deployment.yaml - Use Xget's images
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx-deployment
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: nginx
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      containers:
-      - name: nginx
-        image: xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
-        ports:
-        - containerPort: 80
-      - name: redis
-        image: xget.xi-xu.me/cr/ghcr/bitnami/redis:alpine
-        ports:
-        - containerPort: 6379
-```
-
-#### Docker Compose Configuration
-
-```yaml
-# docker-compose.yml - Use Xget accelerated images
-version: '3.8'
-services:
-  web:
-    image: xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
-    ports:
-      - "80:80"
-    volumes:
-      - ./html:/usr/share/nginx/html
-
-  database:
-    image: xget.xi-xu.me/cr/mcr/mssql/server:2022-latest
-    environment:
-      ACCEPT_EULA: Y
-      SA_PASSWORD: "MyStrongPassword123!"
-    volumes:
-      - mssql_data:/var/opt/mssql
-
-  cache:
-    image: xget.xi-xu.me/cr/ghcr/bitnami/redis:alpine
-    ports:
-      - "6379:6379"
-
-volumes:
-  mssql_data:
-```
-
-#### Dockerfile Optimization
-
-```dockerfile
-# Use Xget accelerated base images in Dockerfile
-FROM xget.xi-xu.me/cr/ghcr/nodejs/node:18-alpine AS builder
-
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-
-COPY . .
-RUN npm run build
-
-# Production stage
-FROM xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Use Microsoft Container Registry's .NET image
-FROM xget.xi-xu.me/cr/mcr/dotnet/aspnet:8.0 AS runtime
-WORKDIR /app
-COPY --from=builder /app/publish .
-ENTRYPOINT ["dotnet", "MyApp.dll"]
-```
-
-#### CI/CD Integration
-
-```yaml
-# GitHub Actions - Use Xget to accelerate container builds
-name: Build and Deploy
-on: [push]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Build with accelerated base images
-        run: |
-          # Build using Xget's base images
-          docker build -t myapp:latest \
-            --build-arg BASE_IMAGE=xget.xi-xu.me/cr/ghcr/nodejs/node:18-alpine .
-
-      - name: Test with accelerated images
-        run: |
-          # Test using accelerated images
-          docker run --rm \
-            xget.xi-xu.me/cr/mcr/dotnet/runtime:8.0 \
-            dotnet --version
-```
-
-#### Podman Configuration
-
-```bash
-# Configure Podman to use Xget image acceleration
-# Edit /etc/containers/registries.conf
-[[registry]]
-prefix = "ghcr.io"
-location = "xget.xi-xu.me/cr/ghcr"
-
-# Or pull directly
-podman pull xget.xi-xu.me/cr/ghcr/alpine/alpine:latest
-podman pull xget.xi-xu.me/cr/ghcr/nginxinc/nginx-unprivileged:latest
-```
-
-#### containerd Configuration
-
-```toml
-# Configure containerd to use Xget
-# Edit /etc/containerd/config.toml
-[plugins."io.containerd.grpc.v1.cri".registry.mirrors]
-  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."ghcr.io"]
-    endpoint = ["https://xget.xi-xu.me/cr/ghcr"]
-  [plugins."io.containerd.grpc.v1.cri".registry.mirrors."gcr.io"]
-    endpoint = ["https://xget.xi-xu.me/cr/gcr"]
-```
-
-```bash
-# Restart containerd
-sudo systemctl restart containerd
-```
-
 ## 🚀 Deployment
 
-### Deployment Steps
+### Deploy to Cloudflare Workers
+
+#### Deployment Steps
 
 1. **Fork this repository**: [Fork xixu-me/Xget](https://github.com/xixu-me/Xget/fork)
 
@@ -2374,7 +2379,7 @@ After deployment completes, your Xget service will be available at:
 - Worker domain: `your-worker-name.your-subdomain.workers.dev`
 - Custom domain: `your-domain.com` (if bound)
 
-### Environment Variable Configuration
+#### Environment Variable Configuration
 
 You can set the following environment variables in the Cloudflare Workers console to customize configuration:
 
@@ -2385,6 +2390,112 @@ You can set the following environment variables in the Cloudflare Workers consol
 - `ALLOWED_METHODS`: Allowed HTTP methods (default: GET,HEAD)
 - `ALLOWED_ORIGINS`: Allowed CORS origins (default: *)
 - `MAX_PATH_LENGTH`: Maximum path length (default: 2048)
+
+### Self-Hosted Deployment
+
+If you prefer to run Xget on your own server, you can use Docker or Podman deployment:
+
+#### Using Pre-built Image
+
+Pull and run the pre-built image from GitHub Container Registry:
+
+**Using Docker:**
+
+```bash
+# Pull the latest image
+docker pull ghcr.io/xixu-me/xget:latest
+
+# Run the container
+docker run -d \
+  --name xget \
+  -p 8080:8080 \
+  ghcr.io/xixu-me/xget:latest
+```
+
+**Using Podman:**
+
+```bash
+# Pull the latest image
+podman pull ghcr.io/xixu-me/xget:latest
+
+# Run the container
+podman run -d \
+  --name xget \
+  -p 8080:8080 \
+  ghcr.io/xixu-me/xget:latest
+```
+
+#### Building Locally
+
+Build the container image from source:
+
+**Using Docker:**
+
+```bash
+# Clone the repository
+git clone https://github.com/xixu-me/Xget.git
+cd Xget
+
+# Build the image
+docker build -t xget:local .
+
+# Run the container
+docker run -d \
+  --name xget \
+  -p 8080:8080 \
+  xget:local
+```
+
+**Using Podman:**
+
+```bash
+# Clone the repository
+git clone https://github.com/xixu-me/Xget.git
+cd Xget
+
+# Build the image
+podman build -t xget:local .
+
+# Run the container
+podman run -d \
+  --name xget \
+  -p 8080:8080 \
+  xget:local
+```
+
+#### Using Docker Compose / Podman Compose
+
+Create a `docker-compose.yml` file:
+
+```yaml
+version: '3.8'
+
+services:
+  xget:
+    image: ghcr.io/xixu-me/xget:latest
+    container_name: xget
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+```
+
+**Using Docker Compose:**
+
+```bash
+docker-compose up -d
+```
+
+**Using Podman Compose:**
+
+```bash
+podman-compose up -d
+# Or use podman compose (Podman 4.0+)
+podman compose up -d
+```
+
+After deployment, Xget will be available at `http://<server-ip>:8080`.
+
+**Note**: Self-hosted deployment does not include Cloudflare Workers' global edge network acceleration. Performance depends on your server configuration and network environment.
 
 ## 🔧 Configuration
 
@@ -2510,16 +2621,16 @@ npx wrangler dev --log-level debug
 
 ## ⚠️ Disclaimer
 
-- **Legal and Compliant Use**: This repository is intended to accelerate access to legal public resources (such as file downloads, Git operations, AI inference APIs, container image pulls, and package management). Please strictly comply with the laws and regulations of your jurisdiction as well as the terms of service and usage agreements of relevant platforms. Any use beyond legal public resources is the user's own legal responsibility
-- **Non-Affiliation and Self-Responsibility**: Any fork, secondary development, redistribution, or derivative version based on this repository is independently responsible by its maintainer; the authors, maintainers, and contributors of this repository bear no legal or joint liability for their actions or consequences, nor does it constitute employment, cooperation, agency, endorsement, or guarantee
-- **No Warranty and Limitation of Liability**: To the maximum extent permitted by applicable law, this repository is provided "AS IS", and the authors, maintainers, and contributors provide no express or implied warranties (including but not limited to merchantability, fitness for a particular purpose, and non-infringement), nor are they responsible for any direct or indirect losses, data loss, business interruption, or other consequences caused by the use of this repository
-- **User Obligations**: Users should independently evaluate and control usage risks, ensuring their actions and purposes are legal, compliant, and do not infringe third-party rights, and not use this repository for illegal, infringing, or malicious purposes in any form
-- **Third-Party Platforms and Rate Limits**: Please comply with the terms of service, API usage limits, and rate controls of platforms such as GitHub, GitLab, Gitea, Codeberg, SourceForge, Hugging Face, various package management platforms, and container registries to avoid excessive load on source platforms
-- **Intellectual Property and Content Compliance**: Ensure that content accessed or distributed through this repository complies with relevant copyright and licensing requirements; for copyrighted content, please comply with its licensing agreements and terms of use
-- **Data and Security**: This repository adopts a no-log architecture and does not store, record, or analyze user request data. However, internet transmission has inherent risks. It is recommended to perform security scans on downloaded files, especially executable files and scripts, and handle sensitive information carefully
-- **Support and Maintenance**: This repository is an open source, community-driven work. Authors and contributors are not obligated to provide support, fixes, or continuous maintenance; merged external contributions do not constitute commitments or endorsements for their purposes, effects, or results
-- **Representation and Name Use**: Do not imply cooperation, endorsement, or guarantee from authors or contributors in any scenario. External display or promotion involving the repository name, author name, or logos should comply with applicable laws and common name/logo usage norms
-- **Updates and Applicability**: This disclaimer may be updated as the repository or legal environment changes without separate notice; by using, copying, distributing, or modifying this repository, you are deemed to have read and agreed to the latest version of this disclaimer
+- **Legal and Compliant Use**: This repository aims to provide unified acceleration services for code repositories, package registries, AI inference APIs, container images, models, datasets, and other legitimate developer resources. Users must strictly comply with the laws and regulations of their jurisdiction and the terms of service of relevant platforms. Any illegal use is the sole responsibility of the user
+- **Non-Affiliation and Independent Responsibility**: This repository has no affiliation, agency, or partnership relationship with any third-party platforms. Any fork, secondary development, redistribution, or derivative version based on this repository is solely the responsibility of its maintainer; authors, maintainers, and contributors bear no legal or joint liability for the actions or consequences of derivative repositories
+- **No Warranty and Limitation of Liability**: To the maximum extent permitted by applicable law, this repository is provided "AS IS" without any express or implied warranties (including but not limited to merchantability, fitness for a particular purpose, non-infringement, etc.). Authors, maintainers, and contributors assume no responsibility for any direct or indirect losses (including but not limited to data loss, business interruption, profit loss, etc.) resulting from the use of this repository
+- **Risk Assumption Principle**: Users should independently assess usage risks, ensure their use is legal and compliant, respect third-party rights, and must not use this repository for any illegal, infringing, malicious, or improper purposes
+- **Third-Party Platform Compliance**: Users must comply with the terms of service, API usage policies, rate limits, and copyright requirements of relevant platforms, and avoid causing overload or interference to source platforms. Each platform has the final interpretation right over its content, services, and policies
+- **Intellectual Property Protection**: Content obtained through this repository is protected by respective copyright laws. Users must comply with relevant licensing agreements, copyright notices, and terms of use, and must not engage in any activities that infringe intellectual property rights
+- **Security Recommendations**: Although this repository adopts a no-log architecture and does not store user request data, due to inherent risks of internet transmission, users are advised to perform security scans on downloaded content, especially for executable files and scripts
+- **Open Source Nature**: This repository is open source. Authors and contributors are not obligated to provide technical support, bug fixes, or continuous maintenance. The inclusion of external contributions does not constitute endorsement or commitment to specific uses or effects
+- **Name Usage Guidelines**: Any representations that may imply authors or contributors provide commercial cooperation, technical support, guarantees, or endorsements are strictly prohibited. The use of repository names or author identifiers must comply with relevant laws and regulations as well as general norms
+- **Disclaimer Updates**: This disclaimer may be updated and revised as the repository develops or legal environments change. Continued use, copying, distribution, or modification of this repository constitutes acceptance of the latest version of this disclaimer
 
 ## 🤝 Contributing
 
@@ -2539,12 +2650,6 @@ We welcome all forms of contribution! Please check the [Contributing Guide](CONT
    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=xixu-me/Xget&type=Date" />
  </picture>
 </a>
-
-## 📞 Contact
-
-- **Author**: [Xi Xu](https://xi-xu.me)
-- **Email**: [Contact Email](mailto:i@xi-xu.me)
-- **Sponsor**: [Sponsor URL](https://xi-xu.me/#sponsorships)
 
 ## 📝 License
 

@@ -13,6 +13,10 @@ on:
       - '.editorconfig'
       - '.vscode/**'
       - 'docs/**'
+      - '.prettierrc*'
+      - '.eslintrc*'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/PULL_REQUEST_TEMPLATE/**'
   workflow_dispatch:
 
 jobs:

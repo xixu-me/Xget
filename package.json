@@ -8,6 +8,7 @@
     "@cloudflare/workers-types": "^4.20250724.0",
     "eslint": "^9.31.0",
     "prettier": "^3.6.2",
+    "typescript": "^5.9.3",
     "vitest": "^3.1.4",
     "wrangler": "^4.26.0"
   },
