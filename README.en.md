@@ -2493,7 +2493,7 @@ podman-compose up -d
 podman compose up -d
 ```
 
-After deployment, Xget will be available at `http://localhost:8080`.
+After deployment, Xget will be available at `http://<server-ip>:8080`.
 
 **Note**: Self-hosted deployment does not include Cloudflare Workers' global edge network acceleration. Performance depends on your server configuration and network environment.
 
