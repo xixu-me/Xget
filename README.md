@@ -4,7 +4,7 @@
 
 <a href="https://trendshift.io/repositories/14768" target="_blank"><img src="https://trendshift.io/api/badge/repositories/14768" alt="xixu-me%2FXget | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
-[![Cloudflare Pages](https://img.shields.io/badge/Cloudflare%20Pages-F38020?&logo=cloudflare&logoColor=white)](#部署到-cloudflare-pages)
+[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare%20Workers-F38020?&logo=cloudflare&logoColor=white)](#部署到-cloudflare-workers)
 [![Docker](https://img.shields.io/badge/Docker-2496ED?&logo=docker&logoColor=white)](#自托管部署)
 [![Podman](https://img.shields.io/badge/Podman-892CA0?&logo=podman&logoColor=white)](#自托管部署)
 [![Chromium](https://img.shields.io/badge/Chromium-4285F4?logo=googlechrome&logoColor=white)](#-生态系统集成)
@@ -74,7 +74,7 @@
 
 ### ⚡ 极速性能 - 突破传统加速器瓶颈
 
-- **⚡ 毫秒级响应**：Cloudflare Pages 全球 330+ 边缘节点，平均响应时间 < 50ms
+- **⚡ 毫秒级响应**：Cloudflare 全球 330+ 边缘节点，平均响应时间 < 50ms
 - **🌐 HTTP/3 极速协议**：启用最新 HTTP/3 协议，连接延迟降低 40%，传输速度提升 30%
 - **📦 智能多重压缩**：gzip、deflate、brotli 三重压缩算法，传输效率提升 60%
 - **🔗 零延迟预连接**：连接预热和保持活跃，消除握手开销，实现秒级响应
@@ -2361,14 +2361,14 @@ client = OpenAI(
 
 ## 🚀 部署
 
-### 部署到 Cloudflare Pages
+### 部署到 Cloudflare Workers
 
 #### 部署步骤
 
 1. **fork 本存储库**：[Fork xixu-me/Xget](https://github.com/xixu-me/Xget/fork)
 
 2. **获取 Cloudflare 凭证**：
-   - 访问[帐户 API 令牌](https://dash.cloudflare.com/?to=/:account/api-tokens)创建并记录 API 令牌，使用"编辑 Cloudflare Workers"模板
+   - 访问[帐户 API 令牌](https://dash.cloudflare.com/?to=/:account/api-tokens)创建并记录 API 令牌，使用“编辑 Cloudflare Workers”模板
    - 访问 [Workers 和 Pages](https://dash.cloudflare.com/?to=/:account/workers-and-pages) 记录 Account ID
 
 3. **配置 GitHub Secrets**：
@@ -2382,16 +2382,16 @@ client = OpenAI(
    - 仅修改文档文件（`.md`）、`LICENSE`、`.gitignore` 等不会触发部署
    - 也可以在 GitHub Actions 页面手动触发部署
 
-5. **绑定自定义域名**（可选）：在 Cloudflare Pages 控制台中绑定你的自定义域名
+5. **绑定自定义域名**（可选）：在 Cloudflare Workers 控制台中绑定你的自定义域名
 
 部署完成后，你的 Xget 服务将在以下地址可用：
 
-- Pages 域名：`your-project-name.pages.dev`
+- Worker 域名：`your-worker-name.your-subdomain.workers.dev`
 - 自定义域名：`your-domain.com`（如果已绑定）
 
 #### 环境变量配置
 
-你可以在 Cloudflare Pages 控制台（Settings → Environment variables）中设置以下环境变量来自定义配置：
+你可以在 Cloudflare Workers 控制台中设置以下环境变量来自定义配置：
 
 - `TIMEOUT_SECONDS`：请求超时时间（默认：30）
 - `MAX_RETRIES`：最大重试次数（默认：3）

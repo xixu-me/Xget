@@ -739,7 +739,7 @@ function responseUnauthorized(url) {
  * const response = await handleRequest(request, env, ctx);
  * // Uses 60s timeout and 1-hour cache instead of defaults
  */
-export async function handleRequest(request, env, ctx) {
+async function handleRequest(request, env, ctx) {
   try {
     // Create config with environment variable overrides
     const config = env ? createConfig(env) : CONFIG;
