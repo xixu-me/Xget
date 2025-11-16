@@ -2503,7 +2503,7 @@ podman-compose up -d
 podman compose up -d
 ```
 
-部署完成后，Xget 将在 `http://localhost:8080` 可用。
+部署完成后，Xget 将在 `http://<server-ip>:8080` 可用。
 
 **注意**：自托管部署不包括 Cloudflare Workers 的全球边缘网络加速，性能取决于你的服务器配置和网络环境。
 
