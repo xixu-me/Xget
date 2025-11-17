@@ -12,6 +12,7 @@ on:
       - 'LICENSE'
       - '.gitignore'
       - '.github/**'
+  workflow_dispatch:
 
 jobs:
   convert-and-push:
