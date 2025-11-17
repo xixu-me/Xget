@@ -1,0 +1,213 @@
+name: Sync Worker to EdgeOne Pages Branch
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+      - '.gitignore'
+      - '.github/**'
+
+jobs:
+  convert-and-push:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create Pages branch (force)
+        run: |
+          git checkout --orphan pages
+          git rm -rf .
+
+      - name: Checkout source files from main
+        run: |
+          git checkout main -- src/
+          git checkout main -- test/
+          git checkout main -- package.json
+          git checkout main -- package-lock.json
+          git checkout main -- vitest.config.js
+          git checkout main -- .gitignore
+          git checkout main -- eslint.config.js 2>/dev/null || true
+          git checkout main -- .prettierrc 2>/dev/null || true
+          git checkout main -- .prettierignore 2>/dev/null || true
+
+      - name: Create node-functions directory and handler
+        run: |
+          mkdir -p node-functions
+          cat > node-functions/[[default]].js << 'EOF'
+          /**
+           * Xget - High-performance acceleration engine for developer resources
+           * Copyright (C) 2025 Xi Xu
+           *
+           * This program is free software: you can redistribute it and/or modify
+           * it under the terms of the GNU General Public License as published by
+           * the Free Software Foundation, either version 3 of the License, or
+           * (at your option) any later version.
+           *
+           * This program is distributed in the hope that it will be useful,
+           * but WITHOUT ANY WARRANTY; without even the implied warranty of
+           * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+           * GNU General Public License for more details.
+           *
+           * You should have received a copy of the GNU General Public License
+           * along with this program. If not, see <https://www.gnu.org/licenses/>.
+           */
+
+          import { handleRequest } from '../src/index.js';
+
+          /**
+           * EdgeOne Pages Node Function handler for all routes.
+           *
+           * This catch-all route handler processes all incoming requests to the Xget
+           * acceleration engine. It delegates request processing to the main handleRequest
+           * function from the Worker code, maintaining full compatibility with the
+           * existing implementation.
+           *
+           * The [[default]] syntax in the filename creates a catch-all route that matches
+           * any path, allowing this single function to handle all requests to the Pages
+           * application.
+           *
+           * @param {Object} context - EdgeOne Pages Function context
+           * @param {Request} context.request - The incoming HTTP request
+           * @param {Object} context.env - Environment variables and bindings
+           * @param {Object} context.params - Route parameters (path segments from [[default]])
+           * @param {string} context.uuid - Unique request identifier
+           * @param {string} context.clientIp - Client IP address
+           * @param {Object} context.server - Server information (region, requestId)
+           * @param {Object} context.geo - Geographic location data
+           * @returns {Promise<Response>} The HTTP response to return to the client
+           *
+           * @example
+           * // This is called automatically by EdgeOne Pages
+           * // User requests: https://xget.pages.dev/npm/lodash
+           * // Runtime invokes: onRequest(context)
+           * // Returns: Response with package data
+           *
+           * @example
+           * // Environment variables usage
+           * // edgeone.json or console: TIMEOUT_SECONDS = "60"
+           * // context.env contains: { TIMEOUT_SECONDS: "60" }
+           * // handleRequest uses createConfig(env) to override defaults
+           */
+          export default async function onRequest(context) {
+            // Extract request and env from context
+            const { request, env } = context;
+
+            // Create a minimal ExecutionContext-like object for compatibility with Worker code
+            const ctx = {
+              waitUntil: (promise) => {
+                // EdgeOne Pages doesn't expose waitUntil in the same way
+                // Background tasks should complete within the request lifecycle
+                promise.catch(err => console.error('Background task error:', err));
+              },
+              passThroughOnException: () => {
+                // Pages doesn't support passThroughOnException, so this is a no-op
+                console.warn('passThroughOnException is not supported in Pages Functions');
+              }
+            };
+
+            // Delegate to the main request handler
+            return handleRequest(request, env, ctx);
+          }
+          EOF
+
+      - name: Create public directory
+        run: |
+          mkdir -p public
+          touch public/.gitkeep
+
+      - name: Modify src/index.js to export handleRequest
+        run: |
+          sed -i 's/^async function handleRequest(/export async function handleRequest(/' src/index.js
+
+      - name: Create edgeone.json configuration
+        run: |
+          cat > edgeone.json << 'EOF'
+          {
+            "name": "xget",
+            "outputDirectory": "./public",
+            "nodeVersion": "20.18.0"
+          }
+          EOF
+
+      - name: Update package.json scripts for EdgeOne Pages
+        run: |
+          # Update scripts to use EdgeOne Pages commands
+          sed -i 's/"deploy": "wrangler deploy"/"deploy": "edgeone pages deploy"/' package.json
+          sed -i 's/"dev": "wrangler dev"/"dev": "edgeone pages dev"/' package.json
+          sed -i 's/"start": "wrangler dev"/"start": "edgeone pages dev"/' package.json
+
+          # Update format and lint scripts to include node-functions/
+          sed -i 's/"format": "prettier --write src\/ test\/ \*\.js \*\.json"/"format": "prettier --write src\/ test\/ node-functions\/ *.js *.json"/' package.json
+          sed -i 's/"format:check": "prettier --check src\/ test\/ \*\.js \*\.json"/"format:check": "prettier --check src\/ test\/ node-functions\/ *.js *.json"/' package.json
+          sed -i 's/"lint": "eslint src\/ test\/"/"lint": "eslint src\/ test\/ node-functions\/"/' package.json
+          sed -i 's/"lint:fix": "eslint src\/ test\/ --fix"/"lint:fix": "eslint src\/ test\/ node-functions\/ --fix"/' package.json
+
+      - name: Update vitest.config.js to include node-functions/
+        run: |
+          sed -i "s|include: \['src/\*\*/\*\.js', 'src/\*\*/\*\.ts'\]|include: ['src/**/*.js', 'src/**/*.ts', 'node-functions/**/*.js', 'node-functions/**/*.ts']|" vitest.config.js
+
+      - name: Create minimal README for Pages branch
+        run: |
+          cat > README.md << 'EOF'
+          # Xget - EdgeOne Pages Branch
+
+          This branch contains the EdgeOne Pages version of Xget, automatically converted from the main (Worker) branch.
+
+          **Note:** This branch is automatically generated and force-pushed. Do not make manual changes here.
+
+          ## Deployment
+
+          Deploy this branch to EdgeOne Pages:
+
+          ```bash
+          edgeone pages deploy
+          ```
+
+          ## Source
+
+          The source code is maintained in the `main` branch. All changes should be made there.
+          EOF
+
+      - name: Commit changes
+        run: |
+          git add -A
+          git commit -m "Convert Worker to EdgeOne Pages (auto-sync from main)
+
+          This commit was automatically generated by the sync-to-pages workflow.
+          Source: main branch @ ${{ github.sha }}
+
+          Changes:
+          - Add node-functions/[[default]].js: EdgeOne Pages Node Function handler
+          - Add public/.gitkeep: Empty public directory for EdgeOne Pages
+          - Add edgeone.json: EdgeOne Pages configuration
+          - Update src/index.js: Export handleRequest
+          - Update package.json: EdgeOne Pages deployment scripts
+          - Update vitest.config.js: Include node-functions/ in coverage"
+
+      - name: Force push to pages branch
+        run: |
+          git push origin pages --force
+
+      - name: Summary
+        run: |
+          echo "✅ Successfully converted Worker code to EdgeOne Pages format"
+          echo "📦 Pushed to 'pages' branch (force push)"
+          echo "🔗 Source commit: ${{ github.sha }}"
+          echo "🚀 Deploy with: edgeone pages deploy"
