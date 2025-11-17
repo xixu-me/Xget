@@ -1,20 +1,32 @@
-name: Sync Worker to Page
+name: Sync to Page
 
 on:
   push:
     branches:
       - main
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+      - '.gitignore'
+      - '.editorconfig'
+      - '.vscode/**'
+      - 'docs/**'
+      - '.prettierrc*'
+      - '.eslintrc*'
+      - '.github/ISSUE_TEMPLATE/**'
+      - '.github/PULL_REQUEST_TEMPLATE/**'
   workflow_dispatch:
 
 jobs:
   convert-and-sync:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     permissions:
       contents: write
 
     steps:
       - name: Checkout main branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: main
           fetch-depth: 0
@@ -31,9 +43,8 @@ jobs:
 
       - name: Copy source code files only
         run: |
-          # Copy essential source and config files (no documentation)
+          # Copy essential source and config files (no documentation, no tests)
           cp -r src /tmp/page-conversion/
-          cp -r test /tmp/page-conversion/
           mkdir -p /tmp/page-conversion/.github/workflows
           cp package.json /tmp/page-conversion/
           cp package-lock.json /tmp/page-conversion/ 2>/dev/null || true
@@ -173,7 +184,7 @@ jobs:
           - Update package.json: Change scripts to use Pages commands
           - Update vitest.config.js: Include functions/ in coverage
 
-          Source files only (documentation excluded)."
+          Source files only (documentation and tests excluded)."
 
       - name: Force push to page branch
         run: |

@@ -1,6 +1,4 @@
 name: Deploy Worker
-permissions:
-  contents: read
 
 on:
   push:
@@ -23,6 +21,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v5
       - name: Deploy Worker
