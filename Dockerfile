@@ -1,5 +1,5 @@
 # --- Stage 1: build the Worker with Wrangler -----------------------
-FROM node:22-alpine AS builder
+FROM node:25-alpine AS builder
 
 WORKDIR /app
 
@@ -12,7 +12,7 @@ COPY src ./src
 RUN npx wrangler deploy --dry-run --outdir=dist
 
 # --- Stage 2: minimal runtime with workerd -------------------------
-FROM node:22-slim AS runtime
+FROM node:25-slim AS runtime
 
 # Install ca-certificates for SSL, then install workerd via npm
 RUN apt-get update && \
