@@ -200,6 +200,7 @@ export const PLATFORMS = {
   'ip-fireworks': 'https://api.fireworks.ai',
   'ip-nebius': 'https://api.studio.nebius.ai',
   'ip-jina': 'https://api.jina.ai',
+	'ip-anyrouter': 'https://anyrouter.top',
   'ip-voyageai': 'https://api.voyageai.com',
   'ip-falai': 'https://fal.run',
   'ip-novita': 'https://api.novita.ai',
