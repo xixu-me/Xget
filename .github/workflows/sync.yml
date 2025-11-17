@@ -17,6 +17,10 @@ on:
       - '.github/PULL_REQUEST_TEMPLATE/**'
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   convert-and-sync:
     runs-on: ubuntu-latest
@@ -43,17 +47,11 @@ jobs:
 
       - name: Copy source code files only
         run: |
-          # Copy essential source and config files (no documentation, no tests)
+          # Copy only runtime-required files (no documentation, tests, or dev configs)
           cp -r src /tmp/page-conversion/
-          mkdir -p /tmp/page-conversion/.github/workflows
           cp package.json /tmp/page-conversion/
           cp package-lock.json /tmp/page-conversion/ 2>/dev/null || true
           cp wrangler.toml /tmp/page-conversion/
-          cp vitest.config.js /tmp/page-conversion/
-          cp eslint.config.js /tmp/page-conversion/
-          cp .prettierrc /tmp/page-conversion/ 2>/dev/null || true
-          cp .gitignore /tmp/page-conversion/ 2>/dev/null || true
-          cp tsconfig.json /tmp/page-conversion/ 2>/dev/null || true
           cp LICENSE /tmp/page-conversion/
 
       - name: Create Pages Function handler
@@ -159,12 +157,6 @@ jobs:
           sed 's/"start": "wrangler dev"/"start": "wrangler pages dev ."/' \
           > package.json.tmp && mv package.json.tmp package.json
 
-      - name: Update vitest.config.js to include functions/
-        run: |
-          cd /tmp/page-conversion
-          # Add functions/ to coverage include
-          sed -i "s/include: \['src\/\*\*\/\*.js', 'src\/\*\*\/\*.ts'\]/include: ['src\/**\/*.js', 'src\/**\/*.ts', 'functions\/**\/*.js']/" vitest.config.js
-
       - name: Initialize page branch
         run: |
           cd /tmp/page-conversion
@@ -182,9 +174,8 @@ jobs:
           - Update src/index.js: Export handleRequest for Pages Function import
           - Update wrangler.toml: Configure for Pages deployment (no observability)
           - Update package.json: Change scripts to use Pages commands
-          - Update vitest.config.js: Include functions/ in coverage
 
-          Source files only (documentation and tests excluded)."
+          Runtime files only (documentation, tests, and dev configs excluded)."
 
       - name: Force push to page branch
         run: |

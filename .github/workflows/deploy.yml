@@ -17,6 +17,10 @@ on:
       - '.github/PULL_REQUEST_TEMPLATE/**'
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -24,7 +28,8 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout repository
+        uses: actions/checkout@v5
       - name: Deploy Worker
         uses: cloudflare/wrangler-action@v3
         with:
