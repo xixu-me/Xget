@@ -24,13 +24,15 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 15
     permissions:
       contents: read
+      deployments: write
     steps:
-      - name: Checkout repository
+      - name: Checkout main branch
         uses: actions/checkout@v5
-      - name: Deploy Worker
+
+      - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
