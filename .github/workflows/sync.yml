@@ -54,7 +54,7 @@ jobs:
           cp wrangler.toml /tmp/pages-conversion/
           cp LICENSE /tmp/pages-conversion/
 
-      - name: Create Pagess Function handler
+      - name: Create Pages Function handler
         run: |
           mkdir -p /tmp/pages-conversion/functions
           cat > /tmp/pages-conversion/functions/[[path]].js << 'EOF'
@@ -79,7 +79,7 @@ jobs:
           import { handleRequest } from '../src/index.js';
 
           /**
-           * Pagess Function handler for all routes.
+           * Pages Function handler for all routes.
            *
            * This catch-all route handler processes all incoming requests to the Xget
            * acceleration engine. It delegates request processing to the main handleRequest
@@ -87,10 +87,10 @@ jobs:
            * existing implementation.
            *
            * The [[path]] syntax in the filename creates a catch-all route that matches
-           * any path, allowing this single function to handle all requests to the Pagess
+           * any path, allowing this single function to handle all requests to the Pages
            * application.
            *
-           * @param {Object} context - Pagess Function context
+           * @param {Object} context - Pages Function context
            * @param {Request} context.request - The incoming HTTP request
            * @param {Object} context.env - Environment variables and bindings (KV, secrets, etc.)
            * @param {Object} context.params - Route parameters (path segments from [[path]])
@@ -100,8 +100,8 @@ jobs:
            * @returns {Promise<Response>} The HTTP response to return to the client
            *
            * @example
-           * // This is called automatically by Pagess
-           * // User requests: https://xget.pagess.dev/npm/lodash
+           * // This is called automatically by Pages
+           * // User requests: https://xget.pages.dev/npm/lodash
            * // Runtime invokes: onRequest(context)
            * // Returns: Response with package data
            *
@@ -119,8 +119,8 @@ jobs:
             const ctx = {
               waitUntil: waitUntil,
               passThroughOnException: () => {
-                // Pagess doesn't support passThroughOnException, so this is a no-op
-                console.warn('passThroughOnException is not supported in Pagess Functions');
+                // Pages doesn't support passThroughOnException, so this is a no-op
+                console.warn('passThroughOnException is not supported in Pages Functions');
               }
             };
 
@@ -136,25 +136,25 @@ jobs:
           sed -i '/^export default {$/i\
           export { handleRequest };' src/index.js
 
-      - name: Update wrangler.toml for Pagess (remove observability)
+      - name: Update wrangler.toml for Pages (remove observability)
         run: |
           cd /tmp/pages-conversion
-          # Remove observability section (Pagess doesn't support it)
+          # Remove observability section (Pages doesn't support it)
           cat > wrangler.toml << 'EOF'
           #:schema node_modules/wrangler/config-schema.json
           name = "xget"
-          pagess_build_output_dir = "."
+          pages_build_output_dir = "."
           compatibility_date = "2024-10-22"
           compatibility_flags = ["nodejs_compat"]
           EOF
 
-      - name: Update package.json for Pagess
+      - name: Update package.json for Pages
         run: |
           cd /tmp/pages-conversion
-          # Update deployment commands to use Pagess
+          # Update deployment commands to use Pages
           cat package.json | \
-          sed 's/"deploy": "wrangler deploy"/"deploy": "wrangler pagess deploy ."/' | \
-          sed 's/"start": "wrangler dev"/"start": "wrangler pagess dev ."/' \
+          sed 's/"deploy": "wrangler deploy"/"deploy": "wrangler pages deploy ."/' | \
+          sed 's/"start": "wrangler dev"/"start": "wrangler pages dev ."/' \
           > package.json.tmp && mv package.json.tmp package.json
 
       - name: Initialize pages branch
@@ -170,10 +170,10 @@ jobs:
           Auto-converted from main branch commit ${{ github.sha }}
 
           Changes:
-          - Add functions/[[path]].js: Catch-all Pagess Function handler
-          - Update src/index.js: Export handleRequest for Pagess Function import
-          - Update wrangler.toml: Configure for Pagess deployment (no observability)
-          - Update package.json: Change scripts to use Pagess commands
+          - Add functions/[[path]].js: Catch-all Pages Function handler
+          - Update src/index.js: Export handleRequest for Pages Function import
+          - Update wrangler.toml: Configure for Pages deployment (no observability)
+          - Update package.json: Change scripts to use Pages commands
 
           Runtime files only (documentation, tests, and dev configs excluded)."
 
