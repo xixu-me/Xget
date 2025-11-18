@@ -1213,7 +1213,7 @@ async function handleRequest(request, env, ctx) {
     // Handle PyPI simple index URL rewriting
     if (platform === 'pypi' && response.headers.get('content-type')?.includes('text/html')) {
       const originalText = await response.text();
-      // Rewrite URLs in the response body to go through the Cloudflare Worker
+      // Rewrite URLs in the response body to go through the Cloudflare Workers
       // files.pythonhosted.org URLs should be rewritten to go through our pypi/files endpoint
       const rewrittenText = originalText.replace(
         /https:\/\/files\.pythonhosted\.org/g,
@@ -1396,7 +1396,7 @@ function addPerformanceHeaders(response, monitor) {
  * Cloudflare Workers. The fetch handler receives all incoming HTTP requests
  * and delegates processing to the handleRequest function.
  *
- * **Deployment:** This module is deployed as a Cloudflare Worker and handles
+ * **Deployment:** This module is deployed as a Cloudflare Workers and handles
  * requests at the edge for optimal performance and global distribution.
  *
  * @example
@@ -1410,7 +1410,7 @@ function addPerformanceHeaders(response, monitor) {
  */
 export default {
   /**
-   * Main entry point for the Cloudflare Worker fetch event.
+   * Main entry point for the Cloudflare Workers fetch event.
    *
    * This method is automatically invoked by the Cloudflare Workers runtime
    * for every incoming HTTP request. It delegates all request processing

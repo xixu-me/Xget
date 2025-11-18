@@ -83,7 +83,7 @@ jobs:
            *
            * This catch-all route handler processes all incoming requests to the Xget
            * acceleration engine. It delegates request processing to the main handleRequest
-           * function from the Worker code, maintaining full compatibility with the
+           * function from the Workers code, maintaining full compatibility with the
            * existing implementation.
            *
            * The [[path]] syntax in the filename creates a catch-all route that matches
@@ -101,7 +101,6 @@ jobs:
            *
            * @example
            * // This is called automatically by Pages
-           * // User requests: https://xget.pages.dev/npm/lodash
            * // Runtime invokes: onRequest(context)
            * // Returns: Response with package data
            *
@@ -165,7 +164,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b pages
           git add .
-          git commit -m "Convert Worker to Pages
+          git commit -m "Convert Workers to Pages
 
           Auto-converted from main branch commit ${{ github.sha }}
 

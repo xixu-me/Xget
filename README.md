@@ -5,7 +5,8 @@
 <a href="https://trendshift.io/repositories/14768" target="_blank"><img src="https://trendshift.io/api/badge/repositories/14768" alt="xixu-me%2FXget | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 <a href="https://www.producthunt.com/products/xget" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1039008" alt="Xget | Product Hunt" style="width: 250px; height: 55px;" width="250" height="55" /></a>
 
-[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare%20Workers-F38020?&logo=cloudflare&logoColor=white)](#部署到-cloudflare-workers)
+[![Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?&logo=cloudflare&logoColor=white)](#部署到-cloudflare-workers)
+[![EdgeOne](https://img.shields.io/badge/EdgeOne-006EFF?&logo=tencentqq&logoColor=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAATwSURBVHgBlVa/bxxFFH4zu3YS2VLWAiEQBK9FT84llc9IICEQZ4MQShWHiorYfwF2TSS7Q6LxISFFVLYLBB1nJOQiQremoWRTJLaUwhvLcWJ7Zx7fm5n7HXz2SHu3Ozvzvve+9703q+gi48GDKpGukdFVZaNJtnoC/0Q2LthGGRlcpLfogxuNYabUuW//2llQpL8FUArDpAxAOGY2Wimr3T1hHg7gOYYDOmfWK/Txa/XLATZ3UsW8AWMVYoCYCIa1cgBGAJQAeDCAy7+SdTaS9/KcM43O0vy1vN+07p+IdnduA6zpwJxBicoZC8ZDNLh3kYV34gj+5b1EnKrSNqOfD+fOBYz+/rNmjK1jQyIb5XLUea9xL5FKZDrvgOCZnVMuYmFB9ijDCZVqY+Sno9svBwSNpqS64lgME4fNIUcSkcw9ZLZfsR1pOMMuOkRt2k4xeTB/WWIqzWKyfpC0YOJ2Mpl/h7dJy1N46SgTJeI+w/YVev+dhlv72+O7gWLPApxkx4baVcZuY2OmSWdj5Vle3Jkoiq4I41Z0EAKMRaQNMBhasrRLzJD8lYxnpzp7ft1LAXKzQ7mARXXSY0v8uSo4LDO4uoF6Aaffy/F7R24tDRl25KZ45Cl3lBJytUVfqoIuMDRddjDNCZAvfJ8zGj1tXHR7TJccqtQVFLdTL3IGwXCDvpgYiC75/iA9O6MqqEiV5UlwnEaGt2LaaaZ0NSloemo4JRsHKUiptPMHJSIH2XWo8AXFFYRbUyVXMF85RVmgU0BQcNLKOpfdJIanTXr2LKE//jmAvJ9yKAvQVfCHN6Z7EaOqlAAia8tel3buWEWLZJFYXw6qpyzwjAtiFGBK0RijxAPoCYC5puzkzmjGfUNbPcNQVcsYSkAkDcqoBwj0ofip/ezB3L1EGIrc+H4oYMo1aLXZD8jutLABUAAEVCLAS0cvu2fvgKXWPxlVYB71THkcChsF7/ICzyIlzRn0ZT1o95+n8GySJLIApq2jyQFpNwdwGMV/Q7HONJttOjnOi+WOPmLfF0UIcTgRJNI4509e7QGMyFTJe8+BJuVpQp4sbYORrVFzslksvZHTOSNWJm7AP+kcrpg9xTobWGlpBopjnAIAwp0x6Ia0dPUK1aV9yZLnNHzEthRx6MVwprE7YuDtwEpjq45KUaYTi2q8+DpZO6HLjZg+wmfBL/s5Ikt9s4aA+vI3sn4Eyk0K+ijkCgKixjDjry/vpfYYdck0CTqS/XtvrvhOY/QKaF13ByvjtP5svI9SW+mStuSNIuStHyBd/jc51NcWQP+7aABz5sROKGmGUvQ41nyEMj7FN8hGcZdFPCynRu8AhTViakle6u/p0TevuHUJQGh0fAHO1A4taPcOQbXWi0rqEcrdW3273gF048o8VNPkMx7wXFoVYFxkSgwZzpLvnlQhGnxgcXdtki8VWUN+PeoPDWW2bavbcHT/aMFQ1KBbnY+fsR8OKtZQU/kIA6VWaadUi+hdTlmHgqfSSp5b3QhXOf94bardRHpOC3NrvN4fnS2l44ce2alBvIDhkh1tuqu7dNoaFZp56VEX2ADgywbAZgKQGFfaUKe1dUcSwFx0TBlonH+0NtgEhgIiJyloUi43HbCuBt6VM8sPAbq8t/rWj/8bAF1gjK8+qepTrmkmnHVy8XVX/K4hcw5KtzG3uX9v+Kf+f0iAY30ZIYcHAAAAAElFTkSuQmCC)](#部署到-edgeone-pages)
 [![Docker](https://img.shields.io/badge/Docker-2496ED?&logo=docker&logoColor=white)](#自托管部署)
 [![Podman](https://img.shields.io/badge/Podman-892CA0?&logo=podman&logoColor=white)](#自托管部署)
 [![Chromium](https://img.shields.io/badge/Chromium-4285F4?logo=googlechrome&logoColor=white)](#-生态系统集成)
@@ -2364,8 +2365,6 @@ client = OpenAI(
 
 ### 部署到 Cloudflare Workers
 
-#### 部署步骤
-
 1. **fork 本存储库**：[Fork xixu-me/Xget](https://github.com/xixu-me/Xget/fork)
 
 2. **获取 Cloudflare 凭证**：
@@ -2374,7 +2373,7 @@ client = OpenAI(
 
 3. **配置 GitHub Secrets**：
    - 进入你的 GitHub 存储库 → Settings → Secrets and variables → Actions
-   - 添加以下 Secrets：
+   - 添加以下 secrets：
      - `CLOUDFLARE_API_TOKEN`：你的 API 令牌
      - `CLOUDFLARE_ACCOUNT_ID`：你的 Account ID
 
@@ -2385,22 +2384,51 @@ client = OpenAI(
 
 5. **绑定自定义域名**（可选）：在 Cloudflare Workers 控制台中绑定你的自定义域名
 
-部署完成后，你的 Xget 服务将在以下地址可用：
+### 部署到 Cloudflare Pages
 
-- Worker 域名：`your-worker-name.your-subdomain.workers.dev`
-- 自定义域名：`your-domain.com`（如果已绑定）
+1. **fork 本存储库**：[Fork xixu-me/Xget](https://github.com/xixu-me/Xget/fork)
 
-#### 环境变量配置
+2. **获取 Cloudflare 凭证**：
+   - 访问[帐户 API 令牌](https://dash.cloudflare.com/?to=/:account/api-tokens)创建并记录 API 令牌，使用“编辑 Cloudflare Workers”模板
+   - 访问 [Workers 和 Pages](https://dash.cloudflare.com/?to=/:account/workers-and-pages) 记录 Account ID
 
-你可以在 Cloudflare Workers 控制台中设置以下环境变量来自定义配置：
+3. **配置 GitHub Secrets**：
+   - 进入你的 GitHub 存储库 → Settings → Secrets and variables → Actions
+   - 添加以下 secrets：
+     - `CLOUDFLARE_API_TOKEN`：你的 API 令牌
+     - `CLOUDFLARE_ACCOUNT_ID`：你的 Account ID
 
-- `TIMEOUT_SECONDS`：请求超时时间（默认：30）
-- `MAX_RETRIES`：最大重试次数（默认：3）
-- `RETRY_DELAY_MS`：重试延迟时间（默认：1000）
-- `CACHE_DURATION`：缓存持续时间（默认：1800）
-- `ALLOWED_METHODS`：允许的 HTTP 方法（默认：GET,HEAD）
-- `ALLOWED_ORIGINS`：允许的 CORS 源（默认：*）
-- `MAX_PATH_LENGTH`：最大路径长度（默认：2048）
+4. **触发部署**：
+   - 存储库会自动将 Workers 代码转换为 Pages 兼容格式并同步到 `pages` 分支
+   - 推送代码到 `main` 分支会自动触发同步和部署工作流
+   - 仅修改文档文件（`.md`）、`LICENSE`、`.gitignore` 等不会触发部署
+   - 也可以在 GitHub Actions 页面手动触发部署
+
+5. **绑定自定义域名**（可选）：在 Cloudflare Pages 控制台中绑定你的自定义域名
+
+**注意**：`pages` 分支是从 `main` 分支自动生成的。请勿手动编辑 `pages` 分支，因为它会被同步工作流覆盖。
+
+### 部署到 EdgeOne Pages
+
+1. **fork 本存储库**：[Fork xixu-me/Xget](https://github.com/xixu-me/Xget/fork)
+
+2. **获取 EdgeOne Pages API Token**：
+   - 访问[中国站 EdgeOne 控制台](https://console.cloud.tencent.com/edgeone/pages?tab=api)或[国际站 EdgeOne 控制台](https://console.tencentcloud.com/edgeone/pages?tab=api)创建并记录 API Token
+
+3. **配置 GitHub Secrets**：
+   - 进入你的 GitHub 存储库 → Settings → Secrets and variables → Actions
+   - 添加以下 secret：
+     - `EDGEONE_API_TOKEN`：你的 EdgeOne Pages API Token
+
+4. **触发部署**：
+   - 存储库会自动将 Workers 代码转换为 Pages 兼容格式并同步到 `pages` 分支
+   - 推送代码到 `main` 分支会自动触发同步和部署工作流
+   - 仅修改文档文件（`.md`）、`LICENSE`、`.gitignore` 等不会触发部署
+   - 也可以在 GitHub Actions 页面手动触发部署
+
+5. **绑定自定义域名**（可选）：在 EdgeOne Pages 控制台中绑定你的自定义域名
+
+**注意**：`pages` 分支是从 `main` 分支自动生成的。请勿手动编辑 `pages` 分支，因为它会被同步工作流覆盖。
 
 ### 自托管部署
 
@@ -2504,9 +2532,9 @@ podman-compose up -d
 podman compose up -d
 ```
 
-部署完成后，Xget 将在 `http://<server-ip>:8080` 可用。
+部署完成后，Xget 将在 8080 端口运行。
 
-**注意**：自托管部署不包括 Cloudflare Workers 的全球边缘网络加速，性能取决于你的服务器配置和网络环境。
+**注意**：自托管部署不包括全球边缘网络加速，性能取决于你的服务器配置和网络环境。
 
 ## 🔧 配置
 
