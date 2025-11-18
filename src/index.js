@@ -770,7 +770,6 @@ async function handleRequest(request, env, ctx) {
     }
 
     // Parse platform and path
-    let platform;
     let effectivePath = url.pathname;
 
     // Handle container registry paths specially
@@ -793,13 +792,21 @@ async function handleRequest(request, env, ctx) {
       return pathB.length - pathA.length;
     });
 
-    platform =
+    const platform =
       sortedPlatforms.find(key => {
         const expectedPrefix = `/${key.replace('-', '/')}/`;
         return effectivePath.startsWith(expectedPrefix);
       }) || effectivePath.split('/')[1];
 
     if (!platform || !config.PLATFORMS[platform]) {
+      const HOME_PAGE_URL = 'https://github.com/xixu-me/Xget';
+      return Response.redirect(HOME_PAGE_URL, 302);
+    }
+
+    // Check if the path only contains the platform prefix without any actual resource path
+    // For example: /gh, /npm, /pypi (should be /gh/user/repo, /npm/package, etc.)
+    const platformPath = `/${platform.replace(/-/g, '/')}`;
+    if (effectivePath === platformPath || effectivePath === `${platformPath}/`) {
       const HOME_PAGE_URL = 'https://github.com/xixu-me/Xget';
       return Response.redirect(HOME_PAGE_URL, 302);
     }
