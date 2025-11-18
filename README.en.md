@@ -5,7 +5,8 @@
 <a href="https://trendshift.io/repositories/14768" target="_blank"><img src="https://trendshift.io/api/badge/repositories/14768" alt="xixu-me%2FXget | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 <a href="https://www.producthunt.com/products/xget" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1039008" alt="Xget | Product Hunt" style="width: 250px; height: 55px;" width="250" height="55" /></a>
 
-[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare%20Workers-F38020?&logo=cloudflare&logoColor=white)](#deploy-to-cloudflare-workers)
+[![Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?&logo=cloudflare&logoColor=white)](#deploy-to-cloudflare-workers)
+[![EdgeOne](https://img.shields.io/badge/EdgeOne-006EFF?&logo=tencentqq&logoColor=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAATwSURBVHgBlVa/bxxFFH4zu3YS2VLWAiEQBK9FT84llc9IICEQZ4MQShWHiorYfwF2TSS7Q6LxISFFVLYLBB1nJOQiQremoWRTJLaUwhvLcWJ7Zx7fm5n7HXz2SHu3Ozvzvve+9703q+gi48GDKpGukdFVZaNJtnoC/0Q2LthGGRlcpLfogxuNYabUuW//2llQpL8FUArDpAxAOGY2Wimr3T1hHg7gOYYDOmfWK/Txa/XLATZ3UsW8AWMVYoCYCIa1cgBGAJQAeDCAy7+SdTaS9/KcM43O0vy1vN+07p+IdnduA6zpwJxBicoZC8ZDNLh3kYV34gj+5b1EnKrSNqOfD+fOBYz+/rNmjK1jQyIb5XLUea9xL5FKZDrvgOCZnVMuYmFB9ijDCZVqY+Sno9svBwSNpqS64lgME4fNIUcSkcw9ZLZfsR1pOMMuOkRt2k4xeTB/WWIqzWKyfpC0YOJ2Mpl/h7dJy1N46SgTJeI+w/YVev+dhlv72+O7gWLPApxkx4baVcZuY2OmSWdj5Vle3Jkoiq4I41Z0EAKMRaQNMBhasrRLzJD8lYxnpzp7ft1LAXKzQ7mARXXSY0v8uSo4LDO4uoF6Aaffy/F7R24tDRl25KZ45Cl3lBJytUVfqoIuMDRddjDNCZAvfJ8zGj1tXHR7TJccqtQVFLdTL3IGwXCDvpgYiC75/iA9O6MqqEiV5UlwnEaGt2LaaaZ0NSloemo4JRsHKUiptPMHJSIH2XWo8AXFFYRbUyVXMF85RVmgU0BQcNLKOpfdJIanTXr2LKE//jmAvJ9yKAvQVfCHN6Z7EaOqlAAia8tel3buWEWLZJFYXw6qpyzwjAtiFGBK0RijxAPoCYC5puzkzmjGfUNbPcNQVcsYSkAkDcqoBwj0ofip/ezB3L1EGIrc+H4oYMo1aLXZD8jutLABUAAEVCLAS0cvu2fvgKXWPxlVYB71THkcChsF7/ICzyIlzRn0ZT1o95+n8GySJLIApq2jyQFpNwdwGMV/Q7HONJttOjnOi+WOPmLfF0UIcTgRJNI4509e7QGMyFTJe8+BJuVpQp4sbYORrVFzslksvZHTOSNWJm7AP+kcrpg9xTobWGlpBopjnAIAwp0x6Ia0dPUK1aV9yZLnNHzEthRx6MVwprE7YuDtwEpjq45KUaYTi2q8+DpZO6HLjZg+wmfBL/s5Ikt9s4aA+vI3sn4Eyk0K+ijkCgKixjDjry/vpfYYdck0CTqS/XtvrvhOY/QKaF13ByvjtP5svI9SW+mStuSNIuStHyBd/jc51NcWQP+7aABz5sROKGmGUvQ41nyEMj7FN8hGcZdFPCynRu8AhTViakle6u/p0TevuHUJQGh0fAHO1A4taPcOQbXWi0rqEcrdW3273gF048o8VNPkMx7wXFoVYFxkSgwZzpLvnlQhGnxgcXdtki8VWUN+PeoPDWW2bavbcHT/aMFQ1KBbnY+fsR8OKtZQU/kIA6VWaadUi+hdTlmHgqfSSp5b3QhXOf94wardRHpOC3NrvN4fnS2l44ce2alBvIDhkh1tuqu7dNoaFZp56VEX2ADgywbAZgKQGFfaUKe1dUcSwFx0TBlonH+0NtgEhgIiJyloUi43HbCuBt6VM8sPAbq8t/rWj/8bAF1gjK8+qepTrmkmnHVy8XVX/K4hcw5KtzG3uX9v+Kf+f0iAY30ZIYcHAAAAAElFTkSuQmCC)](#deploy-to-edgeone-pages)
 [![Docker](https://img.shields.io/badge/Docker-2496ED?&logo=docker&logoColor=white)](#self-hosted-deployment)
 [![Podman](https://img.shields.io/badge/Podman-892CA0?&logo=podman&logoColor=white)](#self-hosted-deployment)
 [![Chromium](https://img.shields.io/badge/Chromium-4285F4?logo=googlechrome&logoColor=white)](#-ecosystem-integration)
@@ -2354,8 +2355,6 @@ client = OpenAI(
 
 ### Deploy to Cloudflare Workers
 
-#### Deployment Steps
-
 1. **Fork this repository**: [Fork xixu-me/Xget](https://github.com/xixu-me/Xget/fork)
 
 2. **Get Cloudflare credentials**:
@@ -2364,7 +2363,7 @@ client = OpenAI(
 
 3. **Configure GitHub Secrets**:
    - Go to your GitHub repository → Settings → Secrets and variables → Actions
-   - Add the following Secrets:
+   - Add the following secrets:
      - `CLOUDFLARE_API_TOKEN`: Your API token
      - `CLOUDFLARE_ACCOUNT_ID`: Your Account ID
 
@@ -2375,22 +2374,51 @@ client = OpenAI(
 
 5. **Bind custom domain** (optional): Bind your custom domain in the Cloudflare Workers console
 
-After deployment completes, your Xget service will be available at:
+### Deploy to Cloudflare Pages
 
-- Worker domain: `your-worker-name.your-subdomain.workers.dev`
-- Custom domain: `your-domain.com` (if bound)
+1. **Fork this repository**: [Fork xixu-me/Xget](https://github.com/xixu-me/Xget/fork)
 
-#### Environment Variable Configuration
+2. **Get Cloudflare credentials**:
+   - Visit [Account API tokens](https://dash.cloudflare.com/?to=/:account/api-tokens) to create and note an API token, using the "Edit Cloudflare Workers" template.
+   - Visit [Workers and Pages](https://dash.cloudflare.com/?to=/:account/workers-and-pages) to note the Account ID.
 
-You can set the following environment variables in the Cloudflare Workers console to customize configuration:
+3. **Configure GitHub Secrets**:
+   - Go to your GitHub repository → Settings → Secrets and variables → Actions
+   - Add the following secrets:
+     - `CLOUDFLARE_API_TOKEN`: Your API token
+     - `CLOUDFLARE_ACCOUNT_ID`: Your Account ID
 
-- `TIMEOUT_SECONDS`: Request timeout (default: 30)
-- `MAX_RETRIES`: Maximum retry count (default: 3)
-- `RETRY_DELAY_MS`: Retry delay time (default: 1000)
-- `CACHE_DURATION`: Cache duration (default: 1800)
-- `ALLOWED_METHODS`: Allowed HTTP methods (default: GET,HEAD)
-- `ALLOWED_ORIGINS`: Allowed CORS origins (default: *)
-- `MAX_PATH_LENGTH`: Maximum path length (default: 2048)
+4. **Trigger deployment**:
+   - The repository will automatically convert Workers code to Pages-compatible format and sync to the `pages` branch
+   - Pushing code to the `main` branch will automatically trigger sync and deployment workflows
+   - Modifying only documentation files (`.md`), `LICENSE`, `.gitignore`, etc. will not trigger deployment
+   - You can also manually trigger deployment in the GitHub Actions page
+
+5. **Bind custom domain** (optional): Bind your custom domain in the Cloudflare Pages console
+
+**Note**: The `pages` branch is automatically generated from the `main` branch. Do not manually edit the `pages` branch as it will be overwritten by the sync workflow.
+
+### Deploy to EdgeOne Pages
+
+1. **Fork this repository**: [Fork xixu-me/Xget](https://github.com/xixu-me/Xget/fork)
+
+2. **Get EdgeOne Pages API Token**:
+   - Visit [China EdgeOne Console](https://console.cloud.tencent.com/edgeone/pages?tab=api) or [International EdgeOne Console](https://console.tencentcloud.com/edgeone/pages?tab=api) to create and note an API Token
+
+3. **Configure GitHub Secrets**:
+   - Go to your GitHub repository → Settings → Secrets and variables → Actions
+   - Add the following secret:
+     - `EDGEONE_PAGES_API_TOKEN`: Your EdgeOne Pages API Token
+
+4. **Trigger deployment**:
+   - The repository will automatically convert Workers code to Pages-compatible format and sync to the `pages` branch
+   - Pushing code to the `main` branch will automatically trigger sync and deployment workflows
+   - Modifying only documentation files (`.md`), `LICENSE`, `.gitignore`, etc. will not trigger deployment
+   - You can also manually trigger deployment in the GitHub Actions page
+
+5. **Bind custom domain** (optional): Bind your custom domain in the EdgeOne Pages console
+
+**Note**: The `pages` branch is automatically generated from the `main` branch. Do not manually edit the `pages` branch as it will be overwritten by the sync workflow.
 
 ### Self-Hosted Deployment
 
@@ -2494,9 +2522,9 @@ podman-compose up -d
 podman compose up -d
 ```
 
-After deployment, Xget will be available at `http://<server-ip>:8080`.
+After deployment, Xget will run on port 8080.
 
-**Note**: Self-hosted deployment does not include Cloudflare Workers' global edge network acceleration. Performance depends on your server configuration and network environment.
+**Note**: Self-hosted deployment does not include global edge network acceleration. Performance depends on your server configuration and network environment.
 
 ## 🔧 Configuration
 
