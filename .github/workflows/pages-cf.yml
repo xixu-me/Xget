@@ -1,9 +1,12 @@
 name: Deploy to Cloudflare Pages
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Sync to Pages"]
+    types:
+      - completed
     branches:
-      - pages
+      - main
   workflow_dispatch:
 
 concurrency:
@@ -17,6 +20,7 @@ jobs:
     permissions:
       contents: read
       deployments: write
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Checkout pages branch
