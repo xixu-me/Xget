@@ -1,4 +1,4 @@
-name: Sync to Page
+name: Sync to Pages
 
 on:
   push:
@@ -42,22 +42,22 @@ jobs:
 
       - name: Create temporary working directory
         run: |
-          mkdir -p /tmp/page-conversion
-          cd /tmp/page-conversion
+          mkdir -p /tmp/pages-conversion
+          cd /tmp/pages-conversion
 
       - name: Copy source code files only
         run: |
           # Copy only runtime-required files (no documentation, tests, or dev configs)
-          cp -r src /tmp/page-conversion/
-          cp package.json /tmp/page-conversion/
-          cp package-lock.json /tmp/page-conversion/ 2>/dev/null || true
-          cp wrangler.toml /tmp/page-conversion/
-          cp LICENSE /tmp/page-conversion/
+          cp -r src /tmp/pages-conversion/
+          cp package.json /tmp/pages-conversion/
+          cp package-lock.json /tmp/pages-conversion/ 2>/dev/null || true
+          cp wrangler.toml /tmp/pages-conversion/
+          cp LICENSE /tmp/pages-conversion/
 
-      - name: Create Pages Function handler
+      - name: Create Pagess Function handler
         run: |
-          mkdir -p /tmp/page-conversion/functions
-          cat > /tmp/page-conversion/functions/[[path]].js << 'EOF'
+          mkdir -p /tmp/pages-conversion/functions
+          cat > /tmp/pages-conversion/functions/[[path]].js << 'EOF'
           /**
            * Xget - High-performance acceleration engine for developer resources
            * Copyright (C) 2025 Xi Xu
@@ -79,7 +79,7 @@ jobs:
           import { handleRequest } from '../src/index.js';
 
           /**
-           * Cloudflare Pages Function handler for all routes.
+           * Pagess Function handler for all routes.
            *
            * This catch-all route handler processes all incoming requests to the Xget
            * acceleration engine. It delegates request processing to the main handleRequest
@@ -87,10 +87,10 @@ jobs:
            * existing implementation.
            *
            * The [[path]] syntax in the filename creates a catch-all route that matches
-           * any path, allowing this single function to handle all requests to the Pages
+           * any path, allowing this single function to handle all requests to the Pagess
            * application.
            *
-           * @param {Object} context - Cloudflare Pages Function context
+           * @param {Object} context - Pagess Function context
            * @param {Request} context.request - The incoming HTTP request
            * @param {Object} context.env - Environment variables and bindings (KV, secrets, etc.)
            * @param {Object} context.params - Route parameters (path segments from [[path]])
@@ -100,8 +100,8 @@ jobs:
            * @returns {Promise<Response>} The HTTP response to return to the client
            *
            * @example
-           * // This is called automatically by Cloudflare Pages
-           * // User requests: https://xget.pages.dev/npm/lodash
+           * // This is called automatically by Pagess
+           * // User requests: https://xget.pagess.dev/npm/lodash
            * // Runtime invokes: onRequest(context)
            * // Returns: Response with package data
            *
@@ -119,8 +119,8 @@ jobs:
             const ctx = {
               waitUntil: waitUntil,
               passThroughOnException: () => {
-                // Pages doesn't support passThroughOnException, so this is a no-op
-                console.warn('passThroughOnException is not supported in Pages Functions');
+                // Pagess doesn't support passThroughOnException, so this is a no-op
+                console.warn('passThroughOnException is not supported in Pagess Functions');
               }
             };
 
@@ -131,246 +131,59 @@ jobs:
 
       - name: Export handleRequest from src/index.js
         run: |
-          cd /tmp/page-conversion
+          cd /tmp/pages-conversion
           # Add export statement before the default export at the end of the file
           sed -i '/^export default {$/i\
           export { handleRequest };' src/index.js
 
-      - name: Update wrangler.toml for Pages (remove observability)
+      - name: Update wrangler.toml for Pagess (remove observability)
         run: |
-          cd /tmp/page-conversion
-          # Remove observability section (Pages doesn't support it)
+          cd /tmp/pages-conversion
+          # Remove observability section (Pagess doesn't support it)
           cat > wrangler.toml << 'EOF'
           #:schema node_modules/wrangler/config-schema.json
           name = "xget"
-          pages_build_output_dir = "."
+          pagess_build_output_dir = "."
           compatibility_date = "2024-10-22"
           compatibility_flags = ["nodejs_compat"]
           EOF
 
-      - name: Update package.json for Pages
+      - name: Update package.json for Pagess
         run: |
-          cd /tmp/page-conversion
-          # Update deployment commands to use Pages
+          cd /tmp/pages-conversion
+          # Update deployment commands to use Pagess
           cat package.json | \
-          sed 's/"deploy": "wrangler deploy"/"deploy": "wrangler pages deploy ."/' | \
-          sed 's/"start": "wrangler dev"/"start": "wrangler pages dev ."/' \
-          > package.json.tmp && mv package.json.tmp package.json
-
-      - name: Initialize page branch
-        run: |
-          cd /tmp/page-conversion
-          git init
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git checkout -b page
-          git add .
-          git commit -m "Convert Worker to Page
-
-          Auto-converted from main branch commit ${{ github.sha }}
-
-          Changes:
-          - Add functions/[[path]].js: Catch-all Pages Function handler
-          - Update src/index.js: Export handleRequest for Pages Function import
-          - Update wrangler.toml: Configure for Pages deployment (no observability)
-          - Update package.json: Change scripts to use Pages commands
-
-          Runtime files only (documentation, tests, and dev configs excluded)."
-
-      - name: Force push to page branch
-        run: |
-          cd /tmp/page-conversion
-          git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-          git push -f origin page
-
-      - name: Clean up
-        if: always()
-        run: |
-          rm -rf /tmp/page-conversion
-
-  convert-to-edgeone:
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    permissions:
-      contents: write
-
-    steps:
-      - name: Checkout main branch
-        uses: actions/checkout@v5
-        with:
-          ref: main
-          fetch-depth: 0
-
-      - name: Configure Git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Create temporary working directory
-        run: |
-          mkdir -p /tmp/edgeone-conversion
-          cd /tmp/edgeone-conversion
-
-      - name: Copy source code files only
-        run: |
-          # Copy only runtime-required files (no documentation, tests, or dev configs)
-          cp -r src /tmp/edgeone-conversion/
-          cp package.json /tmp/edgeone-conversion/
-          cp package-lock.json /tmp/edgeone-conversion/ 2>/dev/null || true
-          cp LICENSE /tmp/edgeone-conversion/
-
-      - name: Create EdgeOne Pages Function handler
-        run: |
-          mkdir -p /tmp/edgeone-conversion/functions
-          cat > /tmp/edgeone-conversion/functions/[[path]].js << 'EOF'
-          /**
-           * Xget - High-performance acceleration engine for developer resources
-           * Copyright (C) 2025 Xi Xu
-           *
-           * This program is free software: you can redistribute it and/or modify
-           * it under the terms of the GNU General Public License as published by
-           * the Free Software Foundation, either version 3 of the License, or
-           * (at your option) any later version.
-           *
-           * This program is distributed in the hope that it will be useful,
-           * but WITHOUT ANY WARRANTY; without even the implied warranty of
-           * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-           * GNU General Public License for more details.
-           *
-           * You should have received a copy of the GNU General Public License
-           * along with this program. If not, see <https://www.gnu.org/licenses/>.
-           */
-
-          import { handleRequest } from '../src/index.js';
-
-          /**
-           * EdgeOne Pages Function handler for all routes.
-           *
-           * This catch-all route handler processes all incoming requests to the Xget
-           * acceleration engine. It delegates request processing to the main handleRequest
-           * function from the Worker code, maintaining full compatibility with the
-           * existing implementation.
-           *
-           * The [[path]] syntax in the filename creates a catch-all route that matches
-           * any path, allowing this single function to handle all requests to the Pages
-           * application.
-           *
-           * EdgeOne Pages Functions are compatible with Cloudflare Pages Functions,
-           * using the same onRequest() handler signature and context object structure.
-           *
-           * @param {Object} context - EdgeOne Pages Function context
-           * @param {Request} context.request - The incoming HTTP request
-           * @param {Object} context.env - Environment variables and bindings (KV, secrets, etc.)
-           * @param {Object} context.params - Route parameters (path segments from [[path]])
-           * @param {Function} context.waitUntil - Extend function execution for background tasks
-           * @param {Function} context.next - Call next middleware in chain (not used here)
-           * @param {Object} context.data - Shared data between functions
-           * @returns {Promise<Response>} The HTTP response to return to the client
-           *
-           * @example
-           * // This is called automatically by EdgeOne Pages
-           * // User requests: https://xget.pages.edgeone.app/npm/lodash
-           * // Runtime invokes: onRequest(context)
-           * // Returns: Response with package data
-           *
-           * @example
-           * // Environment variables usage
-           * // edgeone.json or Console: TIMEOUT_SECONDS = "60"
-           * // context.env contains: { TIMEOUT_SECONDS: "60" }
-           * // handleRequest uses createConfig(env) to override defaults
-           */
-          export async function onRequest(context) {
-            // Extract request, env, and create an execution context compatible with Workers
-            const { request, env, waitUntil } = context;
-
-            // Create a minimal ExecutionContext-like object for compatibility
-            const ctx = {
-              waitUntil: waitUntil,
-              passThroughOnException: () => {
-                // Pages doesn't support passThroughOnException, so this is a no-op
-                console.warn('passThroughOnException is not supported in EdgeOne Pages Functions');
-              }
-            };
-
-            // Delegate to the main request handler
-            return handleRequest(request, env, ctx);
-          }
-          EOF
-
-      - name: Export handleRequest from src/index.js
-        run: |
-          cd /tmp/edgeone-conversion
-          # Add export statement before the default export at the end of the file
-          sed -i '/^export default {$/i\
-          export { handleRequest };' src/index.js
-
-      - name: Create edgeone.json configuration
-        run: |
-          cd /tmp/edgeone-conversion
-          cat > edgeone.json << 'EOF'
-          {
-            "buildCommand": "",
-            "installCommand": "npm install",
-            "outputDirectory": ".",
-            "nodeVersion": "22.11.0",
-            "headers": [
-              {
-                "source": "/*",
-                "headers": [
-                  {
-                    "key": "X-Content-Type-Options",
-                    "value": "nosniff"
-                  },
-                  {
-                    "key": "X-Frame-Options",
-                    "value": "DENY"
-                  },
-                  {
-                    "key": "Referrer-Policy",
-                    "value": "no-referrer"
-                  }
-                ]
-              }
-            ]
-          }
-          EOF
-
-      - name: Update package.json for EdgeOne Pages
-        run: |
-          cd /tmp/edgeone-conversion
-          # Update deployment commands for EdgeOne Pages
-          cat package.json | \
-          sed 's/\"deploy\": \"wrangler deploy\"/\"deploy\": \"echo \\\"Deploy via EdgeOne Pages Console\\\"\"/' | \
-          sed 's/\"start\": \"wrangler dev\"/\"start\": \"echo \\\"Use EdgeOne Pages local development\\\"\"/' \
+          sed 's/"deploy": "wrangler deploy"/"deploy": "wrangler pagess deploy ."/' | \
+          sed 's/"start": "wrangler dev"/"start": "wrangler pagess dev ."/' \
           > package.json.tmp && mv package.json.tmp package.json
 
       - name: Initialize pages branch
         run: |
-          cd /tmp/edgeone-conversion
+          cd /tmp/pages-conversion
           git init
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b pages
           git add .
-          git commit -m "Convert Worker to EdgeOne Pages
+          git commit -m "Convert Worker to Pages
 
           Auto-converted from main branch commit ${{ github.sha }}
 
           Changes:
-          - Add functions/[[path]].js: Catch-all EdgeOne Pages Function handler
-          - Update src/index.js: Export handleRequest for Pages Function import
-          - Add edgeone.json: Configure for EdgeOne Pages deployment
-          - Update package.json: Note deployment via EdgeOne Console
+          - Add functions/[[path]].js: Catch-all Pagess Function handler
+          - Update src/index.js: Export handleRequest for Pagess Function import
+          - Update wrangler.toml: Configure for Pagess deployment (no observability)
+          - Update package.json: Change scripts to use Pagess commands
 
           Runtime files only (documentation, tests, and dev configs excluded)."
 
       - name: Force push to pages branch
         run: |
-          cd /tmp/edgeone-conversion
+          cd /tmp/pages-conversion
           git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git push -f origin pages
 
       - name: Clean up
         if: always()
         run: |
-          rm -rf /tmp/edgeone-conversion
+          rm -rf /tmp/pages-conversion
