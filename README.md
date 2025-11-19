@@ -24,7 +24,7 @@
 [![Codeberg](https://img.shields.io/badge/Codeberg-2185D0?&logo=codeberg&logoColor=white)](#codeberg)
 [![SourceForge](https://img.shields.io/badge/SourceForge-FF6600?&logo=sourceforge&logoColor=white)](#sourceforge)
 [![AOSP](https://img.shields.io/badge/AOSP-3DDC84?&logo=android&logoColor=white)](#aosp-android-%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE)
-[![Hugging Face](https://img.shields.io/badge/Hugging%20Face-FFD21E?&logo=huggingface&logoColor=white)](#hugging-face-镜像)
+[![Hugging Face](https://img.shields.io/badge/Hugging%20Face-FFD21E?&logo=huggingface&logoColor=black)](#hugging-face-镜像)
 [![Civitai](https://img.shields.io/badge/Civitai-1971C2)](#civitai-ai-模型平台)
 [![npm](https://img.shields.io/badge/npm-CB3837?logo=npm&logoColor=white)](#npm-包管理加速)
 [![PyPI](https://img.shields.io/badge/PyPI-3775A9?logo=pypi&logoColor=white)](#python-包管理加速)
