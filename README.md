@@ -1986,25 +1986,6 @@ pipeline {
 
 ### 容器镜像加速
 
-#### Docker 配置
-
-```bash
-# 配置 Docker 使用 Xget 镜像加速
-# 编辑 /etc/docker/daemon.json（Linux）或 ~/.docker/daemon.json（macOS/Windows）
-{
-  "registry-mirrors": [
-    "https://xget.xi-xu.me/cr/ghcr"
-  ]
-}
-
-# 重启 Docker 服务
-sudo systemctl restart docker  # Linux
-# 或在 Docker Desktop 中重启服务
-
-# 验证配置
-docker info | grep -A 10 "Registry Mirrors"
-```
-
 #### 直接拉取镜像
 
 ```bash

@@ -1976,25 +1976,6 @@ pipeline {
 
 ### Container Image Acceleration
 
-#### Docker Configuration
-
-```bash
-# Configure Docker to use Xget image acceleration
-# Edit /etc/docker/daemon.json (Linux) or ~/.docker/daemon.json (macOS/Windows)
-{
-  "registry-mirrors": [
-    "https://xget.xi-xu.me/cr/ghcr"
-  ]
-}
-
-# Restart Docker service
-sudo systemctl restart docker  # Linux
-# Or restart service in Docker Desktop
-
-# Verify configuration
-docker info | grep -A 10 "Registry Mirrors"
-```
-
 #### Pull Images Directly
 
 ```bash
