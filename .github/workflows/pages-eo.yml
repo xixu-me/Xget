@@ -34,4 +34,4 @@ jobs:
           node-version: '22.11.0'
 
       - name: Deploy to EdgeOne Pages
-        run: npx edgeone pages deploy . -n xget-pages -t ${{ secrets.EDGEONE_API_TOKEN }}
+        run: npx edgeone pages deploy . -n xget -t ${{ secrets.EDGEONE_API_TOKEN }}
