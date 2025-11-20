@@ -68,7 +68,7 @@
  *
  * **AI Inference Providers (prefix: ip-):**
  * - `ip-openai` - OpenAI API
- * - `ip-anthropic` - Anthropic API
+ * - `ip-anthropic` - Claude API
  * - `ip-gemini` - Google Gemini API
  * - `ip-vertexai` - Google Vertex AI
  * - `ip-cohere` - Cohere API

@@ -735,7 +735,7 @@ https://api.openai.com/v1/chat/completions
 # Converted (add ip/openai prefix)
 https://xget.xi-xu.me/ip/openai/v1/chat/completions
 
-# Anthropic API original URL
+# Claude API original URL
 https://api.anthropic.com/v1/messages
 
 # Converted (add ip/anthropic prefix)
@@ -2135,175 +2135,146 @@ sudo systemctl restart containerd
 #### OpenAI API
 
 ```python
-import openai
+from openai import OpenAI
 
-# Use Xget's OpenAI API
-client = openai.OpenAI(
+client = OpenAI(
     api_key="your-api-key",
-    base_url="https://xget.xi-xu.me/ip/openai/v1"  # Use Xget
+    base_url="https://xget.xi-xu.me/ip/openai/v1",  # Use Xget
 )
 
-# Chat completion
-response = client.chat.completions.create(
-    model="gpt-4",
-    messages=[
-        {"role": "user", "content": "Hello, how are you?"}
-    ]
+response = client.responses.create(
+    model="gpt-5.1",
+    input="Hello, GPT!",
 )
 
-print(response.choices[0].message.content)
+print(response.output_text)
 ```
 
-#### Anthropic API
+#### Claude API
 
 ```python
-import anthropic
+from anthropic import Anthropic
 
-# Use Xget's Anthropic API
-client = anthropic.Anthropic(
+client = Anthropic(
     api_key="your-api-key",
-    base_url="https://xget.xi-xu.me/ip/anthropic"  # Use Xget
+    base_url="https://xget.xi-xu.me/ip/anthropic",  # Use Xget
 )
 
-# Create message
 message = client.messages.create(
-    model="claude-3-sonnet-20240229",
-    max_tokens=1000,
+    model="claude-sonnet-4-5",
+    max_tokens=256,
     messages=[
-        {"role": "user", "content": "Hello, Claude!"}
-    ]
+        {
+            "role": "user",
+            "content": "Hello, Claude!",
+        }
+    ],
 )
 
-print(message.content)
+print(message.content[0].text)
 ```
 
 #### Gemini API
 
 ```python
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
-# Configure API key
-genai.configure(api_key="your-api-key")
+client = genai.Client(
+    api_key="your-api-key",
+    http_options=types.HttpOptions(base_url="https://xget.xi-xu.me/ip/gemini"),  # Use Xget
+)
 
-# Use custom transport to configure Xget
-import requests
+response = client.models.generate_content(
+    model="gemini-3-pro-preview",
+    contents="Hello, Gemini!",
+)
 
-class XgetTransport:
-    def __init__(self, base_url):
-        self.base_url = base_url
-
-    def request(self, method, url, **kwargs):
-        # Forward request to Xget
-        accelerated_url = url.replace("https://generativelanguage.googleapis.com",
-                                    "https://xget.xi-xu.me/ip/gemini")
-        return requests.request(method, accelerated_url, **kwargs)
-
-# Create model instance
-model = genai.GenerativeModel('gemini-pro')
-
-# Generate content
-response = model.generate_content("Write a brief introduction about artificial intelligence")
 print(response.text)
 ```
 
 #### Multi-Provider Unified Interface
 
 ```python
-import requests
-import json
+from openai import OpenAI
 
-def call_ai_api(provider, endpoint, data, api_key):
-    """
-    Unified AI API calling function, supports multiple providers
-    """
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json"
-    }
+providers = [
+    ("Cohere",  "your-cohere-api-key",  "/cohere/compatibility/v1", "command-a-03-2025"),
+    ("Mistral", "your-mistral-api-key", "/mistralai/v1",            "mistral-medium-latest"),
+    ("xAI",     "your-xai-api-key",     "/xai/v1",                  "grok-4"),
+]
 
-    # Use Xget's accelerated URL
-    url = f"https://xget.xi-xu.me/ip/{provider}/{endpoint}"
-
-    response = requests.post(url, headers=headers, json=data)
-    return response.json()
-
-# Usage example
-providers = {
-    "openai": {
-        "endpoint": "v1/chat/completions",
-        "data": {
-            "model": "gpt-4",
-            "messages": [{"role": "user", "content": "Hello!"}]
-        }
-    },
-    "anthropic": {
-        "endpoint": "v1/messages",
-        "data": {
-            "model": "claude-3-sonnet-20240229",
-            "max_tokens": 1000,
-            "messages": [{"role": "user", "content": "Hello!"}]
-        }
-    },
-    "cohere": {
-        "endpoint": "v1/generate",
-        "data": {
-            "model": "command",
-            "prompt": "Hello!",
-            "max_tokens": 100
-        }
-    }
-}
-
-# Loop through different providers
-for provider, config in providers.items():
-    try:
-        result = call_ai_api(
-            provider=provider,
-            endpoint=config["endpoint"],
-            data=config["data"],
-            api_key="your-api-key"
-        )
-        print(f"{provider.title()} response: {result}")
-    except Exception as e:
-        print(f"Error calling {provider}: {e}")
+for name, key, path, model in providers:
+    client = OpenAI(api_key=key, base_url="https://xget.xi-xu.me/ip" + path)  # Use Xget
+    response = client.chat.completions.create(
+        model=model,
+        messages=[{"role": "user", "content": f"Hello, who are you?"}],
+    )
+    print(name, "=>", response.choices[0].message.content)
 ```
 
 #### Use in JavaScript/Node.js
 
 ```javascript
 // OpenAI API acceleration
-import OpenAI from 'openai';
+import OpenAI from "openai";
 
-const openai = new OpenAI({
-  apiKey: 'your-api-key',
-  baseURL: 'https://xget.xi-xu.me/ip/openai',  // Use Xget
+const openaiClient = new OpenAI({
+  apiKey: "your-openai-api-key",
+  baseURL: "https://xget.xi-xu.me/ip/openai/v1",  // Use Xget
 });
 
 async function chatWithGPT() {
-  const completion = await openai.chat.completions.create({
-    messages: [{ role: 'user', content: 'Hello!' }],
-    model: 'gpt-4',
+  const response = await openaiClient.responses.create({
+    model: "gpt-5.1",
+    input: "Hello, GPT!",
   });
 
-  console.log(completion.choices[0].message.content);
+  console.log(response.output_text);
 }
 
-// Anthropic API acceleration
-import Anthropic from '@anthropic-ai/sdk';
+// Claude API acceleration
+import Anthropic from "@anthropic-ai/sdk";
 
-const anthropic = new Anthropic({
-  apiKey: 'your-api-key',
-  baseURL: 'https://xget.xi-xu.me/ip/anthropic',  // Use Xget
+const anthropicClient = new Anthropic({
+  apiKey: "your-claude-api-key",
+  baseURL: "https://xget.xi-xu.me/ip/anthropic",  // Use Xget
 });
 
 async function chatWithClaude() {
-  const message = await anthropic.messages.create({
-    model: 'claude-3-sonnet-20240229',
-    max_tokens: 1000,
-    messages: [{ role: 'user', content: 'Hello!' }],
+  const message = await anthropicClient.messages.create({
+    model: "claude-sonnet-4-5",
+    max_tokens: 256,
+    messages: [
+      {
+        role: "user",
+        content: "Hello, Claude!",
+      },
+    ],
   });
 
-  console.log(message.content);
+  console.log(message.content[0].text);
+}
+
+// Gemini API acceleration
+import { GoogleGenAI } from "@google/genai";
+
+const geminiClient = new GoogleGenAI({
+  apiKey: "your-gemini-api-key",
+});
+
+async function chatWithGemini() {
+  const response = await geminiClient.models.generateContent({
+    model: "gemini-3-pro-preview",
+    contents: "Hello, Gemini!",
+    config: {
+      httpOptions: {
+        baseUrl: "https://xget.xi-xu.me/ip/gemini",  // Use Xget
+      },
+    },
+  });
+
+  console.log(response.text);
 }
 ```
 

@@ -1,17 +1,27 @@
 {
-  "compilerOptions": {
-    "allowJs": true,
-    "checkJs": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "noEmit": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "ES2022",
-    "types": ["@cloudflare/workers-types", "vitest/globals"]
-  },
-  "exclude": ["node_modules", "dist", "coverage"],
-  "include": ["src/**/*", "test/**/*"]
+	"compilerOptions": {
+		"allowJs": true,
+		"checkJs": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"module": "ESNext",
+		"moduleResolution": "node",
+		"noEmit": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"target": "ES2022",
+		"types": [
+			"@cloudflare/workers-types",
+			"vitest/globals"
+		]
+	},
+	"exclude": [
+		"node_modules",
+		"dist",
+		"coverage"
+	],
+	"include": [
+		"src/**/*",
+		"test/**/*"
+	]
 }
