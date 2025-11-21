@@ -2,8 +2,8 @@
 
 # Xget 🚀
 
-<a href="https://trendshift.io/repositories/14768" target="_blank"><img src="https://trendshift.io/api/badge/repositories/14768" alt="xixu-me%2FXget | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
-<a href="https://www.producthunt.com/products/xget" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1039008" alt="Xget | Product Hunt" style="width: 250px; height: 55px;" width="250" height="55" /></a>
+<a href="https://trendshift.io/repositories/14768" target="_blank"><img src="https://trendshift.io/api/badge/repositories/14768" alt="xixu-me%2FXget | Trendshift" width="250" height="55"/></a>
+<a href="https://www.producthunt.com/products/xget" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1039008" alt="Xget | Product Hunt" width="250" height="55" /></a>
 
 [![Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?&logo=cloudflare&logoColor=white)](#deploy-to-cloudflare-workers)
 [![EdgeOne](https://img.shields.io/badge/EdgeOne-006EFF?&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAACNklEQVR4nJ1W7XHbMAx96ul/lQnCDapOUG3gdIIkG6QjdINOUGeDNhNYmUDuBHIWiNQF/PqDYAxDoMUGdzx+AXgAAQGqSKKAOgAbma8BXMn5DGAv4wlAv6qJ5KVxR3LkOR3NWu9HkcnqzF0EkoMDcsysLd8oOooAb0lOF7wqpYnkzRrgZkVJ8mp0jLFzotscYOC6ZyNjjLbOnTZI7weSjQc4ZoQmkjuSneIdMoADyR9iVKuB0qglWYOT0n9Uys/qPAD4ZHgfAXwzfO/6LLyxcTxbJEdufFi1aEk32l6Z+1Lhep1lQa1aVwI2O3wBsTIFxOoUADzVspgzQp6S1pztATRyvpG5lTNLTUVykssJwF91OQP4bATuAGzVngBexJD0vJW51/u5VpZc4VSUgViMLX1xlIUCoERNLoYE8Ns579S6chTngGYZh1oWjRGoEGOjKSAGP/HovqblDoiJtAfwLPv5xHnqCrbNeK3K8qX9juQDMx3CVpoesXLop7DeATF+2rsKsbo8oizD3zzsjLWk30RHw7N7R5V68/AgMUpeWg9bLLOxL/AniOw1Yp58t/FZi5+mzuFrJJY/Sb6qFzmmV9PMgzBsHUW/eN5gJwdk54Rm4YTXgHPx00p24qEGydFElb3e09nUbpXVuZ+oS/88Z62rJLMelHAJSDqf6LxWSXvS35/+Vr0SlqrPHsBXxOw/o5IGHDLKE4AucS8A7hG7zAIMACryv371WxkfxYhZFD8jFvt+TdE/deK28xBAUlEAAAAASUVORK5CYII=)](#deploy-to-edgeone-pages)
@@ -56,6 +56,21 @@
 Ultra-high-performance, secure, all-in-one acceleration engine for developer resources that significantly outperforms traditional solutions, delivering unified, efficient acceleration across code repositories, model and dataset hubs, package registries, container registries, AI inference providers, and more.
 
 In-depth technical analysis article published: ***[Deep Dive into Xget: A High-Performance, Multi-Protocol, and Secure Acceleration Engine for Developer Resources](https://blog.xi-xu.me/2025/10/07/deep-dive-into-xget-technology-en.html)***.
+
+## 💝 Sponsors
+
+<p align="center" style="display: flex; justify-content: center; align-items: center; gap: 24px;">
+  <a href="https://www.digitalocean.com/?refcode=7efe110ca23f">
+    <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/PoweredByDO/DO_Powered_by_Badge_blue.svg"
+         alt="Powered by DigitalOcean"
+         height="55">
+  </a>
+  <a href="https://dartnode.com">
+    <img src="https://dartnode.com/branding/DN-Open-Source-sm.png"
+         alt="Powered by DartNode"
+         height="55">
+  </a>
+</p>
 
 ## 🎯 Quick Start
 

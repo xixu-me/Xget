@@ -2,8 +2,8 @@
 
 # Xget 🚀
 
-<a href="https://trendshift.io/repositories/14768" target="_blank"><img src="https://trendshift.io/api/badge/repositories/14768" alt="xixu-me%2FXget | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
-<a href="https://www.producthunt.com/products/xget" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1039008" alt="Xget | Product Hunt" style="width: 250px; height: 55px;" width="250" height="55" /></a>
+<a href="https://trendshift.io/repositories/14768" target="_blank"><img src="https://trendshift.io/api/badge/repositories/14768" alt="xixu-me%2FXget | Trendshift" width="250" height="55"/></a>
+<a href="https://www.producthunt.com/products/xget" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1039008" alt="Xget | Product Hunt" width="250" height="55" /></a>
 
 [![Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?&logo=cloudflare&logoColor=white)](#部署到-cloudflare-workers)
 [![EdgeOne](https://img.shields.io/badge/EdgeOne-006EFF?&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAACNklEQVR4nJ1W7XHbMAx96ul/lQnCDapOUG3gdIIkG6QjdINOUGeDNhNYmUDuBHIWiNQF/PqDYAxDoMUGdzx+AXgAAQGqSKKAOgAbma8BXMn5DGAv4wlAv6qJ5KVxR3LkOR3NWu9HkcnqzF0EkoMDcsysLd8oOooAb0lOF7wqpYnkzRrgZkVJ8mp0jLFzotscYOC6ZyNjjLbOnTZI7weSjQc4ZoQmkjuSneIdMoADyR9iVKuB0qglWYOT0n9Uys/qPAD4ZHgfAXwzfO/6LLyxcTxbJEdufFi1aEk32l6Z+1Lhep1lQa1aVwI2O3wBsTIFxOoUADzVspgzQp6S1pztATRyvpG5lTNLTUVykssJwF91OQP4bATuAGzVngBexJD0vJW51/u5VpZc4VSUgViMLX1xlIUCoERNLoYE8Ns579S6chTngGYZh1oWjRGoEGOjKSAGP/HovqblDoiJtAfwLPv5xHnqCrbNeK3K8qX9juQDMx3CVpoesXLop7DeATF+2rsKsbo8oizD3zzsjLWk30RHw7N7R5V68/AgMUpeWg9bLLOxL/AniOw1Yp58t/FZi5+mzuFrJJY/Sb6qFzmmV9PMgzBsHUW/eN5gJwdk54Rm4YTXgHPx00p24qEGydFElb3e09nUbpXVuZ+oS/88Z62rJLMelHAJSDqf6LxWSXvS35/+Vr0SlqrPHsBXxOw/o5IGHDLKE4AucS8A7hG7zAIMACryv371WxkfxYhZFD8jFvt+TdE/deK28xBAUlEAAAAASUVORK5CYII=)](#部署到-edgeone-pages)
@@ -65,6 +65,21 @@
 - **⚖️ 合规合法**：严格遵守相关法律法规，仅加速合法资源
 - **🚀 提升效率**：显著提高开发者的工作效率和开发体验
 - **🆓 普惠开源**：为开源社区贡献力量，促进技术交流与发展
+
+## 💝 赞助商
+
+<p align="center" style="display: flex; justify-content: center; align-items: center; gap: 24px;">
+  <a href="https://www.digitalocean.com/?refcode=7efe110ca23f">
+    <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/PoweredByDO/DO_Powered_by_Badge_blue.svg"
+         alt="Powered by DigitalOcean"
+         height="55">
+  </a>
+  <a href="https://dartnode.com">
+    <img src="https://dartnode.com/branding/DN-Open-Source-sm.png"
+         alt="Powered by DartNode"
+         height="55">
+  </a>
+</p>
 
 ## 🎯 快速使用
 

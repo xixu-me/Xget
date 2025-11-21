@@ -3,9 +3,9 @@ contact_links:
   - name: 📚 存储库文档
     url: https://github.com/xixu-me/Xget/blob/main/README.md
     about: 查看完整的存储库文档和使用指南
-  - name: 🌐 公共实例
-    url: https://xget.xi-xu.me
-    about: 访问官方公共实例，开箱即用
+  - name: 🌐 URL 转换器
+    url: https://xuc.xi-xu.me
+    about: 访问官方 web 应用程序，开箱即用
   - name: 🔧 故障排除
     url: https://github.com/xixu-me/Xget/blob/main/README.md#-故障排除
     about: 查看常见问题和解决方案
