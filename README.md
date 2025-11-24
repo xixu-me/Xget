@@ -66,21 +66,6 @@
 - **🚀 提升效率**：显著提高开发者的工作效率和开发体验
 - **🆓 普惠开源**：为开源社区贡献力量，促进技术交流与发展
 
-## 💝 赞助商
-
-<p align="center" style="display: flex; justify-content: center; align-items: center; gap: 24px;">
-  <a href="https://www.digitalocean.com/?refcode=7efe110ca23f">
-    <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/PoweredByDO/DO_Powered_by_Badge_blue.svg"
-         alt="Powered by DigitalOcean"
-         height="55">
-  </a>
-  <a href="https://dartnode.com">
-    <img src="https://dartnode.com/branding/DN-Open-Source-sm.png"
-         alt="Powered by DartNode"
-         height="55">
-  </a>
-</p>
-
 ## 🎯 快速使用
 
 **预部署实例（不保证可靠性）：`xget.xi-xu.me`**
@@ -2500,6 +2485,14 @@ podman compose up -d
 ```
 
 部署完成后，Xget 将在 8080 端口运行。
+
+如果你希望在 DigitalOcean 上部署和运行 Xget，可以参考文档[《Deploying and Optimizing Xget on DigitalOcean》](docs/deploy-on-digitalocean.md)。通过下方推荐链接注册账号，可获得 200 美元代金券积分，可用于创建 Droplet、Kubernetes、App Platform 等资源：
+
+<p>
+  <a href="https://m.do.co/c/7efe110ca23f">
+    <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/PoweredByDO/DO_Powered_by_Badge_blue.svg" width="201px">
+  </a>
+</p>
 
 **注意**：自托管部署不包括全球边缘网络加速，性能取决于你的服务器配置和网络环境。
 

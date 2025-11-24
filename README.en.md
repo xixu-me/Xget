@@ -57,21 +57,6 @@ Ultra-high-performance, secure, all-in-one acceleration engine for developer res
 
 In-depth technical analysis article published: ***[Deep Dive into Xget: A High-Performance, Multi-Protocol, and Secure Acceleration Engine for Developer Resources](https://blog.xi-xu.me/2025/10/07/deep-dive-into-xget-technology-en.html)***.
 
-## 💝 Sponsors
-
-<p align="center" style="display: flex; justify-content: center; align-items: center; gap: 24px;">
-  <a href="https://www.digitalocean.com/?refcode=7efe110ca23f">
-    <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/PoweredByDO/DO_Powered_by_Badge_blue.svg"
-         alt="Powered by DigitalOcean"
-         height="55">
-  </a>
-  <a href="https://dartnode.com">
-    <img src="https://dartnode.com/branding/DN-Open-Source-sm.png"
-         alt="Powered by DartNode"
-         height="55">
-  </a>
-</p>
-
 ## 🎯 Quick Start
 
 **Pre-deployed Instance (no reliability guarantee): `xget.xi-xu.me`**
@@ -2490,6 +2475,14 @@ podman compose up -d
 ```
 
 After deployment, Xget will run on port 8080.
+
+If you want to deploy and run Xget on DigitalOcean, please refer to *[Deploying and Optimizing Xget on DigitalOcean](docs/deploy-on-digitalocean.md)*. By signing up via the referral link below, you can receive USD 200 in credits to try Droplets, Kubernetes, App Platform, and more:
+
+<p>
+  <a href="https://m.do.co/c/7efe110ca23f">
+    <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/PoweredByDO/DO_Powered_by_Badge_blue.svg" width="201px">
+  </a>
+</p>
 
 **Note**: Self-hosted deployment does not include global edge network acceleration. Performance depends on your server configuration and network environment.
 
