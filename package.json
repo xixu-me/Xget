@@ -6,7 +6,7 @@
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.8.71",
     "@cloudflare/workers-types": "^4.20250724.0",
-    "eslint": "^9.31.0",
+    "eslint": "^9.39.1",
     "prettier": "^3.6.2",
     "typescript": "^5.9.3",
     "vitest": "^3.1.4",
