@@ -9,7 +9,7 @@
     "eslint": "^9.39.1",
     "prettier": "^3.6.2",
     "typescript": "^5.9.3",
-    "vitest": "^3.1.4",
+    "vitest": "^4.0.13",
     "wrangler": "^4.47.0"
   },
   "name": "xget",
