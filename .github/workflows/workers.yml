@@ -30,7 +30,7 @@ jobs:
       deployments: write
     steps:
       - name: Checkout main branch
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
