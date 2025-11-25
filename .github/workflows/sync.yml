@@ -212,7 +212,7 @@ jobs:
           cp package-lock.json /tmp/functions-conversion/ 2>/dev/null || true
           cp LICENSE /tmp/functions-conversion/
 
-      - name: Create Vercel Edge Function handler
+      - name: Create Edge Function handler
         run: |
           mkdir -p /tmp/functions-conversion/api
           cat > /tmp/functions-conversion/api/index.js << 'EOF'
@@ -237,51 +237,56 @@ jobs:
           import { handleRequest } from '../src/index.js';
 
           /**
-           * Vercel Edge Function handler for all routes.
+           * Edge Function handler.
            *
-           * This adapter enables Xget to run on Vercel's Edge Runtime by mapping
-           * Vercel's environment model to Cloudflare Workers' expected format.
-           *
-           * The Vercel Edge Runtime uses standard Web APIs (Request, Response, fetch),
-           * making it compatible with the existing Cloudflare Workers code.
-           *
-           * @param {Request} request - Standard Web API Request
+           * @param {Request} request - Standard Web API Request object
+           * @param {Object} [context] - Platform-specific context (Netlify only)
+           * @param {Object} [context.geo] - Geolocation data (Netlify)
+           * @param {string} [context.ip] - Client IP address (Netlify)
+           * @param {Object} [context.env] - Environment variables (Netlify)
+           * @param {Function} [context.waitUntil] - Background task extension (Netlify)
            * @returns {Promise<Response>} Standard Web API Response
            *
            * @example
-           * // This is called automatically by Vercel Edge Runtime
-           * // Runtime invokes: handler(request)
-           * // Returns: Response with proxied content
+           * // Netlify invokes with context
+           * handler(request, { geo: {...}, ip: '1.2.3.4', env: {...}, waitUntil: fn })
            *
            * @example
-           * // Environment variables usage
-           * // Vercel dashboard or vercel.json: TIMEOUT_SECONDS = "60"
-           * // process.env contains: { TIMEOUT_SECONDS: "60" }
-           * // Mapped to env object and passed to handleRequest
+           * // Vercel invokes without context
+           * handler(request)
            */
-          export default async function handler(request) {
-            // Map process.env to Cloudflare Workers env format
+          export default async function handler(request, context) {
+            // Detect runtime environment
+            const isNetlify = context && (context.geo !== undefined || context.ip !== undefined);
+
+            // Normalize environment variables
+            const envSource = isNetlify && context.env ? context.env : process.env;
             const env = {
-              TIMEOUT_SECONDS: process.env.TIMEOUT_SECONDS,
-              MAX_RETRIES: process.env.MAX_RETRIES,
-              RETRY_DELAY_MS: process.env.RETRY_DELAY_MS,
-              CACHE_DURATION: process.env.CACHE_DURATION,
-              ALLOWED_METHODS: process.env.ALLOWED_METHODS,
-              ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS,
-              MAX_PATH_LENGTH: process.env.MAX_PATH_LENGTH,
+              TIMEOUT_SECONDS: envSource.TIMEOUT_SECONDS,
+              MAX_RETRIES: envSource.MAX_RETRIES,
+              RETRY_DELAY_MS: envSource.RETRY_DELAY_MS,
+              CACHE_DURATION: envSource.CACHE_DURATION,
+              ALLOWED_METHODS: envSource.ALLOWED_METHODS,
+              ALLOWED_ORIGINS: envSource.ALLOWED_ORIGINS,
+              MAX_PATH_LENGTH: envSource.MAX_PATH_LENGTH,
             };
 
-            // Create minimal execution context
-            // Note: Vercel Edge Runtime doesn't support waitUntil or passThroughOnException
+            // Create normalized execution context
             const ctx = {
-              waitUntil: (promise) => {
-                // No-op: Vercel doesn't support background tasks
-                // Cache writes will run synchronously instead
-                console.warn('waitUntil is not supported in Vercel Edge Runtime');
-              },
+              waitUntil: isNetlify && context.waitUntil
+                ? (promise) => context.waitUntil(promise)
+                : (promise) => {
+                    // No-op on Vercel: background tasks not supported
+                    // Cache writes will run synchronously instead
+                    if (process.env.NODE_ENV !== 'production') {
+                      console.warn('waitUntil is not supported in Vercel Edge Runtime');
+                    }
+                  },
               passThroughOnException: () => {
-                // No-op: Vercel-specific error handling
-                console.warn('passThroughOnException is not supported in Vercel Edge Runtime');
+                // Not supported on either platform in this context
+                if (process.env.NODE_ENV !== 'production') {
+                  console.warn('passThroughOnException is not universally supported');
+                }
               }
             };
 
@@ -289,7 +294,7 @@ jobs:
             return handleRequest(request, env, ctx);
           }
 
-          // Vercel Edge Runtime configuration
+          // Vercel Edge Runtime configuration (ignored by Netlify)
           export const config = {
             runtime: 'edge',
           };
@@ -321,6 +326,37 @@ jobs:
               }
             ]
           }
+          EOF
+
+      - name: Create netlify.toml
+        run: |
+          cd /tmp/functions-conversion
+          cat > netlify.toml << 'EOF'
+          [[edge_functions]]
+          function = "edge-handler"
+          path = "/*"
+
+          [build]
+          publish = "."
+          EOF
+
+      - name: Create Netlify Edge Function redirect
+        run: |
+          cd /tmp/functions-conversion
+          mkdir -p netlify/edge-functions
+          cat > netlify/edge-functions/edge-handler.js << 'EOF'
+          /**
+           * Netlify Edge Function entry point.
+           *
+           * This file serves as a redirect to the edge function handler
+           * located at /api/index.js. Both Netlify and Vercel can use the same
+           * handler code, with platform detection handling the differences.
+           *
+           * Netlify requires edge functions to be in netlify/edge-functions/,
+           * while Vercel uses /api/ directory. This approach maintains a single
+           * source of truth at /api/index.js.
+           */
+          export { default, config } from '../../api/index.js';
           EOF
 
       - name: Export handleRequest from src/index.js
