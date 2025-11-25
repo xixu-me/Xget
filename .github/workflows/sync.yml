@@ -168,12 +168,6 @@ jobs:
 
           Auto-converted from main branch commit ${{ github.sha }}
 
-          Changes:
-          - Add functions/[[path]].js: Catch-all Pages Function handler
-          - Update src/index.js: Export handleRequest for Pages Function import
-          - Update wrangler.toml: Configure for Pages deployment (no observability)
-          - Update package.json: Change scripts to use Pages commands
-
           Runtime files only (documentation, tests, and dev configs excluded)."
 
       - name: Force push to pages branch
@@ -367,15 +361,9 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b functions
           git add .
-          git commit -m "Convert Workers to Vercel Functions
+          git commit -m "Convert Workers to Functions
 
           Auto-converted from main branch commit ${{ github.sha }}
-
-          Changes:
-          - Add api/index.js: Vercel Edge Function adapter
-          - Add vercel.json: Vercel routing and headers configuration
-          - Update src/index.js: Export handleRequest for Vercel adapter import
-          - Update package.json: Change scripts to use Vercel commands
 
           Runtime files only (documentation, tests, and dev configs excluded)."
 

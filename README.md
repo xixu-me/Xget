@@ -7,6 +7,7 @@
 
 [![Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?&logo=cloudflare&logoColor=white)](#部署到-cloudflare-workers)
 [![EdgeOne](https://img.shields.io/badge/EdgeOne-006EFF?&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAYAAAByDd+UAAACNklEQVR4nJ1W7XHbMAx96ul/lQnCDapOUG3gdIIkG6QjdINOUGeDNhNYmUDuBHIWiNQF/PqDYAxDoMUGdzx+AXgAAQGqSKKAOgAbma8BXMn5DGAv4wlAv6qJ5KVxR3LkOR3NWu9HkcnqzF0EkoMDcsysLd8oOooAb0lOF7wqpYnkzRrgZkVJ8mp0jLFzotscYOC6ZyNjjLbOnTZI7weSjQc4ZoQmkjuSneIdMoADyR9iVKuB0qglWYOT0n9Uys/qPAD4ZHgfAXwzfO/6LLyxcTxbJEdufFi1aEk32l6Z+1Lhep1lQa1aVwI2O3wBsTIFxOoUADzVspgzQp6S1pztATRyvpG5lTNLTUVykssJwF91OQP4bATuAGzVngBexJD0vJW51/u5VpZc4VSUgViMLX1xlIUCoERNLoYE8Ns579S6chTngGYZh1oWjRGoEGOjKSAGP/HovqblDoiJtAfwLPv5xHnqCrbNeK3K8qX9juQDMx3CVpoesXLop7DeATF+2rsKsbo8oizD3zzsjLWk30RHw7N7R5V68/AgMUpeWg9bLLOxL/AniOw1Yp58t/FZi5+mzuFrJJY/Sb6qFzmmV9PMgzBsHUW/eN5gJwdk54Rm4YTXgHPx00p24qEGydFElb3e09nUbpXVuZ+oS/88Z62rJLMelHAJSDqf6LxWSXvS35/+Vr0SlqrPHsBXxOw/o5IGHDLKE4AucS8A7hG7zAIMACryv371WxkfxYhZFD8jFvt+TdE/deK28xBAUlEAAAAASUVORK5CYII=)](#部署到-edgeone-pages)
+[![Vercel](https://img.shields.io/badge/Vercel-000000?&logo=vercel&logoColor=white)](#部署到-vercel)
 [![Docker](https://img.shields.io/badge/Docker-2496ED?&logo=docker&logoColor=white)](#自托管部署)
 [![Podman](https://img.shields.io/badge/Podman-892CA0?&logo=podman&logoColor=white)](#自托管部署)
 [![Chromium](https://img.shields.io/badge/Chromium-4285F4?logo=googlechrome&logoColor=white)](#-生态系统集成)
@@ -2320,7 +2321,7 @@ client = OpenAI(
 1. **fork 本存储库**：[Fork xixu-me/Xget](https://github.com/xixu-me/Xget/fork)
 
 2. **获取 Cloudflare 凭证**：
-   - 访问[帐户 API 令牌](https://dash.cloudflare.com/?to=/:account/api-tokens)创建并记录 API 令牌，使用“编辑 Cloudflare Workers”模板
+   - 访问[账户 API 令牌](https://dash.cloudflare.com/?to=/:account/api-tokens)创建并记录 API 令牌，使用“编辑 Cloudflare Workers”模板
    - 访问 [Workers 和 Pages](https://dash.cloudflare.com/?to=/:account/workers-and-pages) 记录 Account ID
 
 3. **配置 GitHub Secrets**：
@@ -2341,7 +2342,7 @@ client = OpenAI(
 1. **fork 本存储库**：[Fork xixu-me/Xget](https://github.com/xixu-me/Xget/fork)
 
 2. **获取 Cloudflare 凭证**：
-   - 访问[帐户 API 令牌](https://dash.cloudflare.com/?to=/:account/api-tokens)创建并记录 API 令牌，使用“编辑 Cloudflare Workers”模板
+   - 访问[账户 API 令牌](https://dash.cloudflare.com/?to=/:account/api-tokens)创建并记录 API 令牌，使用“编辑 Cloudflare Workers”模板
    - 访问 [Workers 和 Pages](https://dash.cloudflare.com/?to=/:account/workers-and-pages) 记录 Account ID
 
 3. **配置 GitHub Secrets**：
@@ -2381,6 +2382,28 @@ client = OpenAI(
 5. **绑定自定义域名**（可选）：在 EdgeOne Pages 控制台中绑定你的自定义域名
 
 **注意**：`pages` 分支是从 `main` 分支自动生成的。请勿手动编辑 `pages` 分支，因为它会被同步工作流覆盖。
+
+### 部署到 Vercel
+
+1. **fork 本存储库**：[Fork xixu-me/Xget](https://github.com/xixu-me/Xget/fork)
+
+2. **获取 Vercel Access Token**：
+   - 访问 [Vercel 账户设置](https://vercel.com/account/settings/tokens) 创建并记录 Access Token
+
+3. **配置 GitHub Secrets**：
+   - 进入你的 GitHub 存储库 → Settings → Secrets and variables → Actions
+   - 添加以下 secret：
+     - `VERCEL_TOKEN`：你的 Vercel Access Token
+
+4. **触发部署**：
+   - 存储库会自动将 Workers 代码转换为 Vercel Functions 兼容格式并同步到 `functions` 分支
+   - 推送代码到 `main` 分支会自动触发同步和部署工作流
+   - 仅修改文档文件（`.md`）、`LICENSE`、`.gitignore` 等不会触发部署
+   - 也可以在 GitHub Actions 页面手动触发部署
+
+5. **绑定自定义域名**（可选）：在 Vercel 控制台中绑定你的自定义域名
+
+**注意**：`functions` 分支是从 `main` 分支自动生成的。请勿手动编辑 `functions` 分支，因为它会被同步工作流覆盖。
 
 ### 自托管部署
 
@@ -2486,7 +2509,7 @@ podman compose up -d
 
 部署完成后，Xget 将在 8080 端口运行。
 
-如果你希望在 DigitalOcean 上部署和运行 Xget，可以参考文档[《Deploying and Optimizing Xget on DigitalOcean》](docs/deploy-on-digitalocean.md)。通过下方推荐链接注册账号，可获得 200 美元代金券积分，可用于创建 Droplet、Kubernetes、App Platform 等资源：
+如果你希望在 DigitalOcean 上部署和运行 Xget，可以参考文档[《Deploying and Optimizing Xget on DigitalOcean》](docs/deploy-on-digitalocean.md)。通过下方推荐链接注册账户，可获得 200 美元代金券积分，可用于创建 Droplet、Kubernetes、App Platform 等资源：
 
 <p>
   <a href="https://m.do.co/c/7efe110ca23f">
