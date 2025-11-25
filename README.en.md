@@ -2362,7 +2362,7 @@ client = OpenAI(
 3. **Configure GitHub Secrets**:
    - Go to your GitHub repository → Settings → Secrets and variables → Actions
    - Add the following secret:
-     - `EDGEONE_PAGES_API_TOKEN`: Your EdgeOne Pages API Token
+     - `EDGEONE_PAGES_API_TOKEN`: Your API Token
 
 4. **Trigger deployment**:
    - The repository will automatically convert Workers code to Pages-compatible format and sync to the `pages` branch
@@ -2378,13 +2378,17 @@ client = OpenAI(
 
 1. **Fork this repository**: [Fork xixu-me/Xget](https://github.com/xixu-me/Xget/fork)
 
-2. **Get Vercel Token**:
+2. **Get Vercel credentials**:
    - Visit [Vercel Account Settings](https://vercel.com/account/settings/tokens) to create and note an Access Token
+   - Visit Team Settings to note the Team ID
+   - Visit project's Settings after creating a new project to note the Project ID
 
 3. **Configure GitHub Secrets**:
    - Go to your GitHub repository → Settings → Secrets and variables → Actions
-   - Add the following secret:
-     - `VERCEL_TOKEN`: Your Vercel Access Token
+   - Add the following secrets:
+     - `VERCEL_TOKEN`: Your Access Token
+     - `VERCEL_ORG_ID`: Your Team ID
+     - `VERCEL_PROJECT_ID`: Your Project ID
 
 4. **Trigger deployment**:
    - The repository will automatically convert Workers code to Functions-compatible format and sync to the `functions` branch
@@ -2402,7 +2406,7 @@ client = OpenAI(
 
 2. **Get Netlify credentials**:
    - Visit [Netlify User Settings](https://app.netlify.com/user/applications) to create and note a personal access token
-   - Visit the project configuration page after creating a new project to note the Project ID
+   - Visit Project configuration after creating a new project to note the Project ID
 
 3. **Configure GitHub Secrets**:
    - Go to your GitHub repository → Settings → Secrets and variables → Actions

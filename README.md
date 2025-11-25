@@ -2372,7 +2372,7 @@ client = OpenAI(
 3. **配置 GitHub Secrets**：
    - 进入你的 GitHub 存储库 → Settings → Secrets and variables → Actions
    - 添加以下 secret：
-     - `EDGEONE_API_TOKEN`：你的 EdgeOne Pages API Token
+     - `EDGEONE_API_TOKEN`：你的 API Token
 
 4. **触发部署**：
    - 存储库会自动将 Workers 代码转换为 Pages 兼容格式并同步到 `pages` 分支
@@ -2388,13 +2388,17 @@ client = OpenAI(
 
 1. **fork 本存储库**：[Fork xixu-me/Xget](https://github.com/xixu-me/Xget/fork)
 
-2. **获取 Vercel Access Token**：
-   - 访问 [Vercel 账户设置](https://vercel.com/account/settings/tokens)创建并记录 Access Token
+2. **获取 Vercel 凭证**：
+   - 访问 [Vercel Account Settings](https://vercel.com/account/settings/tokens) 创建并记录 Access Token
+   - 访问 Team Settings 记录 Team ID
+   - 新建项目后访问项目的 Settings 记录 Project ID
 
 3. **配置 GitHub Secrets**：
    - 进入你的 GitHub 存储库 → Settings → Secrets and variables → Actions
-   - 添加以下 secret：
-     - `VERCEL_TOKEN`：你的 Vercel Access Token
+   - 添加以下 secrets：
+     - `VERCEL_TOKEN`：你的 Access Token
+     - `VERCEL_ORG_ID`：你的 Team ID
+     - `VERCEL_PROJECT_ID`：你的 Project ID
 
 4. **触发部署**：
    - 存储库会自动将 Workers 代码转换为 Functions 兼容格式并同步到 `functions` 分支
@@ -2412,7 +2416,7 @@ client = OpenAI(
 
 2. **获取 Netlify 凭证**：
    - 访问 [Netlify User Settings](https://app.netlify.com/user/applications) 创建并记录 personal access token
-   - 新建项目后访问项目配置页面记录 Project ID
+   - 新建项目后访问 Project configuration 记录 Project ID
 
 3. **配置 GitHub Secrets**：
    - 进入你的 GitHub 存储库 → Settings → Secrets and variables → Actions
