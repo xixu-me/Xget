@@ -178,6 +178,9 @@ export const PLATFORMS = {
   fdroid: 'https://f-droid.org',
   jenkins: 'https://updates.jenkins.io',
 
+  // Custom API Endpoints
+  any: 'https://anyrouter.top',
+
   // AI Inference Providers
   'ip-openai': 'https://api.openai.com',
   'ip-anthropic': 'https://api.anthropic.com',

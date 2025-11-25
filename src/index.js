@@ -368,6 +368,11 @@ function isAIInferenceRequest(request, url) {
     return true;
   }
 
+  // Check for custom API endpoints (any/...)
+  if (url.pathname.startsWith('/any/') || url.pathname === '/any') {
+    return true;
+  }
+
   // Check for common AI inference API endpoints
   const aiEndpoints = [
     '/v1/chat/completions',

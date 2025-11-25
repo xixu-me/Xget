@@ -144,7 +144,7 @@ import { PLATFORMS } from './platforms.js';
  */
 export function createConfig(env = {}) {
   return {
-    TIMEOUT_SECONDS: parseInt(env.TIMEOUT_SECONDS) || 30,
+    TIMEOUT_SECONDS: parseInt(env.TIMEOUT_SECONDS) || 180,
     MAX_RETRIES: parseInt(env.MAX_RETRIES) || 3,
     RETRY_DELAY_MS: parseInt(env.RETRY_DELAY_MS) || 1000,
     CACHE_DURATION: parseInt(env.CACHE_DURATION) || 1800, // 30 minutes
