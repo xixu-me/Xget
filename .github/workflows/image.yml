@@ -5,32 +5,32 @@ on:
     branches:
       - main
     tags:
-      - 'v*'
+      - "v*"
     paths-ignore:
-      - '**.md'
-      - 'LICENSE'
-      - '.gitignore'
-      - '.editorconfig'
-      - '.vscode/**'
-      - 'docs/**'
-      - '.prettierrc*'
-      - '.eslintrc*'
-      - '.github/ISSUE_TEMPLATE/**'
-      - '.github/PULL_REQUEST_TEMPLATE/**'
+      - "**.md"
+      - "LICENSE"
+      - ".gitignore"
+      - ".editorconfig"
+      - ".vscode/**"
+      - "docs/**"
+      - ".prettierrc*"
+      - ".eslintrc*"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/PULL_REQUEST_TEMPLATE/**"
   pull_request:
     branches:
       - main
     paths-ignore:
-      - '**.md'
-      - 'LICENSE'
-      - '.gitignore'
-      - '.editorconfig'
-      - '.vscode/**'
-      - 'docs/**'
-      - '.prettierrc*'
-      - '.eslintrc*'
-      - '.github/ISSUE_TEMPLATE/**'
-      - '.github/PULL_REQUEST_TEMPLATE/**'
+      - "**.md"
+      - "LICENSE"
+      - ".gitignore"
+      - ".editorconfig"
+      - ".vscode/**"
+      - "docs/**"
+      - ".prettierrc*"
+      - ".eslintrc*"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/PULL_REQUEST_TEMPLATE/**"
   workflow_dispatch:
 
 concurrency:

@@ -1,20 +1,20 @@
-name: Sync to Pages
+name: Sync to Pages and Functions
 
 on:
   push:
     branches:
       - main
     paths-ignore:
-      - '**.md'
-      - 'LICENSE'
-      - '.gitignore'
-      - '.editorconfig'
-      - '.vscode/**'
-      - 'docs/**'
-      - '.prettierrc*'
-      - '.eslintrc*'
-      - '.github/ISSUE_TEMPLATE/**'
-      - '.github/PULL_REQUEST_TEMPLATE/**'
+      - "**.md"
+      - "LICENSE"
+      - ".gitignore"
+      - ".editorconfig"
+      - ".vscode/**"
+      - "docs/**"
+      - ".prettierrc*"
+      - ".eslintrc*"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/PULL_REQUEST_TEMPLATE/**"
   workflow_dispatch:
 
 concurrency:
@@ -22,7 +22,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  convert-and-sync:
+  convert-and-sync-pages:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -186,3 +186,206 @@ jobs:
         if: always()
         run: |
           rm -rf /tmp/pages-conversion
+
+  convert-and-sync-functions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout main branch
+        uses: actions/checkout@v6
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create temporary working directory
+        run: |
+          mkdir -p /tmp/functions-conversion
+          cd /tmp/functions-conversion
+
+      - name: Copy source code files only
+        run: |
+          # Copy only runtime-required files
+          cp -r src /tmp/functions-conversion/
+          cp package.json /tmp/functions-conversion/
+          cp package-lock.json /tmp/functions-conversion/ 2>/dev/null || true
+          cp LICENSE /tmp/functions-conversion/
+
+      - name: Create Vercel Edge Function handler
+        run: |
+          mkdir -p /tmp/functions-conversion/api
+          cat > /tmp/functions-conversion/api/index.js << 'EOF'
+          /**
+           * Xget - High-performance acceleration engine for developer resources
+           * Copyright (C) 2025 Xi Xu
+           *
+           * This program is free software: you can redistribute it and/or modify
+           * it under the terms of the GNU General Public License as published by
+           * the Free Software Foundation, either version 3 of the License, or
+           * (at your option) any later version.
+           *
+           * This program is distributed in the hope that it will be useful,
+           * but WITHOUT ANY WARRANTY; without even the implied warranty of
+           * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+           * GNU General Public License for more details.
+           *
+           * You should have received a copy of the GNU General Public License
+           * along with this program. If not, see <https://www.gnu.org/licenses/>.
+           */
+
+          import { handleRequest } from '../src/index.js';
+
+          /**
+           * Vercel Edge Function handler for all routes.
+           *
+           * This adapter enables Xget to run on Vercel's Edge Runtime by mapping
+           * Vercel's environment model to Cloudflare Workers' expected format.
+           *
+           * The Vercel Edge Runtime uses standard Web APIs (Request, Response, fetch),
+           * making it compatible with the existing Cloudflare Workers code.
+           *
+           * @param {Request} request - Standard Web API Request
+           * @returns {Promise<Response>} Standard Web API Response
+           *
+           * @example
+           * // This is called automatically by Vercel Edge Runtime
+           * // Runtime invokes: handler(request)
+           * // Returns: Response with proxied content
+           *
+           * @example
+           * // Environment variables usage
+           * // Vercel dashboard or vercel.json: TIMEOUT_SECONDS = "60"
+           * // process.env contains: { TIMEOUT_SECONDS: "60" }
+           * // Mapped to env object and passed to handleRequest
+           */
+          export default async function handler(request) {
+            // Map process.env to Cloudflare Workers env format
+            const env = {
+              TIMEOUT_SECONDS: process.env.TIMEOUT_SECONDS,
+              MAX_RETRIES: process.env.MAX_RETRIES,
+              RETRY_DELAY_MS: process.env.RETRY_DELAY_MS,
+              CACHE_DURATION: process.env.CACHE_DURATION,
+              ALLOWED_METHODS: process.env.ALLOWED_METHODS,
+              ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS,
+              MAX_PATH_LENGTH: process.env.MAX_PATH_LENGTH,
+            };
+
+            // Create minimal execution context
+            // Note: Vercel Edge Runtime doesn't support waitUntil or passThroughOnException
+            const ctx = {
+              waitUntil: (promise) => {
+                // No-op: Vercel doesn't support background tasks
+                // Cache writes will run synchronously instead
+                console.warn('waitUntil is not supported in Vercel Edge Runtime');
+              },
+              passThroughOnException: () => {
+                // No-op: Vercel-specific error handling
+                console.warn('passThroughOnException is not supported in Vercel Edge Runtime');
+              }
+            };
+
+            // Delegate to the main request handler
+            return handleRequest(request, env, ctx);
+          }
+
+          // Vercel Edge Runtime configuration
+          export const config = {
+            runtime: 'edge',
+          };
+          EOF
+
+      - name: Create vercel.json
+        run: |
+          cd /tmp/functions-conversion
+          cat > vercel.json << 'EOF'
+          {
+            "$schema": "https://openapi.vercel.sh/vercel.json",
+            "name": "xget",
+            "version": 2,
+            "rewrites": [
+              {
+                "source": "/(.*)",
+                "destination": "/api/index.js"
+              }
+            ],
+            "headers": [
+              {
+                "source": "/(.*)",
+                "headers": [
+                  {
+                    "key": "X-Powered-By",
+                    "value": "Xget/Vercel"
+                  }
+                ]
+              }
+            ]
+          }
+          EOF
+
+      - name: Export handleRequest from src/index.js
+        run: |
+          cd /tmp/functions-conversion
+          # Add export statement before the default export at the end of the file
+          sed -i '/^export default {$/i\
+          export { handleRequest };' src/index.js
+
+      - name: Update package.json for Vercel
+        run: |
+          cd /tmp/functions-conversion
+          cat > package.json << 'EOF'
+          {
+            "name": "xget",
+            "version": "1.0.0",
+            "type": "module",
+            "private": false,
+            "scripts": {
+              "dev": "vercel dev",
+              "deploy": "vercel --prod",
+              "vercel-build": "echo 'No build step required'"
+            },
+            "dependencies": {
+              "express": "^4.19.2"
+            },
+            "devDependencies": {
+              "@vercel/node": "^3.0.0"
+            }
+          }
+          EOF
+
+      - name: Initialize functions branch
+        run: |
+          cd /tmp/functions-conversion
+          git init
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b functions
+          git add .
+          git commit -m "Convert Workers to Vercel Functions
+
+          Auto-converted from main branch commit ${{ github.sha }}
+
+          Changes:
+          - Add api/index.js: Vercel Edge Function adapter
+          - Add vercel.json: Vercel routing and headers configuration
+          - Update src/index.js: Export handleRequest for Vercel adapter import
+          - Update package.json: Change scripts to use Vercel commands
+
+          Runtime files only (documentation, tests, and dev configs excluded)."
+
+      - name: Force push to functions branch
+        run: |
+          cd /tmp/functions-conversion
+          git remote add origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git push -f origin functions
+
+      - name: Clean up
+        if: always()
+        run: |
+          rm -rf /tmp/functions-conversion

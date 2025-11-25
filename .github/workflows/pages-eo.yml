@@ -31,7 +31,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '22.11.0'
+          node-version: "22.11.0"
 
       - name: Deploy to EdgeOne Pages
         run: npx edgeone pages deploy . -n xget6 -t ${{ secrets.EDGEONE_API_TOKEN }}
