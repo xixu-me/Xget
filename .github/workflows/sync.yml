@@ -258,9 +258,21 @@ jobs:
           export default async function handler(request, context) {
             // Detect runtime environment
             const isNetlify = context && (context.geo !== undefined || context.ip !== undefined);
+            const isVercel = !isNetlify && context;
 
             // Normalize environment variables
-            const envSource = isNetlify && context.env ? context.env : process.env;
+            // Netlify provides context.env, Vercel Edge uses globalThis
+            let envSource;
+            if (isNetlify) {
+              envSource = context.env || {};
+            } else if (typeof process !== 'undefined' && process.env) {
+              // Vercel or Node.js environment
+              envSource = process.env;
+            } else {
+              // Fallback for other environments
+              envSource = {};
+            }
+
             const env = {
               TIMEOUT_SECONDS: envSource.TIMEOUT_SECONDS,
               MAX_RETRIES: envSource.MAX_RETRIES,
@@ -278,15 +290,11 @@ jobs:
                 : (promise) => {
                     // No-op on Vercel: background tasks not supported
                     // Cache writes will run synchronously instead
-                    if (process.env.NODE_ENV !== 'production') {
-                      console.warn('waitUntil is not supported in Vercel Edge Runtime');
-                    }
+                    console.warn('waitUntil is not supported in Vercel Edge Runtime');
                   },
               passThroughOnException: () => {
                 // Not supported on either platform in this context
-                if (process.env.NODE_ENV !== 'production') {
-                  console.warn('passThroughOnException is not universally supported');
-                }
+                console.warn('passThroughOnException is not universally supported');
               }
             };
 
