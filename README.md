@@ -2388,7 +2388,7 @@ client = OpenAI(
 1. **fork 本存储库**：[Fork xixu-me/Xget](https://github.com/xixu-me/Xget/fork)
 
 2. **获取 Vercel Access Token**：
-   - 访问 [Vercel 账户设置](https://vercel.com/account/settings/tokens) 创建并记录 Access Token
+   - 访问 [Vercel 账户设置](https://vercel.com/account/settings/tokens)创建并记录 Access Token
 
 3. **配置 GitHub Secrets**：
    - 进入你的 GitHub 存储库 → Settings → Secrets and variables → Actions
