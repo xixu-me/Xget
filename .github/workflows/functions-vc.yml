@@ -2,7 +2,7 @@ name: Deploy to Vercel Functions
 
 on:
   workflow_run:
-    workflows: ["Sync to Pages and Vercel Functions"]
+    workflows: ["Sync to Pages and Functions"]
     types:
       - completed
     branches:

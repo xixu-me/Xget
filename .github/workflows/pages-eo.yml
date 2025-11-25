@@ -2,7 +2,7 @@ name: Deploy to EdgeOne Pages
 
 on:
   workflow_run:
-    workflows: ["Sync to Pages"]
+    workflows: ["Sync to Pages and Functions"]
     types:
       - completed
     branches:
