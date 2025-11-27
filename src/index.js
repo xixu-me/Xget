@@ -1000,6 +1000,11 @@ async function handleRequest(request, env, ctx) {
       requestHeaders.set('User-Agent', 'Wget/1.21.3');
       requestHeaders.set('Origin', request.headers.get('Origin') || '*');
 
+      // Forward Authorization header if present (needed for authenticated resources)
+      if (authorization) {
+        requestHeaders.set('Authorization', authorization);
+      }
+
       // Handle range requests - but don't forward Range header if we need to cache full content
       const rangeHeader = request.headers.get('Range');
 

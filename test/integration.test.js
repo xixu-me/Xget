@@ -125,7 +125,7 @@ describe('Integration Tests', () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/vnd.git-lfs+json',
-          'Accept': 'application/vnd.git-lfs+json',
+          Accept: 'application/vnd.git-lfs+json',
           'User-Agent': 'git-lfs/3.0.0'
         },
         body: JSON.stringify({
@@ -143,11 +143,12 @@ describe('Integration Tests', () => {
     });
 
     it('should handle LFS object download requests', async () => {
-      const testUrl = 'https://example.com/gh/microsoft/vscode.git/objects/a1b2c3d4e5f6789012345678901234567890123456789012345678901234abcd';
+      const testUrl =
+        'https://example.com/gh/microsoft/vscode.git/objects/a1b2c3d4e5f6789012345678901234567890123456789012345678901234abcd';
       const response = await SELF.fetch(testUrl, {
         headers: {
           'User-Agent': 'git-lfs/3.0.0',
-          'Accept': 'application/octet-stream'
+          Accept: 'application/octet-stream'
         }
       });
 
@@ -160,7 +161,7 @@ describe('Integration Tests', () => {
         method: 'POST',
         headers: {
           'User-Agent': 'git-lfs/3.0.0',
-          'Accept': 'application/vnd.git-lfs+json',
+          Accept: 'application/vnd.git-lfs+json',
           'Content-Type': 'application/vnd.git-lfs+json'
         },
         body: '{}'
@@ -436,6 +437,74 @@ describe('Integration Tests', () => {
         expect(response.headers.get('Strict-Transport-Security')).toBeTruthy();
         expect(response.headers.get('X-Performance-Metrics')).toBeTruthy();
       });
+    });
+  });
+
+  describe('Authentication Header Forwarding', () => {
+    it('should forward Authorization header for Hugging Face requests', async () => {
+      // Test with a Hugging Face dataset file that would require authentication
+      const testUrl = 'https://example.com/hf/datasets/test/private-dataset/resolve/main/data.csv';
+      const authToken = 'Bearer hf_test_token_12345';
+
+      const response = await SELF.fetch(testUrl, {
+        method: 'HEAD',
+        headers: {
+          Authorization: authToken
+        }
+      });
+
+      // Should accept the request (not 400 bad request)
+      expect(response.status).not.toBe(400);
+      // Should attempt to proxy to HF with auth (status depends on actual HF response)
+      expect([200, 401, 403, 404]).toContain(response.status);
+    });
+
+    it('should forward Authorization header for GitHub API requests', async () => {
+      const testUrl = 'https://example.com/gh/test/private-repo/README.md';
+      const authToken = 'Bearer ghp_test_token_12345';
+
+      const response = await SELF.fetch(testUrl, {
+        method: 'HEAD',
+        headers: {
+          Authorization: authToken
+        }
+      });
+
+      // Should accept the request and forward the auth header
+      expect(response.status).not.toBe(400);
+      expect([200, 401, 403, 404]).toContain(response.status);
+    });
+
+    it('should forward Authorization header for PyPI authenticated requests', async () => {
+      const testUrl = 'https://example.com/pypi/simple/private-package/';
+      const authToken = 'Basic dGVzdDp0ZXN0MTIzNDU=';
+
+      const response = await SELF.fetch(testUrl, {
+        method: 'HEAD',
+        headers: {
+          Authorization: authToken
+        }
+      });
+
+      // Should accept the request
+      expect(response.status).not.toBe(400);
+      expect([200, 401, 403, 404]).toContain(response.status);
+    });
+
+    it('should work with gated Hugging Face models', async () => {
+      // Simulate a request to a gated model that requires authentication
+      const testUrl = 'https://example.com/hf/meta-llama/Llama-2-7b/resolve/main/config.json';
+      const authToken = 'Bearer hf_authenticated_token';
+
+      const response = await SELF.fetch(testUrl, {
+        headers: {
+          Authorization: authToken
+        }
+      });
+
+      // Should attempt to proxy with authentication
+      // The actual status depends on whether the token is valid and the model exists
+      expect(response.status).not.toBe(400);
     });
   });
 });

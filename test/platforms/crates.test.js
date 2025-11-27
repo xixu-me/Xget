@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { transformPath } from '../src/config/platforms.js';
+import { transformPath } from '../../src/config/platforms.js';
 
 describe('crates.io path transformation', () => {
   it('should transform crate download URLs correctly', () => {

@@ -176,7 +176,7 @@ describe('Xget Core Functionality', () => {
 
   describe('Path Length Validation', () => {
     it('should reject extremely long paths', async () => {
-      const longPath = '/gh/' + 'a'.repeat(3000);
+      const longPath = `/gh/${'a'.repeat(3000)}`;
       const response = await SELF.fetch(`https://example.com${longPath}`);
 
       expect(response.status).toBe(414);
@@ -241,7 +241,7 @@ describe('Xget Core Functionality', () => {
       // Simulate the regex replacement that happens in the code
       const rewrittenText = mockOriginalText.replace(
         /https:\/\/registry\.npmjs\.org\/([^\/]+)/g,
-        `https://xget.xi-xu.me/npm/$1`
+        'https://xget.xi-xu.me/npm/$1'
       );
 
       const rewrittenData = JSON.parse(rewrittenText);

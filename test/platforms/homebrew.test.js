@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { transformPath } from '../src/config/platforms.js';
+import { transformPath } from '../../src/config/platforms.js';
 
 describe('Homebrew path transformation', () => {
   describe('homebrew-api platform', () => {

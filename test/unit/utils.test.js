@@ -52,9 +52,11 @@ function isGitLFSRequest(request, url) {
   // Check for LFS-specific headers
   const accept = request.headers.get('Accept') || '';
   const contentType = request.headers.get('Content-Type') || '';
-  
-  if (accept.includes('application/vnd.git-lfs') || 
-      contentType.includes('application/vnd.git-lfs')) {
+
+  if (
+    accept.includes('application/vnd.git-lfs') ||
+    contentType.includes('application/vnd.git-lfs')
+  ) {
     return true;
   }
 
@@ -184,7 +186,9 @@ describe('Utility Functions', () => {
     });
 
     it('should identify LFS object storage requests by path', () => {
-      const request = new Request('https://example.com/repo.git/objects/a1b2c3d4e5f6789012345678901234567890123456789012345678901234abcd');
+      const request = new Request(
+        'https://example.com/repo.git/objects/a1b2c3d4e5f6789012345678901234567890123456789012345678901234abcd'
+      );
       const url = new URL(request.url);
 
       expect(isGitLFSRequest(request, url)).toBe(true);
@@ -192,7 +196,7 @@ describe('Utility Functions', () => {
 
     it('should identify LFS requests by Accept header', () => {
       const request = new Request('https://example.com/repo.git/objects/batch', {
-        headers: { 'Accept': 'application/vnd.git-lfs+json' }
+        headers: { Accept: 'application/vnd.git-lfs+json' }
       });
       const url = new URL(request.url);
 
@@ -278,7 +282,7 @@ describe('Utility Functions', () => {
     });
 
     it('should reject extremely long paths', () => {
-      const longPath = '/' + 'a'.repeat(3000);
+      const longPath = `/${'a'.repeat(3000)}`;
       const request = new Request(`https://example.com${longPath}`);
       const url = new URL(request.url);
 

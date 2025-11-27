@@ -139,7 +139,7 @@ describe('Performance Benchmarks', () => {
     });
 
     bench('Long path processing', async () => {
-      const longPath = '/gh/user/repo/' + 'very-long-path-segment/'.repeat(20) + 'file.txt';
+      const longPath = `/gh/user/repo/${'very-long-path-segment/'.repeat(20)}file.txt`;
       await SELF.fetch(`https://example.com${longPath}`, {
         method: 'HEAD'
       });

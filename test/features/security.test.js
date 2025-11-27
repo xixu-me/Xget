@@ -99,7 +99,7 @@ describe('Security Features', () => {
     });
 
     it('should reject extremely long paths', async () => {
-      const longPath = '/gh/' + 'a'.repeat(3000);
+      const longPath = `/gh/${'a'.repeat(3000)}`;
       const response = await SELF.fetch(`https://example.com${longPath}`);
 
       expect(response.status).toBe(414);

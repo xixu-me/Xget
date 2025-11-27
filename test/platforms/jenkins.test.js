@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { transformPath } from '../src/config/platforms.js';
+import { transformPath } from '../../src/config/platforms.js';
 
 describe('Jenkins Plugin Support', () => {
   describe('Update Center Transformations', () => {
