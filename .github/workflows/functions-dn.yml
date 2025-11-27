@@ -1,10 +1,17 @@
 name: Deploy to Deno Deploy
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Sync to Pages and Functions"]
+    types:
+      - completed
     branches:
-      - functions
+      - main
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 permissions:
   id-token: write
