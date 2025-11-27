@@ -1056,29 +1056,61 @@ async function handleRequest(request, env, ctx) {
           // First, try the HEAD request
           response = await fetch(targetUrl, finalFetchOptions);
 
-          // If HEAD request succeeds but lacks Content-Length, do a GET request to get it
+          // If HEAD request succeeds but lacks Content-Length, try to get it efficiently
           if (response.ok && !response.headers.get('Content-Length')) {
-            const getResponse = await fetch(targetUrl, {
+            // Strategy 1: Try a Range request for the first byte to get Content-Range with total size
+            // This is much more efficient than downloading the entire file
+            const rangeHeaders = new Headers(requestHeaders);
+            rangeHeaders.set('Range', 'bytes=0-0');
+
+            const rangeResponse = await fetch(targetUrl, {
               ...finalFetchOptions,
-              method: 'GET'
+              method: 'GET',
+              headers: rangeHeaders
             });
 
-            if (getResponse.ok) {
-              // Create a new response with HEAD method but include Content-Length from GET
-              const headHeaders = new Headers(response.headers);
-              const contentLength = getResponse.headers.get('Content-Length');
+            let contentLength = null;
 
-              if (contentLength) {
-                headHeaders.set('Content-Length', contentLength);
-              } else {
-                // If still no Content-Length, calculate it from the response body
-                const arrayBuffer = await getResponse.arrayBuffer();
-                headHeaders.set('Content-Length', arrayBuffer.byteLength.toString());
+            // If server supports Range requests, extract size from Content-Range header
+            if (rangeResponse.status === 206) {
+              const contentRange = rangeResponse.headers.get('Content-Range');
+              // Content-Range format: "bytes 0-0/12345" where 12345 is the total size
+              if (contentRange) {
+                const match = contentRange.match(/bytes\s+\d+-\d+\/(\d+)/);
+                if (match && match[1]) {
+                  contentLength = match[1];
+                }
               }
+            } else if (rangeResponse.ok) {
+              // Server doesn't support Range requests, try to get Content-Length from GET response
+              contentLength = rangeResponse.headers.get('Content-Length');
+
+              // If still no Content-Length and response is small enough, calculate from body
+              if (!contentLength) {
+                const sizeLimit = 50 * 1024 * 1024; // 50MB limit for buffering
+                const contentLengthHint = rangeResponse.headers.get('Content-Length');
+
+                // Only buffer if we know it's small or we don't know the size
+                if (!contentLengthHint || parseInt(contentLengthHint) < sizeLimit) {
+                  try {
+                    const arrayBuffer = await rangeResponse.arrayBuffer();
+                    contentLength = arrayBuffer.byteLength.toString();
+                  } catch (error) {
+                    // If buffering fails (too large, timeout, etc.), skip it
+                    console.warn('Could not buffer response to get Content-Length:', error);
+                  }
+                }
+              }
+            }
+
+            // Create HEAD response with Content-Length if we got it
+            if (contentLength) {
+              const headHeaders = new Headers(response.headers);
+              headHeaders.set('Content-Length', contentLength);
 
               response = new Response(null, {
-                status: getResponse.status,
-                statusText: getResponse.statusText,
+                status: response.status,
+                statusText: response.statusText,
                 headers: headHeaders
               });
             }
