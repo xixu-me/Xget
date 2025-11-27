@@ -2445,7 +2445,7 @@ client = OpenAI(
    - 将默认分支从 `main` 切换到 `functions`
 
 3. **部署到 Deno Deploy**：
-   - 参考 [Deno Deploy 官方文档](https://docs.deno.com/deploy/getting_started/) 执行部署
+   - 参考 [Deno Deploy 官方文档](https://docs.deno.com/deploy/getting_started/)执行部署
    - 在 Deno Deploy 控制台创建新项目并连接你的 GitHub 存储库
 
 4. **绑定自定义域名**（可选）：在 Deno Deploy 控制台中绑定你的自定义域名
