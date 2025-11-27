@@ -164,6 +164,8 @@ export const PLATFORMS = {
   nuget: 'https://api.nuget.org',
   crates: 'https://crates.io',
   packagist: 'https://repo.packagist.org',
+	'gg-map': 'https://maps.googleapis.com',
+	'gg-places': 'https://places.googleapis.com',
 
   // Linux Distributions
   debian: 'https://deb.debian.org',
