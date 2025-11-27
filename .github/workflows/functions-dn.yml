@@ -1,0 +1,37 @@
+name: Deploy to Deno Deploy
+
+on:
+  push:
+    branches:
+      - functions
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout functions branch
+        uses: actions/checkout@v6
+        with:
+          ref: functions
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Verify Deno installation
+        run: deno --version
+
+      - name: Deploy to Deno Deploy
+        uses: denoland/deployctl@v1
+        with:
+          project: xget
+          entrypoint: deno.js
+          root: .
