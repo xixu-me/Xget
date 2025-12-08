@@ -4,7 +4,7 @@
     "xget": "file:"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.10.10",
+    "@cloudflare/vitest-pool-workers": "^0.10.14",
     "@cloudflare/workers-types": "^4.20251205.0",
     "eslint": "^9.39.1",
     "prettier": "^3.7.4",
