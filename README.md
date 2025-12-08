@@ -2,6 +2,8 @@
 
 # Xget 🚀
 
+> 🗳️ **Xget 正在参加 [Gitee 2025 年度开源软件评选](https://gitee.com/activity/2025opensource?ident=IB55NH)，请为我们投上宝贵的一票！感谢您的支持！** 🙏
+
 <a href="https://trendshift.io/repositories/14768" target="_blank"><img src="https://trendshift.io/api/badge/repositories/14768" alt="xixu-me%2FXget | Trendshift" width="250" height="55"/></a>
 <a href="https://www.producthunt.com/products/xget" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1039008" alt="Xget | Product Hunt" width="250" height="55" /></a>
 

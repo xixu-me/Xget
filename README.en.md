@@ -2,6 +2,8 @@
 
 # Xget 🚀
 
+> 🗳️ **Xget is participating in the [Gitee 2025 Open Source Software Awards](https://gitee.com/activity/2025opensource?ident=IB55NH). Please vote for us! Thank you for your support!** 🙏
+
 <a href="https://trendshift.io/repositories/14768" target="_blank"><img src="https://trendshift.io/api/badge/repositories/14768" alt="xixu-me%2FXget | Trendshift" width="250" height="55"/></a>
 <a href="https://www.producthunt.com/products/xget" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1039008" alt="Xget | Product Hunt" width="250" height="55" /></a>
 
