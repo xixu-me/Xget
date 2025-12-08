@@ -1,20 +1,12 @@
 name: Sync to Pages and Functions
 
 on:
-  push:
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
     branches:
       - main
-    paths-ignore:
-      - "**.md"
-      - "LICENSE"
-      - ".gitignore"
-      - ".editorconfig"
-      - ".vscode/**"
-      - "docs/**"
-      - ".prettierrc*"
-      - ".eslintrc*"
-      - ".github/ISSUE_TEMPLATE/**"
-      - ".github/PULL_REQUEST_TEMPLATE/**"
   workflow_dispatch:
 
 concurrency:
@@ -27,6 +19,7 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: write
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
 
     steps:
       - name: Checkout main branch
@@ -186,6 +179,7 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: write
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
 
     steps:
       - name: Checkout main branch
