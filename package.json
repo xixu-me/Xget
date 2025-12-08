@@ -7,6 +7,7 @@
     "@cloudflare/vitest-pool-workers": "^0.10.14",
     "@cloudflare/workers-types": "^4.20251205.0",
     "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
     "prettier": "^3.7.4",
     "typescript": "^5.9.3",
     "vitest": "^3.1.4",

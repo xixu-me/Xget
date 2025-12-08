@@ -1,4 +1,5 @@
 import js from '@eslint/js';
+import prettierConfig from 'eslint-config-prettier';
 
 export default [
   js.configs.recommended,
@@ -230,6 +231,7 @@ export default [
       'template-curly-spacing': ['error', 'never']
     }
   },
+  prettierConfig, // Disable formatting rules that conflict with Prettier
   {
     files: ['test/**/*.js'],
     rules: {
