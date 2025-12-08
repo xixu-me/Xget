@@ -1328,11 +1328,11 @@ async function handleRequest(request, env, ctx) {
       // Always use GET method for cache key
       const cacheKey = rangeHeader
         ? new Request(targetUrl, {
-            method: 'GET',
-            headers: new Headers(
-              [...request.headers.entries()].filter(([k]) => k.toLowerCase() !== 'range')
-            )
-          })
+          method: 'GET',
+          headers: new Headers(
+            [...request.headers.entries()].filter(([k]) => k.toLowerCase() !== 'range')
+          )
+        })
         : new Request(targetUrl, { method: 'GET' });
 
       // Use waitUntil if available (Cloudflare Workers), otherwise cache synchronously
