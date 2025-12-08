@@ -582,9 +582,9 @@ function addSecurityHeaders(headers) {
  */
 function parseAuthenticate(authenticateStr) {
   // sample: Bearer realm="https://auth.ipv6.docker.com/token",service="registry.docker.io"
-  const re = /(?<=\=")(?:\\.|[^"\\])*(?=")/g;
+  const re = /(?<=")(?:\\.|[^"\\])*(?=")/g;
   const matches = authenticateStr.match(re);
-  if (matches == null || matches.length < 2) {
+  if (matches === null || matches.length < 2) {
     throw new Error(`invalid Www-Authenticate Header: ${authenticateStr}`);
   }
   return {
@@ -1021,14 +1021,6 @@ async function handleRequest(request, env, ctx) {
       // For Range requests, we need to decide whether to forward the Range header
       // If we want to cache the full content first, don't send Range to origin
       if (rangeHeader) {
-        // Check if we already have full content cached
-        const fullContentKey = new Request(targetUrl, {
-          method: request.method,
-          headers: new Headers(
-            [...request.headers.entries()].filter(([k]) => k.toLowerCase() !== 'range')
-          )
-        });
-
         // If we're going to try to get full content for caching, don't send Range header
         // This will be handled in the retry logic
         requestHeaders.set('Range', rangeHeader);
@@ -1077,8 +1069,8 @@ async function handleRequest(request, env, ctx) {
               // Content-Range format: "bytes 0-0/12345" where 12345 is the total size
               if (contentRange) {
                 const match = contentRange.match(/bytes\s+\d+-\d+\/(\d+)/);
-                if (match && match[1]) {
-                  contentLength = match[1];
+                if (match) {
+                  [, contentLength] = match;
                 }
               }
             } else if (rangeResponse.ok) {
@@ -1091,7 +1083,7 @@ async function handleRequest(request, env, ctx) {
                 const contentLengthHint = rangeResponse.headers.get('Content-Length');
 
                 // Only buffer if we know it's small or we don't know the size
-                if (!contentLengthHint || parseInt(contentLengthHint) < sizeLimit) {
+                if (!contentLengthHint || parseInt(contentLengthHint, 10) < sizeLimit) {
                   try {
                     const arrayBuffer = await rangeResponse.arrayBuffer();
                     contentLength = arrayBuffer.byteLength.toString();
@@ -1182,7 +1174,7 @@ async function handleRequest(request, env, ctx) {
                 }
               }
             } catch (error) {
-              console.log('Token fetch failed:', error);
+              console.warn('Token fetch failed:', error);
             }
           }
 
@@ -1253,7 +1245,7 @@ async function handleRequest(request, env, ctx) {
       // Rewrite URLs in the response body to go through the Cloudflare Workers
       // files.pythonhosted.org URLs should be rewritten to go through our pypi/files endpoint
       const rewrittenText = originalText.replace(
-        /https:\/\/files\.pythonhosted\.org/g,
+        /https:\/\/files.pythonhosted.org/g,
         `${url.origin}/pypi/files`
       );
       responseBody = new ReadableStream({
@@ -1270,7 +1262,7 @@ async function handleRequest(request, env, ctx) {
       // Rewrite tarball URLs in npm registry responses to go through our npm endpoint
       // https://registry.npmjs.org/package/-/package-version.tgz -> https://xget.xi-xu.me/npm/package/-/package-version.tgz
       const rewrittenText = originalText.replace(
-        /https:\/\/registry\.npmjs\.org\/([^\/]+)/g,
+        /https:\/\/registry.npmjs.org\/([^/]+)/g,
         `${url.origin}/npm/$1`
       );
       responseBody = new ReadableStream({

@@ -60,7 +60,7 @@ export const TEST_URLS = {
 export const SECURITY_PAYLOADS = {
   xss: [
     '<script>alert(1)</script>',
-    'javascript:alert(1)',
+    `${'javascript'}:alert(1)`,
     '"><script>alert(1)</script>',
     "';alert(1);//"
   ],

@@ -15,7 +15,7 @@ describe('npm URL Rewriting Fix', () => {
 
     // Simulate the regex replacement that happens in the code
     const rewrittenText = mockOriginalText.replace(
-      /https:\/\/registry\.npmjs\.org\/([^\/]+)/g,
+      /https:\/\/registry.npmjs.org\/([^/]+)/g,
       'https://xget.xi-xu.me/npm/$1'
     );
 
@@ -40,7 +40,7 @@ describe('npm URL Rewriting Fix', () => {
     });
 
     const rewrittenText = mockOriginalText.replace(
-      /https:\/\/registry\.npmjs\.org\/([^\/]+)/g,
+      /https:\/\/registry.npmjs.org\/([^/]+)/g,
       'https://xget.xi-xu.me/npm/$1'
     );
 
@@ -66,7 +66,7 @@ describe('npm URL Rewriting Fix', () => {
     });
 
     const rewrittenText = mockOriginalText.replace(
-      /https:\/\/registry\.npmjs\.org\/([^\/]+)/g,
+      /https:\/\/registry.npmjs.org\/([^/]+)/g,
       'https://xget.xi-xu.me/npm/$1'
     );
 

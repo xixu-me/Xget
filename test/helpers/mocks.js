@@ -83,7 +83,7 @@ export function createDockerRequest(url, options = {}) {
  * @param {Object} options - Fetch options
  * @returns {Promise<Response>} Mock response
  */
-export function mockFetch(url, options = {}) {
+export function mockFetch(url, _options = {}) {
   return new Promise(resolve => {
     setTimeout(() => {
       if (url.includes('error')) {

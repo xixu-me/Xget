@@ -1,10 +1,8 @@
 import { SELF } from 'cloudflare:test';
 import { bench, describe } from 'vitest';
-import { PerformanceTestHelper, TEST_URLS } from '../helpers/test-utils.js';
+import { TEST_URLS } from '../helpers/test-utils.js';
 
 describe('Performance Benchmarks', () => {
-  const perfHelper = new PerformanceTestHelper();
-
   describe('Request Processing Speed', () => {
     bench('Basic request handling', async () => {
       await SELF.fetch('https://example.com/gh/test/repo/file.txt', {

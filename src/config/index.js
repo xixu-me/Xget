@@ -144,14 +144,14 @@ import { PLATFORMS } from './platforms.js';
  */
 export function createConfig(env = {}) {
   return {
-    TIMEOUT_SECONDS: parseInt(env.TIMEOUT_SECONDS) || 30,
-    MAX_RETRIES: parseInt(env.MAX_RETRIES) || 3,
-    RETRY_DELAY_MS: parseInt(env.RETRY_DELAY_MS) || 1000,
-    CACHE_DURATION: parseInt(env.CACHE_DURATION) || 1800, // 30 minutes
+    TIMEOUT_SECONDS: parseInt(env.TIMEOUT_SECONDS, 10) || 30,
+    MAX_RETRIES: parseInt(env.MAX_RETRIES, 10) || 3,
+    RETRY_DELAY_MS: parseInt(env.RETRY_DELAY_MS, 10) || 1000,
+    CACHE_DURATION: parseInt(env.CACHE_DURATION, 10) || 1800, // 30 minutes
     SECURITY: {
       ALLOWED_METHODS: env.ALLOWED_METHODS ? env.ALLOWED_METHODS.split(',') : ['GET', 'HEAD'],
       ALLOWED_ORIGINS: env.ALLOWED_ORIGINS ? env.ALLOWED_ORIGINS.split(',') : ['*'],
-      MAX_PATH_LENGTH: parseInt(env.MAX_PATH_LENGTH) || 2048
+      MAX_PATH_LENGTH: parseInt(env.MAX_PATH_LENGTH, 10) || 2048
     },
     PLATFORMS
   };

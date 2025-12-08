@@ -207,7 +207,7 @@ describe('Security Features', () => {
         await SELF.fetch('https://example.com/gh/test/very-large-file', {
           signal: AbortSignal.timeout(35000) // Slightly longer than expected timeout
         });
-      } catch (error) {
+      } catch {
         // Request should timeout or complete within reasonable time
         const elapsed = Date.now() - startTime;
         expect(elapsed).toBeLessThan(40000); // 40 seconds max
@@ -223,8 +223,8 @@ describe('Security Features', () => {
 
       const body = await response.text();
       // Should not expose internal paths, stack traces, or sensitive info
-      expect(body).not.toMatch(/\/[a-zA-Z]:[\\\/]/); // Windows paths
-      expect(body).not.toMatch(/\/home\/[^\/]+/); // Unix home paths
+      expect(body).not.toMatch(/\/[a-zA-Z]:[\\/]/); // Windows paths
+      expect(body).not.toMatch(/\/home\/[^/]+/); // Unix home paths
       expect(body).not.toMatch(/at [a-zA-Z]+\.[a-zA-Z]+/); // Stack traces
       expect(body).not.toMatch(/Error: .+ at/); // Detailed error messages
     });

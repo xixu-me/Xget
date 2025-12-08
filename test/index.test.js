@@ -1,13 +1,7 @@
 import { SELF } from 'cloudflare:test';
-import { beforeEach, describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 describe('Xget Core Functionality', () => {
-  let env;
-
-  beforeEach(() => {
-    env = {};
-  });
-
   describe('Basic Request Handling', () => {
     it('should redirect root path to homepage', async () => {
       const response = await SELF.fetch('https://example.com/', { redirect: 'manual' });
@@ -240,7 +234,7 @@ describe('Xget Core Functionality', () => {
 
       // Simulate the regex replacement that happens in the code
       const rewrittenText = mockOriginalText.replace(
-        /https:\/\/registry\.npmjs\.org\/([^\/]+)/g,
+        /https:\/\/registry.npmjs.org\/([^/]+)/g,
         'https://xget.xi-xu.me/npm/$1'
       );
 

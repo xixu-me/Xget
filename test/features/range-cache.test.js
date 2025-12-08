@@ -14,8 +14,8 @@ describe('Range Request Caching Strategy', () => {
   let SELF;
 
   beforeAll(async () => {
-    const { unstable_dev } = await import('wrangler');
-    const worker = await unstable_dev('src/index.js', {
+    const { unstable_dev: unstableDev } = await import('wrangler');
+    const worker = await unstableDev('src/index.js', {
       experimental: { disableExperimentalWarning: true }
     });
     SELF = worker;
@@ -184,7 +184,7 @@ describe('Range Request Caching Strategy', () => {
         // Should have Content-Length for proper range support
         const contentLength = response.headers.get('Content-Length');
         if (contentLength) {
-          expect(parseInt(contentLength)).toBeGreaterThan(0);
+          expect(parseInt(contentLength, 10)).toBeGreaterThan(0);
         }
 
         // Should have Accept-Ranges header

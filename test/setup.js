@@ -29,7 +29,7 @@ beforeAll(async () => {
     if (!SELF) {
       throw new Error('SELF is not available');
     }
-  } catch (error) {
+  } catch {
     console.warn('Warning: Cloudflare Workers test environment not available');
   }
 

@@ -55,7 +55,7 @@ describe('Performance Monitoring', () => {
     it('should warn on duplicate mark names', () => {
       // Mock console.warn for this test
       const originalWarn = console.warn;
-      const mockWarn = vi ? vi.fn() : jest.fn();
+      const mockWarn = vi.fn();
       console.warn = mockWarn;
 
       monitor.mark('duplicate');
