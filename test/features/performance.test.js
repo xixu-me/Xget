@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock PerformanceMonitor class for testing
 class MockPerformanceMonitor {
@@ -7,6 +7,10 @@ class MockPerformanceMonitor {
     this.marks = new Map();
   }
 
+  /**
+   * Mark a performance measurement
+   * @param {string} name - Name of the mark
+   */
   mark(name) {
     if (this.marks.has(name)) {
       console.warn(`Mark with name ${name} already exists.`);
@@ -20,6 +24,7 @@ class MockPerformanceMonitor {
 }
 
 describe('Performance Monitoring', () => {
+  /** @type {MockPerformanceMonitor} */
   let monitor;
 
   beforeEach(() => {
@@ -217,7 +222,7 @@ describe('Performance Monitoring', () => {
 
       for (let i = 0; i < 10; i++) {
         promises.push(
-          new Promise(resolve => {
+          new Promise((/** @type {(value?: unknown) => void} */ resolve) => {
             setTimeout(() => {
               monitor.mark(`concurrent-${i}`);
               resolve();

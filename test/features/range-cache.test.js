@@ -11,6 +11,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
  */
 
 describe('Range Request Caching Strategy', () => {
+  /** @type {any} */
   let SELF;
 
   beforeAll(async () => {

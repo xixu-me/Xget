@@ -195,7 +195,8 @@ describe('Xget Core Functionality', () => {
       const response = await SELF.fetch('https://example.com/gh/test/repo/file.txt');
       const metricsHeader = response.headers.get('X-Performance-Metrics');
 
-      expect(() => JSON.parse(metricsHeader)).not.toThrow();
+      expect(metricsHeader).toBeTruthy();
+      expect(() => JSON.parse(metricsHeader || '')).not.toThrow();
     });
   });
 

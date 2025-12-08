@@ -64,6 +64,8 @@ export const MOCK_RESPONSES = {
 
 /**
  * Create a Response object from mock data
+ * @param {{body: string, status: number, headers?: Record<string, string>}} mockData - Mock response data
+ * @returns {Response} Response object
  */
 export function createMockResponse(mockData) {
   return new Response(mockData.body, {

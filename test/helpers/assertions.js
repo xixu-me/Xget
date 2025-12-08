@@ -5,7 +5,7 @@
 /**
  * Validate response headers for security
  * @param {Response} response - Response to validate
- * @returns {Object} Validation results
+ * @returns {{passed: boolean, missing: string[], present: string[]}} Validation results
  */
 export function validateSecurityHeaders(response) {
   const requiredHeaders = [
@@ -18,7 +18,9 @@ export function validateSecurityHeaders(response) {
 
   const results = {
     passed: true,
+    /** @type {string[]} */
     missing: [],
+    /** @type {string[]} */
     present: []
   };
 

@@ -433,7 +433,7 @@ describe('Integration Tests', () => {
       );
 
       // All responses should have consistent security headers
-      responses.forEach(response => {
+      responses.forEach((/** @type {Response} */ response) => {
         expect(response.headers.get('Strict-Transport-Security')).toBeTruthy();
         expect(response.headers.get('X-Performance-Metrics')).toBeTruthy();
       });

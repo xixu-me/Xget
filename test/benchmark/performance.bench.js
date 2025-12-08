@@ -100,7 +100,7 @@ describe('Performance Benchmarks', () => {
   describe('Concurrent Request Handling', () => {
     bench('10 concurrent requests', async () => {
       const requests = Array(10)
-        .fill()
+        .fill(null)
         .map(() =>
           SELF.fetch('https://example.com/gh/test/repo/file.txt', {
             method: 'HEAD'
@@ -112,7 +112,7 @@ describe('Performance Benchmarks', () => {
 
     bench('50 concurrent requests', async () => {
       const requests = Array(50)
-        .fill()
+        .fill(null)
         .map(() =>
           SELF.fetch('https://example.com/gh/test/repo/file.txt', {
             method: 'HEAD'

@@ -3,6 +3,12 @@ import { describe, expect, it } from 'vitest';
 // Mock utility functions for testing
 // These would normally be imported from actual utility modules
 
+/**
+ * Check if request is a Git request
+ * @param {Request} request - Request object
+ * @param {URL} url - URL object
+ * @returns {boolean} True if Git request
+ */
 function isGitRequest(request, url) {
   // Check for Git-specific endpoints
   if (url.pathname.endsWith('/info/refs')) {
@@ -34,6 +40,12 @@ function isGitRequest(request, url) {
   return false;
 }
 
+/**
+ * Check if request is a Git LFS request
+ * @param {Request} request - Request object
+ * @param {URL} url - URL object
+ * @returns {boolean} True if Git LFS request
+ */
 function isGitLFSRequest(request, url) {
   // Check for LFS-specific endpoints
   if (url.pathname.includes('/info/lfs')) {
@@ -69,6 +81,12 @@ function isGitLFSRequest(request, url) {
   return false;
 }
 
+/**
+ * Validate request method and path
+ * @param {Request} request - Request object
+ * @param {URL} url - URL object
+ * @returns {{valid: boolean, error?: string, status?: number}} Validation result
+ */
 function validateRequest(request, url) {
   const CONFIG = {
     SECURITY: {
@@ -93,6 +111,11 @@ function validateRequest(request, url) {
   return { valid: true };
 }
 
+/**
+ * Add security headers to response headers
+ * @param {Headers} headers - Response headers
+ * @returns {Headers} Headers with security headers added
+ */
 function addSecurityHeaders(headers) {
   headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
   headers.set('X-Frame-Options', 'DENY');

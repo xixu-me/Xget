@@ -40,7 +40,7 @@ describe('openSUSE Platform Configuration', () => {
 
     testCases.forEach(({ input, expected, description }) => {
       const result = transformPath(input, 'opensuse');
-      expect(result).toBe(expected, `Failed for ${description}: ${input}`);
+      expect(result, `Failed for ${description}: ${input}`).toBe(expected);
     });
   });
 

@@ -60,9 +60,9 @@ export function createGitRequest(url, service = 'git-upload-pack') {
 }
 
 /**
- * Create a Docker request for testing
- * @param {string} url - Docker registry URL
- * @param {Object} options - Request options
+ * Create a Docker registry request
+ * @param {string} url - Request URL
+ * @param {{headers?: Record<string, string>}} options - Request options
  * @returns {Request} Docker request object
  */
 export function createDockerRequest(url, options = {}) {
@@ -80,7 +80,7 @@ export function createDockerRequest(url, options = {}) {
 /**
  * Mock fetch function for testing
  * @param {string} url - Request URL
- * @param {Object} options - Fetch options
+ * @param {Object} _options - Fetch options
  * @returns {Promise<Response>} Mock response
  */
 export function mockFetch(url, _options = {}) {
