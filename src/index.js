@@ -1245,7 +1245,7 @@ async function handleRequest(request, env, ctx) {
       // Rewrite URLs in the response body to go through the Cloudflare Workers
       // files.pythonhosted.org URLs should be rewritten to go through our pypi/files endpoint
       const rewrittenText = originalText.replace(
-        /https:\/\/files.pythonhosted.org/g,
+        /https:\/\/files\.pythonhosted\.org/g,
         `${url.origin}/pypi/files`
       );
       responseBody = new ReadableStream({
