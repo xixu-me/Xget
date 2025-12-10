@@ -230,6 +230,16 @@ export const PLATFORMS = {
 };
 
 /**
+ * Pre-computed sorted platforms keys for efficient matching.
+ * Sorted by key length (descending) to prioritize more specific paths.
+ */
+export const SORTED_PLATFORMS = Object.keys(PLATFORMS).sort((a, b) => {
+  const pathA = `/${a.replace('-', '/')}/`;
+  const pathB = `/${b.replace('-', '/')}/`;
+  return pathB.length - pathA.length;
+});
+
+/**
  * Unified path transformation function that converts request paths to platform-specific URLs.
  *
  * This function performs two primary operations:
