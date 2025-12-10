@@ -183,7 +183,7 @@ describe('Security Features', () => {
         // If it doesn't throw, it should not be a server error
       } catch (error) {
         // Expected to throw TypeError for invalid header value
-        expect(error.message).toMatch(/[Ii]nvalid|[Hh]eader/);
+        expect((/** @type {Error} */ (error)).message).toMatch(/[Ii]nvalid|[Hh]eader/);
       }
     });
   });

@@ -138,9 +138,9 @@ async function handleRequest(request, env, ctx) {
 
                 // Check cache first (skip cache for Git, Git LFS, Docker, and AI inference operations)
                 /** @type {Cache | null} */
+                /** @type {Cache | null} */
                 // @ts-ignore - Cloudflare Workers cache API
-                const cache =
-                  typeof caches !== 'undefined' && caches.default ? caches.default : null;
+                const cache = typeof caches !== 'undefined' && /** @type {any} */ (caches).default ? /** @type {any} */ (caches).default : null;
 
                 if (cache && !isGit && !isGitLFS && !isDocker && !isAI) {
                   try {
@@ -655,6 +655,11 @@ async function handleRequest(request, env, ctx) {
 }
 
 export default {
+  /**
+   * @param {Request} request
+   * @param {Object} env
+   * @param {ExecutionContext} ctx
+   */
   fetch(request, env, ctx) {
     return handleRequest(request, env, ctx);
   }

@@ -40,93 +40,17 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Create temporary working directory
+      - name: Setup adapter files
         run: |
           mkdir -p /tmp/pages-conversion
-          cd /tmp/pages-conversion
-
-      - name: Copy source code files only
+          cp -r adapters/pages/* /tmp/pages-conversion/
+          
+      - name: Copy source code files
         run: |
-          # Copy only runtime-required files (no documentation, tests, or dev configs)
           cp -r src /tmp/pages-conversion/
           cp package.json /tmp/pages-conversion/
           cp package-lock.json /tmp/pages-conversion/ 2>/dev/null || true
-          cp wrangler.toml /tmp/pages-conversion/
           cp LICENSE /tmp/pages-conversion/
-
-      - name: Create Pages Function handler
-        run: |
-          mkdir -p /tmp/pages-conversion/functions
-          cat > /tmp/pages-conversion/functions/[[path]].js << 'EOF'
-          /**
-           * Xget - High-performance acceleration engine for developer resources
-           * Copyright (C) 2025 Xi Xu
-           *
-           * This program is free software: you can redistribute it and/or modify
-           * it under the terms of the GNU General Public License as published by
-           * the Free Software Foundation, either version 3 of the License, or
-           * (at your option) any later version.
-           *
-           * This program is distributed in the hope that it will be useful,
-           * but WITHOUT ANY WARRANTY; without even the implied warranty of
-           * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-           * GNU General Public License for more details.
-           *
-           * You should have received a copy of the GNU General Public License
-           * along with this program. If not, see <https://www.gnu.org/licenses/>.
-           */
-
-          import { handleRequest } from '../src/index.js';
-
-          /**
-           * Pages Function handler for all routes.
-           *
-           * This catch-all route handler processes all incoming requests to the Xget
-           * acceleration engine. It delegates request processing to the main handleRequest
-           * function from the Workers code, maintaining full compatibility with the
-           * existing implementation.
-           *
-           * The [[path]] syntax in the filename creates a catch-all route that matches
-           * any path, allowing this single function to handle all requests to the Pages
-           * application.
-           *
-           * @param {Object} context - Pages Function context
-           * @param {Request} context.request - The incoming HTTP request
-           * @param {Object} context.env - Environment variables and bindings (KV, secrets, etc.)
-           * @param {Object} context.params - Route parameters (path segments from [[path]])
-           * @param {Function} context.waitUntil - Extend function execution for background tasks
-           * @param {Function} context.next - Call next middleware in chain (not used here)
-           * @param {Object} context.data - Shared data between functions
-           * @returns {Promise<Response>} The HTTP response to return to the client
-           *
-           * @example
-           * // This is called automatically by Pages
-           * // Runtime invokes: onRequest(context)
-           * // Returns: Response with package data
-           *
-           * @example
-           * // Environment variables usage
-           * // wrangler.toml: [vars] TIMEOUT_SECONDS = "60"
-           * // context.env contains: { TIMEOUT_SECONDS: "60" }
-           * // handleRequest uses createConfig(env) to override defaults
-           */
-          export async function onRequest(context) {
-            // Extract request, env, and create an execution context compatible with Workers
-            const { request, env, waitUntil } = context;
-
-            // Create a minimal ExecutionContext-like object for compatibility
-            const ctx = {
-              waitUntil: waitUntil,
-              passThroughOnException: () => {
-                // Pages doesn't support passThroughOnException, so this is a no-op
-                console.warn('passThroughOnException is not supported in Pages Functions');
-              }
-            };
-
-            // Delegate to the main request handler
-            return handleRequest(request, env, ctx);
-          }
-          EOF
 
       - name: Export handleRequest from src/index.js
         run: |
@@ -134,18 +58,6 @@ jobs:
           # Add export statement before the default export at the end of the file
           sed -i '/^export default {$/i\
           export { handleRequest };' src/index.js
-
-      - name: Update wrangler.toml for Pages (remove observability)
-        run: |
-          cd /tmp/pages-conversion
-          # Remove observability section (Pages doesn't support it)
-          cat > wrangler.toml << 'EOF'
-          #:schema node_modules/wrangler/config-schema.json
-          name = "xget"
-          pages_build_output_dir = "."
-          compatibility_date = "2024-10-22"
-          compatibility_flags = ["nodejs_compat"]
-          EOF
 
       - name: Update package.json for Pages
         run: |
@@ -199,242 +111,20 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Create temporary working directory
+      - name: Setup adapter files
         run: |
           mkdir -p /tmp/functions-conversion
-          cd /tmp/functions-conversion
+          # Copy all content from adapters/functions excluding package.json first
+          cp -r adapters/functions/* /tmp/functions-conversion/
+          # Copy the specific package.json for functions (overwriting if needed, but we do it later anyway)
 
-      - name: Copy source code files only
+      - name: Copy source code files
         run: |
           # Copy only runtime-required files
           cp -r src /tmp/functions-conversion/
-          cp package.json /tmp/functions-conversion/
+          # Note: We do NOT copy the root package.json here as we use the one from adapters/functions
           cp package-lock.json /tmp/functions-conversion/ 2>/dev/null || true
           cp LICENSE /tmp/functions-conversion/
-
-      - name: Create Edge Function handler
-        run: |
-          mkdir -p /tmp/functions-conversion/api
-          cat > /tmp/functions-conversion/api/index.js << 'EOF'
-          /**
-           * Xget - High-performance acceleration engine for developer resources
-           * Copyright (C) 2025 Xi Xu
-           *
-           * This program is free software: you can redistribute it and/or modify
-           * it under the terms of the GNU General Public License as published by
-           * the Free Software Foundation, either version 3 of the License, or
-           * (at your option) any later version.
-           *
-           * This program is distributed in the hope that it will be useful,
-           * but WITHOUT ANY WARRANTY; without even the implied warranty of
-           * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-           * GNU General Public License for more details.
-           *
-           * You should have received a copy of the GNU General Public License
-           * along with this program. If not, see <https://www.gnu.org/licenses/>.
-           */
-
-          import { handleRequest } from '../src/index.js';
-
-          /**
-           * Edge Function handler.
-           *
-           * @param {Request} request - Standard Web API Request object
-           * @param {Object} [context] - Platform-specific context (Netlify only)
-           * @param {Object} [context.geo] - Geolocation data (Netlify)
-           * @param {string} [context.ip] - Client IP address (Netlify)
-           * @param {Object} [context.env] - Environment variables (Netlify)
-           * @param {Function} [context.waitUntil] - Background task extension (Netlify)
-           * @returns {Promise<Response>} Standard Web API Response
-           *
-           * @example
-           * // Netlify invokes with context
-           * handler(request, { geo: {...}, ip: '1.2.3.4', env: {...}, waitUntil: fn })
-           *
-           * @example
-           * // Vercel invokes without context
-           * handler(request)
-           */
-          export default async function handler(request, context) {
-            // Detect runtime environment
-            const isNetlify = context && (context.geo !== undefined || context.ip !== undefined);
-            const isVercel = !isNetlify && context;
-
-            // Normalize environment variables
-            // Netlify provides context.env, Vercel Edge uses globalThis
-            let envSource;
-            if (isNetlify) {
-              envSource = context.env || {};
-            } else if (typeof process !== 'undefined' && process.env) {
-              // Vercel or Node.js environment
-              envSource = process.env;
-            } else {
-              // Fallback for other environments
-              envSource = {};
-            }
-
-            const env = {
-              TIMEOUT_SECONDS: envSource.TIMEOUT_SECONDS,
-              MAX_RETRIES: envSource.MAX_RETRIES,
-              RETRY_DELAY_MS: envSource.RETRY_DELAY_MS,
-              CACHE_DURATION: envSource.CACHE_DURATION,
-              ALLOWED_METHODS: envSource.ALLOWED_METHODS,
-              ALLOWED_ORIGINS: envSource.ALLOWED_ORIGINS,
-              MAX_PATH_LENGTH: envSource.MAX_PATH_LENGTH,
-            };
-
-            // Create normalized execution context
-            const ctx = {
-              waitUntil: isNetlify && context.waitUntil
-                ? (promise) => context.waitUntil(promise)
-                : (promise) => {
-                    // No-op on Vercel: background tasks not supported
-                    // Cache writes will run synchronously instead
-                    console.warn('waitUntil is not supported in Vercel Edge Runtime');
-                  },
-              passThroughOnException: () => {
-                // Not supported on either platform in this context
-                console.warn('passThroughOnException is not universally supported');
-              }
-            };
-
-            // Delegate to the main request handler
-            return handleRequest(request, env, ctx);
-          }
-
-          // Vercel Edge Runtime configuration (ignored by Netlify)
-          export const config = {
-            runtime: 'edge',
-          };
-          EOF
-
-      - name: Create vercel.json
-        run: |
-          cd /tmp/functions-conversion
-          cat > vercel.json << 'EOF'
-          {
-            "$schema": "https://openapi.vercel.sh/vercel.json",
-            "name": "xget",
-            "version": 2,
-            "rewrites": [
-              {
-                "source": "/(.*)",
-                "destination": "/api/index.js"
-              }
-            ],
-            "headers": [
-              {
-                "source": "/(.*)",
-                "headers": [
-                  {
-                    "key": "X-Powered-By",
-                    "value": "Xget/Vercel"
-                  }
-                ]
-              }
-            ]
-          }
-          EOF
-
-      - name: Create netlify.toml
-        run: |
-          cd /tmp/functions-conversion
-          cat > netlify.toml << 'EOF'
-          [[edge_functions]]
-          function = "edge-handler"
-          path = "/*"
-
-          [build]
-          publish = "."
-          EOF
-
-      - name: Create Netlify Edge Function redirect
-        run: |
-          cd /tmp/functions-conversion
-          mkdir -p netlify/edge-functions
-          cat > netlify/edge-functions/edge-handler.js << 'EOF'
-          /**
-           * Netlify Edge Function entry point.
-           *
-           * This file serves as a redirect to the edge function handler
-           * located at /api/index.js. Both Netlify and Vercel can use the same
-           * handler code, with platform detection handling the differences.
-           *
-           * Netlify requires edge functions to be in netlify/edge-functions/,
-           * while Vercel uses /api/ directory. This approach maintains a single
-           * source of truth at /api/index.js.
-           */
-          export { default, config } from '../../api/index.js';
-          EOF
-
-      - name: Create Deno Deploy handler
-        run: |
-          cd /tmp/functions-conversion
-          cat > deno.js << 'EOF'
-          /**
-           * Xget - High-performance acceleration engine for developer resources
-           * Copyright (C) 2025 Xi Xu
-           *
-           * This program is free software: you can redistribute it and/or modify
-           * it under the terms of the GNU General Public License as published by
-           * the Free Software Foundation, either version 3 of the License, or
-           * (at your option) any later version.
-           *
-           * This program is distributed in the hope that it will be useful,
-           * but WITHOUT ANY WARRANTY; without even the implied warranty of
-           * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-           * GNU General Public License for more details.
-           *
-           * You should have received a copy of the GNU General Public License
-           * along with this program. If not, see <https://www.gnu.org/licenses/>.
-           */
-
-          import { handleRequest } from './src/index.js';
-
-          /**
-           * Deno Deploy handler.
-           *
-           * This is the entry point for Deno Deploy deployments. It uses the
-           * standard Deno.serve() API to handle incoming HTTP requests.
-           *
-           * @param {Request} request - Standard Web API Request object
-           * @returns {Promise<Response>} Standard Web API Response
-           *
-           * @example
-           * // Deno Deploy invokes automatically:
-           * // Deno.serve((request) => handler(request))
-           */
-          async function handler(request) {
-            // Extract environment variables from Deno.env
-            const env = {
-              TIMEOUT_SECONDS: Deno.env.get('TIMEOUT_SECONDS'),
-              MAX_RETRIES: Deno.env.get('MAX_RETRIES'),
-              RETRY_DELAY_MS: Deno.env.get('RETRY_DELAY_MS'),
-              CACHE_DURATION: Deno.env.get('CACHE_DURATION'),
-              ALLOWED_METHODS: Deno.env.get('ALLOWED_METHODS'),
-              ALLOWED_ORIGINS: Deno.env.get('ALLOWED_ORIGINS'),
-              MAX_PATH_LENGTH: Deno.env.get('MAX_PATH_LENGTH'),
-            };
-
-            // Create minimal ExecutionContext-like object
-            // Deno Deploy doesn't support waitUntil, so cache writes are synchronous
-            const ctx = {
-              waitUntil: (promise) => {
-                // No-op on Deno: background tasks not supported
-                console.warn('waitUntil is not supported in Deno Deploy');
-              },
-              passThroughOnException: () => {
-                console.warn('passThroughOnException is not supported in Deno Deploy');
-              }
-            };
-
-            // Delegate to the main request handler
-            return handleRequest(request, env, ctx);
-          }
-
-          // Start the server
-          Deno.serve(handler);
-          EOF
 
       - name: Export handleRequest from src/index.js
         run: |
@@ -442,29 +132,6 @@ jobs:
           # Add export statement before the default export at the end of the file
           sed -i '/^export default {$/i\
           export { handleRequest };' src/index.js
-
-      - name: Update package.json for Vercel
-        run: |
-          cd /tmp/functions-conversion
-          cat > package.json << 'EOF'
-          {
-            "name": "xget",
-            "version": "1.0.0",
-            "type": "module",
-            "private": false,
-            "scripts": {
-              "dev": "vercel dev",
-              "deploy": "vercel --prod",
-              "vercel-build": "echo 'No build step required'"
-            },
-            "dependencies": {
-              "express": "^4.19.2"
-            },
-            "devDependencies": {
-              "@vercel/node": "^3.0.0"
-            }
-          }
-          EOF
 
       - name: Initialize functions branch
         run: |
