@@ -10,19 +10,22 @@
 
 import { CONFIG, createConfig } from './config/index.js';
 import { SORTED_PLATFORMS, transformPath } from './config/platforms.js';
+import { configureAIHeaders, isAIInferenceRequest } from './protocols/ai.js';
 import {
     fetchToken,
     handleDockerAuth,
     parseAuthenticate,
     responseUnauthorized
 } from './protocols/docker.js';
+import {
+    configureGitHeaders,
+    isGitLFSRequest,
+    isGitRequest
+} from './protocols/git.js';
 import { PerformanceMonitor, addPerformanceHeaders } from './utils/performance.js';
 import { addSecurityHeaders, createErrorResponse } from './utils/security.js';
 import {
-    isAIInferenceRequest,
     isDockerRequest,
-    isGitLFSRequest,
-    isGitRequest,
     validateRequest
 } from './utils/validation.js';
 
@@ -200,50 +203,13 @@ async function handleRequest(request, env, ctx) {
         }
       }
 
-      // Set Git-specific headers if not present
-      if (isGit && !requestHeaders.has('User-Agent')) {
-        requestHeaders.set('User-Agent', 'git/2.34.1');
-      }
-
-      if (isGit && request.method === 'POST' && url.pathname.endsWith('/git-upload-pack')) {
-        if (!requestHeaders.has('Content-Type')) {
-          requestHeaders.set('Content-Type', 'application/x-git-upload-pack-request');
-        }
-      }
-
-      if (isGit && request.method === 'POST' && url.pathname.endsWith('/git-receive-pack')) {
-        if (!requestHeaders.has('Content-Type')) {
-          requestHeaders.set('Content-Type', 'application/x-git-receive-pack-request');
-        }
-      }
-
-      if (isGitLFS) {
-        if (!requestHeaders.has('User-Agent')) {
-          requestHeaders.set('User-Agent', 'git-lfs/3.0.0 (GitHub; darwin amd64; go 1.17.2)');
-        }
-        if (url.pathname.includes('/objects/batch')) {
-          if (!requestHeaders.has('Accept')) {
-            requestHeaders.set('Accept', 'application/vnd.git-lfs+json');
-          }
-          if (request.method === 'POST' && !requestHeaders.has('Content-Type')) {
-            requestHeaders.set('Content-Type', 'application/vnd.git-lfs+json');
-          }
-        }
-        if (url.pathname.match(/\/objects\/[a-fA-F0-9]{64}$/)) {
-          if (!requestHeaders.has('Accept')) {
-            requestHeaders.set('Accept', 'application/octet-stream');
-          }
-        }
-      }
-
+      // Configure protocol-specific headers using modular helpers
+      configureGitHeaders(requestHeaders, request, url, isGitLFS);
+      
       if (isAI) {
-        if (request.method === 'POST' && !requestHeaders.has('Content-Type')) {
-          requestHeaders.set('Content-Type', 'application/json');
-        }
-        if (!requestHeaders.has('User-Agent')) {
-          requestHeaders.set('User-Agent', 'Xget-AI-Proxy/1.0');
-        }
+        configureAIHeaders(requestHeaders, request);
       }
+
     } else {
       // Regular file download headers
       Object.assign(fetchOptions, {
