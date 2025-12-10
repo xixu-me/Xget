@@ -240,7 +240,7 @@ describe('Security Features', () => {
 
     it('should provide generic error messages', async () => {
       const response = await SELF.fetch('https://example.com/gh/test/repo', {
-        method: 'INVALID',
+        method: 'TRACE',
         redirect: 'manual'
       });
 

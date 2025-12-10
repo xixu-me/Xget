@@ -12,21 +12,21 @@ import { CONFIG, createConfig } from './config/index.js';
 import { SORTED_PLATFORMS, transformPath } from './config/platforms.js';
 import { configureAIHeaders, isAIInferenceRequest } from './protocols/ai.js';
 import {
-    fetchToken,
-    handleDockerAuth,
-    parseAuthenticate,
-    responseUnauthorized
+  fetchToken,
+  handleDockerAuth,
+  parseAuthenticate,
+  responseUnauthorized
 } from './protocols/docker.js';
 import {
-    configureGitHeaders,
-    isGitLFSRequest,
-    isGitRequest
+  configureGitHeaders,
+  isGitLFSRequest,
+  isGitRequest
 } from './protocols/git.js';
 import { PerformanceMonitor, addPerformanceHeaders } from './utils/performance.js';
 import { addSecurityHeaders, createErrorResponse } from './utils/security.js';
 import {
-    isDockerRequest,
-    validateRequest
+  isDockerRequest,
+  validateRequest
 } from './utils/validation.js';
 
 /**
@@ -38,13 +38,14 @@ import {
  * @returns {Promise<Response>} The HTTP response with appropriate headers and body
  */
 async function handleRequest(request, env, ctx) {
+  let response;
+  const monitor = new PerformanceMonitor();
+
   try {
     // Create config with environment variable overrides
     const config = env ? createConfig(env) : CONFIG;
     const url = new URL(request.url);
     const isDocker = isDockerRequest(request, url);
-
-    const monitor = new PerformanceMonitor();
 
     // Handle Docker API version check
     if (isDocker && (url.pathname === '/v2/' || url.pathname === '/v2')) {
@@ -53,492 +54,604 @@ async function handleRequest(request, env, ctx) {
         'Content-Type': 'application/json'
       });
       addSecurityHeaders(headers);
-      return new Response('{}', { status: 200, headers });
+      response = new Response('{}', { status: 200, headers });
     }
-
     // Redirect root path or invalid platforms to GitHub repository
-    if (url.pathname === '/' || url.pathname === '') {
+    else if (url.pathname === '/' || url.pathname === '') {
       const HOME_PAGE_URL = 'https://github.com/xixu-me/Xget';
-      return Response.redirect(HOME_PAGE_URL, 302);
-    }
-
-    const validation = validateRequest(request, url, config);
-    if (!validation.valid) {
-      return createErrorResponse(validation.error || 'Validation failed', validation.status || 400);
-    }
-
-    // Parse platform and path
-    let effectivePath = url.pathname;
-
-    // Handle container registry paths specially
-    if (isDocker) {
-      // For Docker requests, check if they have /cr/ prefix
-      // but allow /v2/auth which handles authentication
-      if (
-        !url.pathname.startsWith('/cr/') &&
-        !url.pathname.startsWith('/v2/cr/') &&
-        url.pathname !== '/v2/auth'
-      ) {
-        return createErrorResponse('container registry requests must use /cr/ prefix', 400);
-      }
-      // Remove /v2 from the path for container registry API consistency if present
-      effectivePath = url.pathname.replace(/^\/v2/, '');
-    }
-
-    // Handle Docker authentication explicitly
-    // This must be done before platform detection because /v2/auth doesn't follow the
-    // standard /platform/path pattern - it encodes the path in the 'scope' parameter
-    if (isDocker && url.pathname === '/v2/auth') {
-      return handleDockerAuth(request, url, config);
-    }
-
-    // Platform detection using transform patterns
-    // Use pre-computed sorted platforms
-    const platform =
-      SORTED_PLATFORMS.find(key => {
-        const expectedPrefix = `/${key.replace('-', '/')}/`;
-        return effectivePath.startsWith(expectedPrefix);
-      }) || effectivePath.split('/')[1];
-
-    if (!platform || !config.PLATFORMS[platform]) {
-      const HOME_PAGE_URL = 'https://github.com/xixu-me/Xget';
-      return Response.redirect(HOME_PAGE_URL, 302);
-    }
-
-    // Check if the path only contains the platform prefix without any actual resource path
-    const platformPath = `/${platform.replace(/-/g, '/')}`;
-    if (effectivePath === platformPath || effectivePath === `${platformPath}/`) {
-      const HOME_PAGE_URL = 'https://github.com/xixu-me/Xget';
-      return Response.redirect(HOME_PAGE_URL, 302);
-    }
-
-    // Transform URL based on platform using unified logic
-    const targetPath = transformPath(effectivePath, platform);
-
-    // For container registries, ensure we add the /v2 prefix for the Docker API
-    let finalTargetPath;
-    if (platform.startsWith('cr-')) {
-      finalTargetPath = `/v2${targetPath}`;
+      response = Response.redirect(HOME_PAGE_URL, 302);
     } else {
-      finalTargetPath = targetPath;
-    }
-
-    const targetUrl = `${config.PLATFORMS[platform]}${finalTargetPath}${url.search}`;
-    const authorization = request.headers.get('Authorization');
-
-    // Check if this is a Git operation
-    const isGit = isGitRequest(request, url);
-
-    // Check if this is a Git LFS operation
-    const isGitLFS = isGitLFSRequest(request, url);
-
-    // Check if this is an AI inference request
-    const isAI = isAIInferenceRequest(request, url);
-
-    // Check cache first (skip cache for Git, Git LFS, Docker, and AI inference operations)
-    /** @type {Cache | null} */
-    // @ts-ignore - Cloudflare Workers cache API
-    const cache = typeof caches !== 'undefined' && caches.default ? caches.default : null;
-    let response;
-
-    if (cache && !isGit && !isGitLFS && !isDocker && !isAI) {
-      try {
-        // For Range requests, try cache match first
-        const cacheKey = new Request(targetUrl, {
-          method: 'GET',
-          headers: request.headers
-        });
-        response = await cache.match(cacheKey);
-        if (response) {
-          monitor.mark('cache_hit');
-          return response;
-        }
-
-        // If Range request missed cache, try with original request to see if we have full content cached
-        const rangeHeader = request.headers.get('Range');
-        if (rangeHeader) {
-          const fullContentKey = new Request(targetUrl, {
-            method: 'GET', // Always use GET method for cache key consistency
-            headers: new Headers(
-              [...request.headers.entries()].filter(([k]) => k.toLowerCase() !== 'range')
-            )
-          });
-          response = await cache.match(fullContentKey);
-          if (response) {
-            monitor.mark('cache_hit_full_content');
-            return response;
-          }
-        }
-      } catch (cacheError) {
-        console.warn('Cache API unavailable:', cacheError);
-      }
-    }
-
-    /** @type {RequestInit} */
-    const fetchOptions = {
-      method: request.method,
-      headers: new Headers(),
-      redirect: 'follow'
-    };
-
-    // Add body for POST/PUT/PATCH requests (Git/Docker/AI inference operations)
-    if (
-      ['POST', 'PUT', 'PATCH'].includes(request.method) &&
-      (isGit || isGitLFS || isDocker || isAI)
-    ) {
-      fetchOptions.body = request.body;
-    }
-
-    // Cast headers to Headers for proper typing
-    const requestHeaders = /** @type {Headers} */ (fetchOptions.headers);
-
-    // Set appropriate headers for Git/Docker/AI vs regular requests
-    if (isGit || isGitLFS || isDocker || isAI) {
-      // For Git/Docker/AI operations, copy all headers from the original request
-      // This ensures protocol compliance
-      for (const [key, value] of request.headers.entries()) {
-        // Skip headers that might cause issues with proxying
-        if (!['host', 'connection', 'upgrade', 'proxy-connection'].includes(key.toLowerCase())) {
-          requestHeaders.set(key, value);
-        }
-      }
-
-      // Configure protocol-specific headers using modular helpers
-      configureGitHeaders(requestHeaders, request, url, isGitLFS);
-      
-      if (isAI) {
-        configureAIHeaders(requestHeaders, request);
-      }
-
-    } else {
-      // Regular file download headers
-      Object.assign(fetchOptions, {
-        cf: {
-          http3: true,
-          cacheTtl: config.CACHE_DURATION,
-          cacheEverything: true,
-          minify: {
-            javascript: true,
-            css: true,
-            html: true
-          },
-          preconnect: true
-        }
-      });
-
-      requestHeaders.set('Accept-Encoding', 'gzip, deflate, br');
-      requestHeaders.set('Connection', 'keep-alive');
-      requestHeaders.set('User-Agent', 'Wget/1.21.3');
-      requestHeaders.set('Origin', request.headers.get('Origin') || '*');
-
-      if (authorization) {
-        requestHeaders.set('Authorization', authorization);
-      }
-
-      const rangeHeader = request.headers.get('Range');
-      const isMediaFile = targetUrl.match(
-        /\.(mp4|avi|mkv|mov|wmv|flv|webm|mp3|wav|flac|aac|ogg|jpg|jpeg|png|gif|bmp|svg|pdf|zip|rar|7z|tar|gz|bz2|xz)$/i
-      );
-
-      if (isMediaFile || rangeHeader) {
-        requestHeaders.set('Accept-Encoding', 'identity');
-      }
-
-      if (rangeHeader) {
-        requestHeaders.set('Range', rangeHeader);
-      }
-    }
-
-    // Implement retry mechanism
-    let attempts = 0;
-    while (attempts < config.MAX_RETRIES) {
-      try {
-        monitor.mark(`attempt_${attempts}`);
-
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), config.TIMEOUT_SECONDS * 1000);
-
-        const finalFetchOptions = { ...fetchOptions, signal: controller.signal };
-
-        // Special handling for HEAD requests to ensure Content-Length header
-        if (request.method === 'HEAD') {
-          response = await fetch(targetUrl, finalFetchOptions);
-
-          if (response.ok && !response.headers.get('Content-Length')) {
-            const rangeHeaders = new Headers(requestHeaders);
-            rangeHeaders.set('Range', 'bytes=0-0');
-
-            const rangeResponse = await fetch(targetUrl, {
-              ...finalFetchOptions,
-              method: 'GET',
-              headers: rangeHeaders
-            });
-
-            let contentLength = null;
-
-            if (rangeResponse.status === 206) {
-              const contentRange = rangeResponse.headers.get('Content-Range');
-              if (contentRange) {
-                const match = contentRange.match(/bytes\s+\d+-\d+\/(\d+)/);
-                if (match) {
-                  [, contentLength] = match;
-                }
-              }
-            } else if (rangeResponse.ok) {
-              contentLength = rangeResponse.headers.get('Content-Length');
-              if (!contentLength) {
-                const sizeLimit = 50 * 1024 * 1024;
-                const contentLengthHint = rangeResponse.headers.get('Content-Length');
-                if (!contentLengthHint || parseInt(contentLengthHint, 10) < sizeLimit) {
-                  try {
-                    const arrayBuffer = await rangeResponse.arrayBuffer();
-                    contentLength = arrayBuffer.byteLength.toString();
-                  } catch (error) {
-                    console.warn('Could not buffer response to get Content-Length:', error);
-                  }
-                }
-              }
-            }
-
-            if (contentLength) {
-              const headHeaders = new Headers(response.headers);
-              headHeaders.set('Content-Length', contentLength);
-              response = new Response(null, {
-                status: response.status,
-                statusText: response.statusText,
-                headers: headHeaders
-              });
-            }
-          }
-        } else {
-          response = await fetch(targetUrl, finalFetchOptions);
-        }
-
-        clearTimeout(timeoutId);
-
-        if (response.ok || response.status === 206) {
-          monitor.mark('success');
-          break;
-        }
-
-        // For container registry, handle authentication challenges more intelligently
-        if (isDocker && response.status === 401) {
-          monitor.mark('docker_auth_challenge');
-
-          const authenticateStr = response.headers.get('WWW-Authenticate');
-          if (authenticateStr) {
-            try {
-              const wwwAuthenticate = parseAuthenticate(authenticateStr);
-
-              // Infer scope from the request path for container registry requests
-              let scope = '';
-              const pathParts = url.pathname.split('/');
-              if (pathParts.length >= 4 && pathParts[1] === 'v2') {
-                 const platformPrefix = `/${platform.replace(/-/g, '/')}/`;
-                 if (effectivePath.startsWith(platformPrefix)) {
-                    const repoPathFull = effectivePath.slice(platformPrefix.length);
-                    const repoParts = repoPathFull.split('/');
-                    if (repoParts.length >= 1) {
-                        let repoName = repoParts.slice(0, -2).join('/'); // Remove /manifests/tag or /blobs/sha
-
-                        if (platform === 'cr-docker' && repoName && !repoName.includes('/')) {
-                          repoName = `library/${repoName}`;
-                        }
-
-                        if (repoName) {
-                          scope = `repository:${repoName}:pull`;
-                        }
-                    }
-                 }
-              }
-
-              // Try to get a token for public access (without authorization)
-              const tokenResponse = await fetchToken(wwwAuthenticate, scope || '', '');
-              
-              if (tokenResponse.ok) {
-                const tokenData = await tokenResponse.json();
-                if (tokenData.token) {
-                  const retryHeaders = new Headers(requestHeaders);
-                  retryHeaders.set('Authorization', `Bearer ${tokenData.token}`);
-
-                  const retryResponse = await fetch(targetUrl, {
-                    ...finalFetchOptions,
-                    headers: retryHeaders
-                  });
-
-                  if (retryResponse.ok) {
-                    response = retryResponse;
-                    monitor.mark('success');
-                    break;
-                  }
-                }
-              }
-            } catch (error) {
-              console.warn('Token fetch failed:', error);
-            }
-          }
-
-          return responseUnauthorized(url);
-        }
-
-        if (response.status >= 400 && response.status < 500) {
-          monitor.mark('client_error');
-          break;
-        }
-
-        attempts++;
-        if (attempts < config.MAX_RETRIES) {
-          await new Promise(resolve => setTimeout(resolve, config.RETRY_DELAY_MS * attempts));
-        }
-      } catch (error) {
-        attempts++;
-        if (error instanceof Error && error.name === 'AbortError') {
-          return createErrorResponse('Request timeout', 408);
-        }
-        if (attempts >= config.MAX_RETRIES) {
-          const message = error instanceof Error ? error.message : String(error);
-          return createErrorResponse(
-            `Failed after ${config.MAX_RETRIES} attempts: ${message}`,
-            500,
-            true
-          );
-        }
-        await new Promise(resolve => setTimeout(resolve, config.RETRY_DELAY_MS * attempts));
-      }
-    }
-
-    if (!response) {
-      return createErrorResponse('No response received after all retry attempts', 500, true);
-    }
-
-    if (!response.ok && response.status !== 206) {
-      if (isDocker && response.status === 401) {
-        const errorText = await response.text().catch(() => '');
-        return createErrorResponse(
-          `Authentication required for this container registry resource. This may be a private repository. Original error: ${errorText}`,
-          401,
-          true
+      const validation = validateRequest(request, url, config);
+      if (!validation.valid) {
+        response = createErrorResponse(
+          validation.error || 'Validation failed',
+          validation.status || 400
         );
-      }
-      const errorText = await response.text().catch(() => 'Unknown error');
-      return createErrorResponse(
-        `Upstream server error (${response.status}): ${errorText}`,
-        response.status,
-        true
-      );
-    }
+      } else {
+        // Parse platform and path
+        let effectivePath = url.pathname;
 
-    let responseBody = response.body;
-
-    if (platform === 'pypi' && response.headers.get('content-type')?.includes('text/html')) {
-      const originalText = await response.text();
-      const rewrittenText = originalText.replace(
-        /https:\/\/files\.pythonhosted\.org/g,
-        `${url.origin}/pypi/files`
-      );
-      responseBody = new ReadableStream({
-        start(controller) {
-          controller.enqueue(new TextEncoder().encode(rewrittenText));
-          controller.close();
-        }
-      });
-    }
-
-    if (platform === 'npm' && response.headers.get('content-type')?.includes('application/json')) {
-      const originalText = await response.text();
-      const rewrittenText = originalText.replace(
-        /https:\/\/registry.npmjs.org\/([^/]+)/g,
-        `${url.origin}/npm/$1`
-      );
-      responseBody = new ReadableStream({
-        start(controller) {
-          controller.enqueue(new TextEncoder().encode(rewrittenText));
-          controller.close();
-        }
-      });
-    }
-
-    const headers = new Headers(response.headers);
-
-    if (!isGit && !isDocker) {
-      headers.set('Cache-Control', `public, max-age=${config.CACHE_DURATION}`);
-      headers.set('X-Content-Type-Options', 'nosniff');
-      headers.set('Accept-Ranges', 'bytes');
-
-      if (!headers.has('Content-Length') && response.status === 200) {
-        try {
-          const contentLength = response.headers.get('Content-Length');
-          if (contentLength) {
-            headers.set('Content-Length', contentLength);
-          }
-        } catch (error) {
-          console.warn('Could not set Content-Length header:', error);
-        }
-      }
-
-      addSecurityHeaders(headers);
-    }
-
-    const finalResponse = new Response(responseBody, {
-      status: response.status,
-      headers
-    });
-
-    if (
-      cache &&
-      !isGit &&
-      !isGitLFS &&
-      !isDocker &&
-      !isAI &&
-      request.method === 'GET' &&
-      response.ok &&
-      response.status === 200
-    ) {
-      const rangeHeader = request.headers.get('Range');
-      const cacheKey = rangeHeader
-        ? new Request(targetUrl, {
-            method: 'GET',
-            headers: new Headers(
-              [...request.headers.entries()].filter(([k]) => k.toLowerCase() !== 'range')
-            )
-          })
-        : new Request(targetUrl, { method: 'GET' });
-
-      try {
-        if (ctx && typeof ctx.waitUntil === 'function') {
-          ctx.waitUntil(cache.put(cacheKey, finalResponse.clone()));
-        } else {
-          cache.put(cacheKey, finalResponse.clone()).catch(error => {
-            console.warn('Cache put failed:', error);
-          });
-        }
-
-        if (rangeHeader && response.status === 200) {
-          const rangedResponse = await cache.match(
-            new Request(targetUrl, {
-              method: 'GET',
-              headers: request.headers
-            })
-          );
-          if (rangedResponse) {
-            monitor.mark('range_cache_hit_after_full_cache');
-            return rangedResponse;
+        // Handle container registry paths specially
+        if (isDocker) {
+          // For Docker requests, check if they have /cr/ prefix
+          // but allow /v2/auth which handles authentication
+          if (
+            !url.pathname.startsWith('/cr/') &&
+            !url.pathname.startsWith('/v2/cr/') &&
+            url.pathname !== '/v2/auth'
+          ) {
+            response = createErrorResponse(
+              'container registry requests must use /cr/ prefix',
+              400
+            );
+          } else {
+            // Remove /v2 from the path for container registry API consistency if present
+            effectivePath = url.pathname.replace(/^\/v2/, '');
           }
         }
-      } catch (cacheError) {
-        console.warn('Cache put/match failed:', cacheError);
+
+        if (!response) {
+          // Handle Docker authentication explicitly
+          if (isDocker && url.pathname === '/v2/auth') {
+            response = await handleDockerAuth(request, url, config);
+          } else {
+            // Platform detection using transform patterns
+            // Use pre-computed sorted platforms
+            const platform =
+              SORTED_PLATFORMS.find(key => {
+                const expectedPrefix = `/${key.replace('-', '/')}/`;
+                return effectivePath.startsWith(expectedPrefix);
+              }) || effectivePath.split('/')[1];
+
+            if (!platform || !config.PLATFORMS[platform]) {
+              const HOME_PAGE_URL = 'https://github.com/xixu-me/Xget';
+              response = Response.redirect(HOME_PAGE_URL, 302);
+            } else {
+              // Check if the path only contains the platform prefix without any actual resource path
+              const platformPath = `/${platform.replace(/-/g, '/')}`;
+              if (effectivePath === platformPath || effectivePath === `${platformPath}/`) {
+                const HOME_PAGE_URL = 'https://github.com/xixu-me/Xget';
+                response = Response.redirect(HOME_PAGE_URL, 302);
+              } else {
+                // Transform URL based on platform using unified logic
+                const targetPath = transformPath(effectivePath, platform);
+
+                // For container registries, ensure we add the /v2 prefix for the Docker API
+                let finalTargetPath;
+                if (platform.startsWith('cr-')) {
+                  finalTargetPath = `/v2${targetPath}`;
+                } else {
+                  finalTargetPath = targetPath;
+                }
+
+                const targetUrl = `${config.PLATFORMS[platform]}${finalTargetPath}${url.search}`;
+                const authorization = request.headers.get('Authorization');
+
+                // Check if this is a Git operation
+                const isGit = isGitRequest(request, url);
+
+                // Check if this is a Git LFS operation
+                const isGitLFS = isGitLFSRequest(request, url);
+
+                // Check if this is an AI inference request
+                const isAI = isAIInferenceRequest(request, url);
+
+                // Check cache first (skip cache for Git, Git LFS, Docker, and AI inference operations)
+                /** @type {Cache | null} */
+                // @ts-ignore - Cloudflare Workers cache API
+                const cache =
+                  typeof caches !== 'undefined' && caches.default ? caches.default : null;
+
+                if (cache && !isGit && !isGitLFS && !isDocker && !isAI) {
+                  try {
+                    // For Range requests, try cache match first
+                    const cacheKey = new Request(targetUrl, {
+                      method: 'GET',
+                      headers: request.headers
+                    });
+                    const cachedResponse = await cache.match(cacheKey);
+                    if (cachedResponse) {
+                      monitor.mark('cache_hit');
+                      response = cachedResponse;
+                    } else {
+                      // If Range request missed cache, try with original request to see if we have full content cached
+                      const rangeHeader = request.headers.get('Range');
+                      if (rangeHeader) {
+                        const fullContentKey = new Request(targetUrl, {
+                          method: 'GET', // Always use GET method for cache key consistency
+                          headers: new Headers(
+                            [...request.headers.entries()].filter(
+                              ([k]) => k.toLowerCase() !== 'range'
+                            )
+                          )
+                        });
+                        const fullCachedResponse = await cache.match(fullContentKey);
+                        if (fullCachedResponse) {
+                          monitor.mark('cache_hit_full_content');
+                          response = fullCachedResponse;
+                        }
+                      }
+                    }
+                  } catch (cacheError) {
+                    console.warn('Cache API unavailable:', cacheError);
+                  }
+                }
+
+                if (!response) {
+                  /** @type {RequestInit} */
+                  const fetchOptions = {
+                    method: request.method,
+                    headers: new Headers(),
+                    redirect: 'follow'
+                  };
+
+                  // Add body for POST/PUT/PATCH requests (Git/Docker/AI inference operations)
+                  if (
+                    ['POST', 'PUT', 'PATCH'].includes(request.method) &&
+                    (isGit || isGitLFS || isDocker || isAI)
+                  ) {
+                    fetchOptions.body = request.body;
+                  }
+
+                  // Cast headers to Headers for proper typing
+                  const requestHeaders = /** @type {Headers} */ (fetchOptions.headers);
+
+                  // Set appropriate headers for Git/Docker/AI vs regular requests
+                  if (isGit || isGitLFS || isDocker || isAI) {
+                    // For Git/Docker/AI operations, copy all headers from the original request
+                    // This ensures protocol compliance
+                    for (const [key, value] of request.headers.entries()) {
+                      // Skip headers that might cause issues with proxying
+                      if (
+                        !['host', 'connection', 'upgrade', 'proxy-connection'].includes(
+                          key.toLowerCase()
+                        )
+                      ) {
+                        requestHeaders.set(key, value);
+                      }
+                    }
+
+                    // Configure protocol-specific headers using modular helpers
+                    configureGitHeaders(requestHeaders, request, url, isGitLFS);
+
+                    if (isAI) {
+                      configureAIHeaders(requestHeaders, request);
+                    }
+                  } else {
+                    // Regular file download headers
+                    Object.assign(fetchOptions, {
+                      cf: {
+                        http3: true,
+                        cacheTtl: config.CACHE_DURATION,
+                        cacheEverything: true,
+                        minify: {
+                          javascript: true,
+                          css: true,
+                          html: true
+                        },
+                        preconnect: true
+                      }
+                    });
+
+                    requestHeaders.set('Accept-Encoding', 'gzip, deflate, br');
+                    requestHeaders.set('Connection', 'keep-alive');
+                    requestHeaders.set('User-Agent', 'Wget/1.21.3');
+                    requestHeaders.set('Origin', request.headers.get('Origin') || '*');
+
+                    if (authorization) {
+                      requestHeaders.set('Authorization', authorization);
+                    }
+
+                    const rangeHeader = request.headers.get('Range');
+                    const isMediaFile = targetUrl.match(
+                      /\.(mp4|avi|mkv|mov|wmv|flv|webm|mp3|wav|flac|aac|ogg|jpg|jpeg|png|gif|bmp|svg|pdf|zip|rar|7z|tar|gz|bz2|xz)$/i
+                    );
+
+                    if (isMediaFile || rangeHeader) {
+                      requestHeaders.set('Accept-Encoding', 'identity');
+                    }
+
+                    if (rangeHeader) {
+                      requestHeaders.set('Range', rangeHeader);
+                    }
+                  }
+
+                  // Implement retry mechanism
+                  let attempts = 0;
+                  while (attempts < config.MAX_RETRIES) {
+                    try {
+                      monitor.mark(`attempt_${attempts}`);
+
+                      const controller = new AbortController();
+                      const timeoutId = setTimeout(
+                        () => controller.abort(),
+                        config.TIMEOUT_SECONDS * 1000
+                      );
+
+                      const finalFetchOptions = {
+                        ...fetchOptions,
+                        signal: controller.signal
+                      };
+
+                      // Special handling for HEAD requests to ensure Content-Length header
+                      if (request.method === 'HEAD') {
+                        response = await fetch(targetUrl, finalFetchOptions);
+
+                        if (response.ok && !response.headers.get('Content-Length')) {
+                          const rangeHeaders = new Headers(requestHeaders);
+                          rangeHeaders.set('Range', 'bytes=0-0');
+
+                          const rangeResponse = await fetch(targetUrl, {
+                            ...finalFetchOptions,
+                            method: 'GET',
+                            headers: rangeHeaders
+                          });
+
+                          let contentLength = null;
+
+                          if (rangeResponse.status === 206) {
+                            const contentRange = rangeResponse.headers.get('Content-Range');
+                            if (contentRange) {
+                              const match = contentRange.match(/bytes\s+\d+-\d+\/(\d+)/);
+                              if (match) {
+                                [, contentLength] = match;
+                              }
+                            }
+                          } else if (rangeResponse.ok) {
+                            contentLength = rangeResponse.headers.get('Content-Length');
+                            if (!contentLength) {
+                              const sizeLimit = 50 * 1024 * 1024;
+                              const contentLengthHint =
+                                rangeResponse.headers.get('Content-Length');
+                              if (
+                                !contentLengthHint ||
+                                parseInt(contentLengthHint, 10) < sizeLimit
+                              ) {
+                                try {
+                                  const arrayBuffer = await rangeResponse.arrayBuffer();
+                                  contentLength = arrayBuffer.byteLength.toString();
+                                } catch (error) {
+                                  console.warn(
+                                    'Could not buffer response to get Content-Length:',
+                                    error
+                                  );
+                                }
+                              }
+                            }
+                          }
+
+                          if (contentLength) {
+                            const headHeaders = new Headers(response.headers);
+                            headHeaders.set('Content-Length', contentLength);
+                            response = new Response(null, {
+                              status: response.status,
+                              statusText: response.statusText,
+                              headers: headHeaders
+                            });
+                          }
+                        }
+                      } else {
+                        response = await fetch(targetUrl, finalFetchOptions);
+                      }
+
+                      clearTimeout(timeoutId);
+
+                      if (response.ok || response.status === 206) {
+                        monitor.mark('success');
+                        break;
+                      }
+
+                      // For container registry, handle authentication challenges more intelligently
+                      if (isDocker && response.status === 401) {
+                        monitor.mark('docker_auth_challenge');
+
+                        const authenticateStr = response.headers.get('WWW-Authenticate');
+                        if (authenticateStr) {
+                          try {
+                            const wwwAuthenticate = parseAuthenticate(authenticateStr);
+
+                            // Infer scope from the request path for container registry requests
+                            let scope = '';
+                            const pathParts = url.pathname.split('/');
+                            if (pathParts.length >= 4 && pathParts[1] === 'v2') {
+                              const platformPrefix = `/${platform.replace(/-/g, '/')}/`;
+                              if (effectivePath.startsWith(platformPrefix)) {
+                                const repoPathFull = effectivePath.slice(platformPrefix.length);
+                                const repoParts = repoPathFull.split('/');
+                                if (repoParts.length >= 1) {
+                                  let repoName = repoParts.slice(0, -2).join('/'); // Remove /manifests/tag or /blobs/sha
+
+                                  if (
+                                    platform === 'cr-docker' &&
+                                    repoName &&
+                                    !repoName.includes('/')
+                                  ) {
+                                    repoName = `library/${repoName}`;
+                                  }
+
+                                  if (repoName) {
+                                    scope = `repository:${repoName}:pull`;
+                                  }
+                                }
+                              }
+                            }
+
+                            // Try to get a token for public access (without authorization)
+                            const tokenResponse = await fetchToken(
+                              wwwAuthenticate,
+                              scope || '',
+                              ''
+                            );
+
+                            if (tokenResponse.ok) {
+                              const tokenData = await tokenResponse.json();
+                              if (tokenData.token) {
+                                const retryHeaders = new Headers(requestHeaders);
+                                retryHeaders.set('Authorization', `Bearer ${tokenData.token}`);
+
+                                const retryResponse = await fetch(targetUrl, {
+                                  ...finalFetchOptions,
+                                  headers: retryHeaders
+                                });
+
+                                if (retryResponse.ok) {
+                                  response = retryResponse;
+                                  monitor.mark('success');
+                                  break;
+                                }
+                              }
+                            }
+                          } catch (error) {
+                            console.warn('Token fetch failed:', error);
+                          }
+                        }
+
+                        response = responseUnauthorized(url);
+                        break;
+                      }
+
+                      if (response.status >= 400 && response.status < 500) {
+                        monitor.mark('client_error');
+                        break;
+                      }
+
+                      attempts++;
+                      if (attempts < config.MAX_RETRIES) {
+                        await new Promise(resolve =>
+                          setTimeout(resolve, config.RETRY_DELAY_MS * attempts)
+                        );
+                      }
+                    } catch (error) {
+                      attempts++;
+                      if (error instanceof Error && error.name === 'AbortError') {
+                        response = createErrorResponse('Request timeout', 408);
+                        break;
+                      }
+                      if (attempts >= config.MAX_RETRIES) {
+                        const message = error instanceof Error ? error.message : String(error);
+                        response = createErrorResponse(
+                          `Failed after ${config.MAX_RETRIES} attempts: ${message}`,
+                          500,
+                          true
+                        );
+                        break;
+                      }
+                      await new Promise(resolve =>
+                        setTimeout(resolve, config.RETRY_DELAY_MS * attempts)
+                      );
+                    }
+                  }
+
+                  if (!response) {
+                    response = createErrorResponse(
+                      'No response received after all retry attempts',
+                      500,
+                      true
+                    );
+                  } else if (!response.ok && response.status !== 206) {
+                    if (isDocker && response.status === 401) {
+                      // If response is already an error response (e.g. from responseUnauthorized), use it.
+                      // otherwise construct one.
+                      // responseUnauthorized returns a Response, so we should check if it's already properly formatted?
+                      // Actually responseUnauthorized returns a JSON response. The original code returned it directly.
+                      // Here we might have broken out of loop with it.
+                      // We need to check if the body is already consumed or if it is our custom response.
+                      // responseUnauthorized creates a new Response, so it's fine.
+
+                      // BUT, if we just broke out of the loop because of 401 and didn't construct a new response (e.g. token fetch failed), `response` is still the upstream 401.
+                      // In original code: `return responseUnauthorized(url);`
+                      // Here if we successfully retried, response is 200.
+                      // If we failed to get token, we set response = responseUnauthorized(url) and break.
+                      // So check if response is our custom one?
+                      // Actually, if we hit the `isDocker && response.status === 401` block:
+                      // If we succeed retry: response = retryResponse (200), break. -> fall through to next checks (ok)
+                      // If we fail retry/token: response = responseUnauthorized(url), break. -> fall through.
+
+                      // Only if we didn't handle 401 (e.g. no WWW-Auth header?) would we reach here with upstream 401?
+                      // Wait, if upstream 401 has proper headers, we enter the block. If we fail, we replace `response`.
+                      // So `response` acts as the final result.
+
+                      // However, we still have this block:
+                      // if (!response.ok && response.status !== 206) {
+                      //   if (isDocker && response.status === 401) { ... }
+                      // }
+                      // This block seems to be for cases where it failed and we didn't already handle it?
+                      // In the original code, this block was AFTER the loop.
+                      // The loop `return`s on success, or `return`s `responseUnauthorized` on docker 401 failure.
+                      // So this block was only reachable if:
+                      // 1. Loop finished max retries (but that returns 500 earlier)
+                      // 2. Client error (4xx) break -> response is upstream 4xx
+                      // 3. Upstream 500 error ? -> loop retries, then 500 error response.
+
+                      // Wait, the client error (400-499) break in the loop:
+                      // `if (response.status >= 400 && response.status < 500) { ... break; }`
+                      // Then it hits `if (!response.ok ...)`
+                      // If Docker 401 was NOT handled (e.g. no WWW-Auth), it hits here.
+                      // We should preserve this logic.
+
+                      // If response is the one created by responseUnauthorized, it has body '{"message": "UNAUTHORIZED"}'.
+                      // We should probably just let it pass through if it's already formatted?
+                      // But `responseUnauthorized` sets status 401. So `response.ok` is false.
+                      // The original code returned `responseUnauthorized` IMMEDIATELY.
+                      // My new code assigns it to `response` and breaks.
+                      // So it reaches here.
+                      // We should allow it to pass if it looks like our custom response (e.g. has specific headers?).
+                      // OR we just ensuring we don't double-wrap it?
+
+                      const isCustomError =
+                        response.headers.get('content-type') === 'application/json' &&
+                        (await response.clone().text()).includes('UNAUTHORIZED');
+
+                      if (!isCustomError) {
+                         const errorText = await response.text().catch(() => '');
+                         response = createErrorResponse(
+                          `Authentication required for this container registry resource. This may be a private repository. Original error: ${errorText}`,
+                          401,
+                          true
+                        );
+                      }
+                    } else {
+                        const errorText = await response.text().catch(() => 'Unknown error');
+                        response = createErrorResponse(
+                          `Upstream server error (${response.status}): ${errorText}`,
+                          response.status,
+                          true
+                        );
+                    }
+                  } else {
+                    // Success case processing (rewriting URLs etc)
+                    let responseBody = response.body;
+
+                    if (
+                      platform === 'pypi' &&
+                      response.headers.get('content-type')?.includes('text/html')
+                    ) {
+                      const originalText = await response.text();
+                      const rewrittenText = originalText.replace(
+                        /https:\/\/files\.pythonhosted\.org/g,
+                        `${url.origin}/pypi/files`
+                      );
+                      responseBody = new ReadableStream({
+                        start(controller) {
+                          controller.enqueue(new TextEncoder().encode(rewrittenText));
+                          controller.close();
+                        }
+                      });
+                    }
+
+                    if (
+                      platform === 'npm' &&
+                      response.headers.get('content-type')?.includes('application/json')
+                    ) {
+                      const originalText = await response.text();
+                      const rewrittenText = originalText.replace(
+                        /https:\/\/registry.npmjs.org\/([^/]+)/g,
+                        `${url.origin}/npm/$1`
+                      );
+                      responseBody = new ReadableStream({
+                        start(controller) {
+                          controller.enqueue(new TextEncoder().encode(rewrittenText));
+                          controller.close();
+                        }
+                      });
+                    }
+
+                    const headers = new Headers(response.headers);
+
+                    if (!isGit && !isDocker) {
+                      headers.set('Cache-Control', `public, max-age=${config.CACHE_DURATION}`);
+                      headers.set('X-Content-Type-Options', 'nosniff');
+                      headers.set('Accept-Ranges', 'bytes');
+
+                      if (!headers.has('Content-Length') && response.status === 200) {
+                        try {
+                          const contentLength = response.headers.get('Content-Length');
+                          if (contentLength) {
+                            headers.set('Content-Length', contentLength);
+                          }
+                        } catch (error) {
+                          console.warn('Could not set Content-Length header:', error);
+                        }
+                      }
+
+                      addSecurityHeaders(headers);
+                    }
+
+                    response = new Response(responseBody, {
+                      status: response.status,
+                      headers
+                    });
+
+                    // Cache success logic
+                    if (
+                        cache &&
+                        !isGit &&
+                        !isGitLFS &&
+                        !isDocker &&
+                        !isAI &&
+                        request.method === 'GET' &&
+                        response.ok &&
+                        response.status === 200
+                      ) {
+                        const rangeHeader = request.headers.get('Range');
+                        const cacheKey = rangeHeader
+                          ? new Request(targetUrl, {
+                              method: 'GET',
+                              headers: new Headers(
+                                [...request.headers.entries()].filter(([k]) => k.toLowerCase() !== 'range')
+                              )
+                            })
+                          : new Request(targetUrl, { method: 'GET' });
+
+                        try {
+                          if (ctx && typeof ctx.waitUntil === 'function') {
+                            ctx.waitUntil(cache.put(cacheKey, response.clone()));
+                          } else {
+                            cache.put(cacheKey, response.clone()).catch(error => {
+                              console.warn('Cache put failed:', error);
+                            });
+                          }
+
+                          if (rangeHeader && response.status === 200) {
+                             const rangedResponse = await cache.match(
+                              new Request(targetUrl, {
+                                method: 'GET',
+                                headers: request.headers
+                              })
+                            );
+                            if (rangedResponse) {
+                              monitor.mark('range_cache_hit_after_full_cache');
+                              response = rangedResponse;
+                            }
+                          }
+                        } catch (cacheError) {
+                          console.warn('Cache put/match failed:', cacheError);
+                        }
+                      }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
-
-    monitor.mark('complete');
-    return isGit || isGitLFS || isDocker || isAI
-      ? finalResponse
-      : addPerformanceHeaders(finalResponse, monitor);
   } catch (error) {
     console.error('Error handling request:', error);
     const message = error instanceof Error ? error.message : String(error);
-    return createErrorResponse(`Internal Server Error: ${message}`, 500, true);
+    response = createErrorResponse(`Internal Server Error: ${message}`, 500, true);
   }
+
+  // Ensure performance headers are added to the final response
+  monitor.mark('complete');
+  const isGit = isGitRequest(request, new URL(request.url));
+  const isDocker = isDockerRequest(request, new URL(request.url));
+  const isAI = isAIInferenceRequest(request, new URL(request.url));
+  const isGitLFS = isGitLFSRequest(request, new URL(request.url));
+
+  return isGit || isGitLFS || isDocker || isAI
+    ? response
+    : addPerformanceHeaders(response, monitor);
 }
 
 export default {

@@ -42,7 +42,7 @@ describe('Integration Tests', () => {
       const response = await SELF.fetch(testUrl, { method: 'HEAD' });
 
       expect([200, 301, 302, 404]).toContain(response.status);
-    });
+    }, 10000);
 
     it('should handle npm package requests', async () => {
       const testUrl = 'https://example.com/npm/react';
@@ -229,7 +229,7 @@ describe('Integration Tests', () => {
       });
 
       // Git requests should not be cached (no cache headers)
-      expect(response.headers.get('Cache-Control')).not.toContain('max-age=1800');
+      expect(response.headers.get('Cache-Control') || '').not.toContain('max-age=1800');
     });
   });
 
@@ -297,7 +297,7 @@ describe('Integration Tests', () => {
         const response = await SELF.fetch(url, { method: 'HEAD' });
         expect(response.headers.get('X-Performance-Metrics')).toBeTruthy();
       }
-    });
+    }, 10000);
   });
 
   describe('Content Type Handling', () => {

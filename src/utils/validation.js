@@ -22,7 +22,7 @@ import { isGitLFSRequest, isGitRequest } from '../protocols/git.js';
  */
 export function isDockerRequest(request, url) {
   // Check for container registry API endpoints
-  if (url.pathname.startsWith('/v2/')) {
+  if (url.pathname.includes('/v2/') || url.pathname === '/v2') {
     return true;
   }
 
@@ -38,6 +38,15 @@ export function isDockerRequest(request, url) {
     accept.includes('application/vnd.docker.distribution.manifest') ||
     accept.includes('application/vnd.oci.image.manifest') ||
     accept.includes('application/vnd.docker.image.rootfs.diff.tar.gzip')
+  ) {
+    return true;
+  }
+
+  // Check for Docker-specific Content-Type headers (for PUT/POST)
+  const contentType = request.headers.get('Content-Type') || '';
+  if (
+    contentType.includes('application/vnd.docker.distribution.manifest') ||
+    contentType.includes('application/vnd.oci.image.manifest')
   ) {
     return true;
   }
