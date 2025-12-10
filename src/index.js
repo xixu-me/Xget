@@ -17,17 +17,10 @@ import {
   parseAuthenticate,
   responseUnauthorized
 } from './protocols/docker.js';
-import {
-  configureGitHeaders,
-  isGitLFSRequest,
-  isGitRequest
-} from './protocols/git.js';
+import { configureGitHeaders, isGitLFSRequest, isGitRequest } from './protocols/git.js';
 import { PerformanceMonitor, addPerformanceHeaders } from './utils/performance.js';
 import { addSecurityHeaders, createErrorResponse } from './utils/security.js';
-import {
-  isDockerRequest,
-  validateRequest
-} from './utils/validation.js';
+import { isDockerRequest, validateRequest } from './utils/validation.js';
 
 /**
  * Main request handler with comprehensive caching, retry logic, and security measures.
@@ -80,10 +73,7 @@ async function handleRequest(request, env, ctx) {
             !url.pathname.startsWith('/v2/cr/') &&
             url.pathname !== '/v2/auth'
           ) {
-            response = createErrorResponse(
-              'container registry requests must use /cr/ prefix',
-              400
-            );
+            response = createErrorResponse('container registry requests must use /cr/ prefix', 400);
           } else {
             // Remove /v2 from the path for container registry API consistency if present
             effectivePath = url.pathname.replace(/^\/v2/, '');
@@ -140,7 +130,10 @@ async function handleRequest(request, env, ctx) {
                 /** @type {Cache | null} */
                 /** @type {Cache | null} */
                 // @ts-ignore - Cloudflare Workers cache API
-                const cache = typeof caches !== 'undefined' && /** @type {any} */ (caches).default ? /** @type {any} */ (caches).default : null;
+                const cache =
+                  typeof caches !== 'undefined' && /** @type {any} */ (caches).default
+                    ? /** @type {any} */ (caches).default
+                    : null;
 
                 if (cache && !isGit && !isGitLFS && !isDocker && !isAI) {
                   try {
@@ -301,8 +294,7 @@ async function handleRequest(request, env, ctx) {
                             contentLength = rangeResponse.headers.get('Content-Length');
                             if (!contentLength) {
                               const sizeLimit = 50 * 1024 * 1024;
-                              const contentLengthHint =
-                                rangeResponse.headers.get('Content-Length');
+                              const contentLengthHint = rangeResponse.headers.get('Content-Length');
                               if (
                                 !contentLengthHint ||
                                 parseInt(contentLengthHint, 10) < sizeLimit
@@ -503,20 +495,20 @@ async function handleRequest(request, env, ctx) {
                         (await response.clone().text()).includes('UNAUTHORIZED');
 
                       if (!isCustomError) {
-                         const errorText = await response.text().catch(() => '');
-                         response = createErrorResponse(
+                        const errorText = await response.text().catch(() => '');
+                        response = createErrorResponse(
                           `Authentication required for this container registry resource. This may be a private repository. Original error: ${errorText}`,
                           401,
                           true
                         );
                       }
                     } else {
-                        const errorText = await response.text().catch(() => 'Unknown error');
-                        response = createErrorResponse(
-                          `Upstream server error (${response.status}): ${errorText}`,
-                          response.status,
-                          true
-                        );
+                      const errorText = await response.text().catch(() => 'Unknown error');
+                      response = createErrorResponse(
+                        `Upstream server error (${response.status}): ${errorText}`,
+                        response.status,
+                        true
+                      );
                     }
                   } else {
                     // Success case processing (rewriting URLs etc)
@@ -584,50 +576,52 @@ async function handleRequest(request, env, ctx) {
 
                     // Cache success logic
                     if (
-                        cache &&
-                        !isGit &&
-                        !isGitLFS &&
-                        !isDocker &&
-                        !isAI &&
-                        request.method === 'GET' &&
-                        response.ok &&
-                        response.status === 200
-                      ) {
-                        const rangeHeader = request.headers.get('Range');
-                        const cacheKey = rangeHeader
-                          ? new Request(targetUrl, {
-                              method: 'GET',
-                              headers: new Headers(
-                                [...request.headers.entries()].filter(([k]) => k.toLowerCase() !== 'range')
+                      cache &&
+                      !isGit &&
+                      !isGitLFS &&
+                      !isDocker &&
+                      !isAI &&
+                      request.method === 'GET' &&
+                      response.ok &&
+                      response.status === 200
+                    ) {
+                      const rangeHeader = request.headers.get('Range');
+                      const cacheKey = rangeHeader
+                        ? new Request(targetUrl, {
+                            method: 'GET',
+                            headers: new Headers(
+                              [...request.headers.entries()].filter(
+                                ([k]) => k.toLowerCase() !== 'range'
                               )
-                            })
-                          : new Request(targetUrl, { method: 'GET' });
+                            )
+                          })
+                        : new Request(targetUrl, { method: 'GET' });
 
-                        try {
-                          if (ctx && typeof ctx.waitUntil === 'function') {
-                            ctx.waitUntil(cache.put(cacheKey, response.clone()));
-                          } else {
-                            cache.put(cacheKey, response.clone()).catch(error => {
-                              console.warn('Cache put failed:', error);
-                            });
-                          }
-
-                          if (rangeHeader && response.status === 200) {
-                             const rangedResponse = await cache.match(
-                              new Request(targetUrl, {
-                                method: 'GET',
-                                headers: request.headers
-                              })
-                            );
-                            if (rangedResponse) {
-                              monitor.mark('range_cache_hit_after_full_cache');
-                              response = rangedResponse;
-                            }
-                          }
-                        } catch (cacheError) {
-                          console.warn('Cache put/match failed:', cacheError);
+                      try {
+                        if (ctx && typeof ctx.waitUntil === 'function') {
+                          ctx.waitUntil(cache.put(cacheKey, response.clone()));
+                        } else {
+                          cache.put(cacheKey, response.clone()).catch(error => {
+                            console.warn('Cache put failed:', error);
+                          });
                         }
+
+                        if (rangeHeader && response.status === 200) {
+                          const rangedResponse = await cache.match(
+                            new Request(targetUrl, {
+                              method: 'GET',
+                              headers: request.headers
+                            })
+                          );
+                          if (rangedResponse) {
+                            monitor.mark('range_cache_hit_after_full_cache');
+                            response = rangedResponse;
+                          }
+                        }
+                      } catch (cacheError) {
+                        console.warn('Cache put/match failed:', cacheError);
                       }
+                    }
                   }
                 }
               }

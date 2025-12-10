@@ -254,7 +254,11 @@ describe('Container Registry Support', () => {
         prefix: 'cr/ghcr',
         expectedStatus: [200, 301, 302, 401, 404, 429]
       },
-      { name: 'Amazon ECR Public', prefix: 'cr/ecr', expectedStatus: [200, 301, 302, 401, 404, 429] }
+      {
+        name: 'Amazon ECR Public',
+        prefix: 'cr/ecr',
+        expectedStatus: [200, 301, 302, 401, 404, 429]
+      }
     ];
 
     containerRegistries.forEach(({ name, prefix, expectedStatus }) => {

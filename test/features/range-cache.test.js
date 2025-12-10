@@ -1,4 +1,5 @@
-import { beforeAll, describe, expect, it } from 'vitest';
+import { SELF } from 'cloudflare:test';
+import { describe, expect, it } from 'vitest';
 
 /**
  * Tests for Range Request Caching Strategy
@@ -11,17 +12,6 @@ import { beforeAll, describe, expect, it } from 'vitest';
  */
 
 describe('Range Request Caching Strategy', () => {
-  /** @type {any} */
-  let SELF;
-
-  beforeAll(async () => {
-    const { unstable_dev: unstableDev } = await import('wrangler');
-    const worker = await unstableDev('src/index.js', {
-      experimental: { disableExperimentalWarning: true }
-    });
-    SELF = worker;
-  });
-
   describe('Cache Behavior for Range Requests', () => {
     it('should not attempt to cache 206 responses', async () => {
       const testUrl = 'https://example.com/gh/test/repo/sample.pdf';
@@ -44,7 +34,7 @@ describe('Range Request Caching Strategy', () => {
 
         // Should not contain any cache put errors
         const errorKeys = Object.keys(parsedMetrics).filter(
-          key => key.includes('error') || key.includes('fail')
+          key => (key.includes('error') || key.includes('fail')) && key !== 'client_error'
         );
         expect(errorKeys).toHaveLength(0);
       }

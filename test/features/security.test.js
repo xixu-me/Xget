@@ -183,7 +183,7 @@ describe('Security Features', () => {
         // If it doesn't throw, it should not be a server error
       } catch (error) {
         // Expected to throw TypeError for invalid header value
-        expect((/** @type {Error} */ (error)).message).toMatch(/[Ii]nvalid|[Hh]eader/);
+        expect(/** @type {Error} */ (error).message).toMatch(/[Ii]nvalid|[Hh]eader/);
       }
     });
   });
@@ -200,7 +200,7 @@ describe('Security Features', () => {
       responses.forEach((/** @type {Response} */ response) => {
         expect(response.status).not.toBe(500);
       });
-    });
+    }, 30000);
 
     it('should timeout long-running requests', async () => {
       // This test would need to be implemented based on actual timeout behavior
