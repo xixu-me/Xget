@@ -595,6 +595,24 @@ function parseAuthenticate(authenticateStr) {
 }
 
 /**
+ * Transforms the effective path by removing the platform prefix.
+ *
+ * @param {string} path - The original path (e.g. /gh/user/repo, /cr/docker/image)
+ * @param {string} platform - The platform key (e.g. gh, cr-docker)
+ * @returns {string} The transformed path (e.g. /user/repo, /image)
+ */
+function transformPath(path, platform) {
+  // Convert platform key to path prefix format (e.g. cr-docker -> /cr/docker/)
+  const platformPrefix = `/${platform.replace(/-/g, '/')}/`;
+
+  if (path.startsWith(platformPrefix)) {
+    return path.substring(platformPrefix.length - 1); // Keep the leading slash
+  }
+
+  return path;
+}
+
+/**
  * Fetches authentication token from container registry token service.
  *
  * Requests a Bearer token from the registry's authentication service,
@@ -1223,6 +1241,7 @@ async function handleRequest(request, env, ctx) {
 
               // Try to get a token for public access (without authorization)
               const tokenResponse = await fetchToken(wwwAuthenticate, scope || '', '');
+              
               if (tokenResponse.ok) {
                 const tokenData = await tokenResponse.json();
                 if (tokenData.token) {
