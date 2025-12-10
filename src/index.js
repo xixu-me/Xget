@@ -840,7 +840,27 @@ async function handleRequest(request, env, ctx) {
         return resp;
       }
       const wwwAuthenticate = parseAuthenticate(authenticateStr);
-      const scope = url.searchParams.get('scope');
+      let scope = url.searchParams.get('scope');
+
+      // Transform scope to remove Xget path prefix (cr/[registry]/)
+      // Original scope: repository:cr/docker/mlikiowa/napcat-docker:pull
+      // Transformed scope: repository:mlikiowa/napcat-docker:pull
+      if (scope && scope.startsWith('repository:')) {
+        const scopeParts = scope.split(':');
+        if (scopeParts.length === 3) {
+          const repoPath = scopeParts[1];
+          // Remove cr/[registry]/ prefix (e.g., cr/docker/, cr/ghcr/, etc.)
+          const transformedRepo = repoPath.replace(/^cr\/[^/]+\//, '');
+
+          // Special handling for Docker Hub: official images need 'library/' prefix
+          if (platform === 'cr-docker' && transformedRepo && !transformedRepo.includes('/')) {
+            scope = `repository:library/${transformedRepo}:${scopeParts[2]}`;
+          } else {
+            scope = `repository:${transformedRepo}:${scopeParts[2]}`;
+          }
+        }
+      }
+
       return await fetchToken(wwwAuthenticate, scope || '', authorization || '');
     }
 

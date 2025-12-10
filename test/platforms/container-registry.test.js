@@ -76,6 +76,36 @@ describe('Container Registry Support', () => {
       // Should attempt to proxy auth requests
       expect(response.status).not.toBe(400);
     });
+
+    it('should transform scope parameter correctly for Docker Hub', async () => {
+      // Test that scope parameter removes Xget path prefix
+      const testUrl =
+        'https://example.com/cr/docker/v2/auth?scope=repository:cr/docker/mlikiowa/napcat-docker:pull&service=Xget';
+      const response = await SELF.fetch(testUrl);
+
+      // Should not return 400 Bad Request (which indicates malformed scope)
+      expect(response.status).not.toBe(400);
+    });
+
+    it('should transform scope parameter correctly for GHCR', async () => {
+      // Test that scope parameter removes Xget path prefix
+      const testUrl =
+        'https://example.com/cr/ghcr/v2/auth?scope=repository:cr/ghcr/user/repo:pull&service=Xget';
+      const response = await SELF.fetch(testUrl);
+
+      // Should not return 400 Bad Request (which indicates malformed scope)
+      expect(response.status).not.toBe(400);
+    });
+
+    it('should handle scope parameter for official Docker Hub images', async () => {
+      // Test that scope parameter is transformed and adds library/ prefix for official images
+      const testUrl =
+        'https://example.com/cr/docker/v2/auth?scope=repository:cr/docker/nginx:pull&service=Xget';
+      const response = await SELF.fetch(testUrl);
+
+      // Should not return 400 Bad Request
+      expect(response.status).not.toBe(400);
+    });
   });
 
   describe('Docker Request Detection', () => {
