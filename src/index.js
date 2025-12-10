@@ -17,7 +17,6 @@
  */
 
 import { CONFIG, createConfig } from './config/index.js';
-import { transformPath } from './config/platforms.js';
 
 /**
  * Monitors performance metrics during request processing.
@@ -582,14 +581,16 @@ function addSecurityHeaders(headers) {
  */
 function parseAuthenticate(authenticateStr) {
   // sample: Bearer realm="https://auth.ipv6.docker.com/token",service="registry.docker.io"
-  const re = /(?<=")(?:\\.|[^"\\])*(?=")/g;
-  const matches = authenticateStr.match(re);
-  if (matches === null || matches.length < 2) {
+  const realmMatch = authenticateStr.match(/realm="([^"]+)"/);
+  const serviceMatch = authenticateStr.match(/service="([^"]+)"/);
+
+  if (!realmMatch || !serviceMatch) {
     throw new Error(`invalid Www-Authenticate Header: ${authenticateStr}`);
   }
+
   return {
-    realm: matches[0],
-    service: matches[1]
+    realm: realmMatch[1],
+    service: serviceMatch[1]
   };
 }
 
@@ -775,12 +776,99 @@ async function handleRequest(request, env, ctx) {
     // Handle container registry paths specially
     if (isDocker) {
       // For Docker requests (excluding version check which is handled above),
-      // check if they have /cr/ prefix
-      if (!url.pathname.startsWith('/cr/') && !url.pathname.startsWith('/v2/cr/')) {
+      // check if they have /cr/ prefix, but allow /v2/auth
+      if (
+        !url.pathname.startsWith('/cr/') &&
+        !url.pathname.startsWith('/v2/cr/') &&
+        url.pathname !== '/v2/auth'
+      ) {
         return createErrorResponse('container registry requests must use /cr/ prefix', 400);
       }
       // Remove /v2 from the path for container registry API consistency if present
       effectivePath = url.pathname.replace(/^\/v2/, '');
+    }
+
+    // Handle Docker authentication explicitly
+    // This must be done before platform detection because /v2/auth doesn't follow the
+    // standard /platform/path pattern - it encodes the path in the 'scope' parameter
+    if (isDocker && url.pathname === '/v2/auth') {
+      const scope = url.searchParams.get('scope');
+      if (!scope) {
+        return createErrorResponse('Missing scope parameter', 400);
+      }
+
+      // Parse scope to find the target platform and repository
+      // Format: repository:cr/docker/library/ubuntu:pull
+      // We need to extract 'cr/docker' as the platform
+      const parts = scope.split(':');
+      if (parts.length < 3 || parts[0] !== 'repository') {
+        // If not a repository scope, or invalid format, we can't easily proxy it
+        // Check if we can just return a generic valid response or if we must fail
+        // For now, return 400 if we can't parse it
+        return createErrorResponse('Invalid scope format', 400);
+      }
+
+      const fullRepoPath = parts[1]; // e.g., cr/docker/library/ubuntu
+      let platformKey = '';
+      let repoPath = '';
+
+      // Find the platform from the start of the repo path
+      // Try to match 'cr/docker', 'cr/ghcr', etc.
+      // We need to find which platform prefix matches the start of fullRepoPath
+      
+      // Sort platforms by length desc to match most specific first
+      const sortedPlatforms = Object.keys(config.PLATFORMS).sort((a, b) => b.length - a.length);
+      
+      for (const key of sortedPlatforms) {
+        if (!key.startsWith('cr-')) continue;
+        
+        // Convert key cr-docker to cr/docker for matching
+        const prefix = key.replace(/-/g, '/');
+        if (fullRepoPath.startsWith(prefix + '/')) {
+          platformKey = key;
+          repoPath = fullRepoPath.slice(prefix.length + 1); // +1 for the slash
+          break;
+        }
+      }
+
+      if (!platformKey || !config.PLATFORMS[platformKey]) {
+        return createErrorResponse('Unsupported registry platform in scope', 400);
+      }
+
+      const upstreamUrl = config.PLATFORMS[platformKey];
+      const authorization = request.headers.get('Authorization');
+
+      // 1. Fetch the upstream root (v2) to get the proper realm and service
+      // We use the upstream URL + /v2/
+      const v2Url = new URL(`${upstreamUrl}/v2/`);
+      const v2Resp = await fetch(v2Url.toString(), {
+        method: 'GET',
+        redirect: 'follow'
+      });
+
+      if (v2Resp.status !== 401) {
+        // If not 401, maybe no auth needed? Or error.
+        // Just forward the response?
+        return v2Resp;
+      }
+
+      const authenticateStr = v2Resp.headers.get('WWW-Authenticate');
+      if (authenticateStr === null) {
+        return v2Resp;
+      }
+
+      const wwwAuthenticate = parseAuthenticate(authenticateStr);
+      
+      // 2. Construct the new scope for the upstream registry
+      // We replace our prefixed path with the actual repo path
+      // e.g. repository:cr/docker/library/ubuntu:pull -> repository:library/ubuntu:pull
+      
+      // However, we also need to respect the service name if possible, 
+      // but usually we just need to fix the repository part of the scope.
+      const newScope = `repository:${repoPath}:${parts.slice(2).join(':')}`;
+      
+      // 3. Fetch the token from the upstream realm
+      return await fetchToken(wwwAuthenticate, newScope, authorization || '');
     }
 
     // Platform detection using transform patterns
@@ -824,45 +912,6 @@ async function handleRequest(request, env, ctx) {
 
     const targetUrl = `${config.PLATFORMS[platform]}${finalTargetPath}${url.search}`;
     const authorization = request.headers.get('Authorization');
-
-    // Handle Docker authentication
-    if (isDocker && url.pathname === '/v2/auth') {
-      const newUrl = new URL(`${config.PLATFORMS[platform]}/v2/`);
-      const resp = await fetch(newUrl.toString(), {
-        method: 'GET',
-        redirect: 'follow'
-      });
-      if (resp.status !== 401) {
-        return resp;
-      }
-      const authenticateStr = resp.headers.get('WWW-Authenticate');
-      if (authenticateStr === null) {
-        return resp;
-      }
-      const wwwAuthenticate = parseAuthenticate(authenticateStr);
-      let scope = url.searchParams.get('scope');
-
-      // Transform scope to remove Xget path prefix (cr/[registry]/)
-      // Original scope: repository:cr/docker/mlikiowa/napcat-docker:pull
-      // Transformed scope: repository:mlikiowa/napcat-docker:pull
-      if (scope && scope.startsWith('repository:')) {
-        const scopeParts = scope.split(':');
-        if (scopeParts.length === 3) {
-          const repoPath = scopeParts[1];
-          // Remove cr/[registry]/ prefix (e.g., cr/docker/, cr/ghcr/, etc.)
-          const transformedRepo = repoPath.replace(/^cr\/[^/]+\//, '');
-
-          // Special handling for Docker Hub: official images need 'library/' prefix
-          if (platform === 'cr-docker' && transformedRepo && !transformedRepo.includes('/')) {
-            scope = `repository:library/${transformedRepo}:${scopeParts[2]}`;
-          } else {
-            scope = `repository:${transformedRepo}:${scopeParts[2]}`;
-          }
-        }
-      }
-
-      return await fetchToken(wwwAuthenticate, scope || '', authorization || '');
-    }
 
     // Check if this is a Git operation
     const isGit = isGitRequest(request, url);
