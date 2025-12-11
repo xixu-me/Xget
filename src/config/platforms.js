@@ -115,17 +115,13 @@
  * - `cr-suse` - SUSE Registry
  * - `cr-opensuse` - openSUSE Registry
  * - `cr-gitpod` - Gitpod Registry
- *
- * @type {Object.<string, string>}
- *
+ * @type {{ [key: string]: string }}
  * @example
  * // Access GitHub base URL
  * const githubUrl = PLATFORMS.gh; // 'https://github.com'
- *
  * @example
  * // Access OpenAI API base URL
  * const openaiUrl = PLATFORMS['ip-openai']; // 'https://api.openai.com'
- *
  * @example
  * // Check if platform exists
  * if (PLATFORMS.npm) {
@@ -248,41 +244,33 @@ export const SORTED_PLATFORMS = Object.keys(PLATFORMS).sort((a, b) => {
  *
  * The function handles special cases for platforms that require API path prefixes or
  * URL structure modifications to match their upstream API conventions.
- *
  * @param {string} path - The original request path including platform prefix (e.g., '/gh/user/repo')
  * @param {string} platformKey - The platform key from PLATFORMS object (e.g., 'gh', 'crates', 'npm')
  * @returns {string} The transformed path ready for upstream request
- *
  * @example
  * // Basic transformation - strips platform prefix
  * transformPath('/gh/torvalds/linux', 'gh')
  * // Returns: '/torvalds/linux'
- *
  * @example
  * // crates.io API transformation - adds API prefix
  * transformPath('/crates/serde/1.0.0/download', 'crates')
  * // Returns: '/api/v1/crates/serde/1.0.0/download'
- *
  * @example
  * // crates.io search endpoint
  * transformPath('/crates/?q=tokio', 'crates')
  * // Returns: '/api/v1/crates?q=tokio'
- *
  * @example
  * // Jenkins update center transformation
  * transformPath('/jenkins/update-center.json', 'jenkins')
  * // Returns: '/current/update-center.json'
- *
  * @example
  * // Homebrew API paths (pass-through)
  * transformPath('/homebrew/api/formula/git.json', 'homebrew-api')
  * // Returns: '/formula/git.json'
- *
  * @example
  * // Unknown platform (no transformation)
  * transformPath('/unknown/path', 'nonexistent')
  * // Returns: '/unknown/path'
- *
  * @example
  * // Multi-part platform key (hyphens converted to slashes)
  * transformPath('/ip/openai/v1/chat/completions', 'ip-openai')

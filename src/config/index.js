@@ -20,12 +20,10 @@ import { PLATFORMS } from './platforms.js';
 
 /**
  * Security-related configuration options for request validation and CORS.
- *
- * @typedef {Object} SecurityConfig
+ * @typedef {object} SecurityConfig
  * @property {string[]} ALLOWED_METHODS - List of allowed HTTP methods for incoming requests
  * @property {string[]} ALLOWED_ORIGINS - List of allowed CORS origins (use ['*'] for all origins)
  * @property {number} MAX_PATH_LENGTH - Maximum allowed URL path length in characters
- *
  * @example
  * // Default security config
  * const security = {
@@ -33,7 +31,6 @@ import { PLATFORMS } from './platforms.js';
  *   ALLOWED_ORIGINS: ['*'],
  *   MAX_PATH_LENGTH: 2048
  * };
- *
  * @example
  * // Custom security config with restricted origins
  * const security = {
@@ -49,15 +46,13 @@ import { PLATFORMS } from './platforms.js';
  * This configuration controls timeout behavior, retry logic, caching, security policies,
  * and platform URL mappings. All values can be overridden via environment variables
  * in Cloudflare Workers.
- *
- * @typedef {Object} ApplicationConfig
+ * @typedef {object} ApplicationConfig
  * @property {number} TIMEOUT_SECONDS - Request timeout in seconds (default: 30)
  * @property {number} MAX_RETRIES - Maximum number of retry attempts for failed requests (default: 3)
  * @property {number} RETRY_DELAY_MS - Delay between retry attempts in milliseconds (default: 1000)
  * @property {number} CACHE_DURATION - Cache duration in seconds for successful responses (default: 1800)
  * @property {SecurityConfig} SECURITY - Security-related configurations
- * @property {Object.<string, string>} PLATFORMS - Platform-specific base URL mappings
- *
+ * @property {{ [key: string]: string }} PLATFORMS - Platform-specific base URL mappings
  * @example
  * // Default configuration
  * const config = {
@@ -72,7 +67,6 @@ import { PLATFORMS } from './platforms.js';
  *   },
  *   PLATFORMS: { gh: 'https://github.com', ... }
  * };
- *
  * @example
  * // Configuration with environment overrides
  * const env = {
@@ -99,16 +93,13 @@ import { PLATFORMS } from './platforms.js';
  * - `ALLOWED_METHODS` - Comma-separated HTTP methods (default: 'GET,HEAD')
  * - `ALLOWED_ORIGINS` - Comma-separated CORS origins (default: '*')
  * - `MAX_PATH_LENGTH` - Override max path length (default: 2048)
- *
- * @param {Record<string, any>} env - Environment variables from Cloudflare Workers env object
+ * @param {Record<string, unknown>} env - Environment variables from Cloudflare Workers env object
  * @returns {ApplicationConfig} Complete application configuration with applied overrides
- *
  * @example
  * // Create config with defaults (no environment variables)
  * const config = createConfig();
  * console.log(config.TIMEOUT_SECONDS); // 30
  * console.log(config.CACHE_DURATION); // 1800
- *
  * @example
  * // Create config with environment overrides
  * const env = {
@@ -122,7 +113,6 @@ import { PLATFORMS } from './platforms.js';
  * console.log(config.MAX_RETRIES); // 5
  * console.log(config.CACHE_DURATION); // 3600 (1 hour)
  * console.log(config.SECURITY.ALLOWED_METHODS); // ['GET', 'HEAD', 'POST', 'PUT']
- *
  * @example
  * // Invalid environment values fallback to defaults
  * const env = {
@@ -132,7 +122,6 @@ import { PLATFORMS } from './platforms.js';
  * const config = createConfig(env);
  * console.log(config.TIMEOUT_SECONDS); // 30 (default)
  * console.log(config.MAX_RETRIES); // 3 (default)
- *
  * @example
  * // Custom CORS origins
  * const env = {
@@ -144,14 +133,16 @@ import { PLATFORMS } from './platforms.js';
  */
 export function createConfig(env = {}) {
   return {
-    TIMEOUT_SECONDS: parseInt(env.TIMEOUT_SECONDS, 10) || 30,
-    MAX_RETRIES: parseInt(env.MAX_RETRIES, 10) || 3,
-    RETRY_DELAY_MS: parseInt(env.RETRY_DELAY_MS, 10) || 1000,
-    CACHE_DURATION: parseInt(env.CACHE_DURATION, 10) || 1800, // 30 minutes
+    TIMEOUT_SECONDS: parseInt(String(env.TIMEOUT_SECONDS), 10) || 30,
+    MAX_RETRIES: parseInt(String(env.MAX_RETRIES), 10) || 3,
+    RETRY_DELAY_MS: parseInt(String(env.RETRY_DELAY_MS), 10) || 1000,
+    CACHE_DURATION: parseInt(String(env.CACHE_DURATION), 10) || 1800, // 30 minutes
     SECURITY: {
-      ALLOWED_METHODS: env.ALLOWED_METHODS ? env.ALLOWED_METHODS.split(',') : ['GET', 'HEAD'],
-      ALLOWED_ORIGINS: env.ALLOWED_ORIGINS ? env.ALLOWED_ORIGINS.split(',') : ['*'],
-      MAX_PATH_LENGTH: parseInt(env.MAX_PATH_LENGTH, 10) || 2048
+      ALLOWED_METHODS:
+        typeof env.ALLOWED_METHODS === 'string' ? env.ALLOWED_METHODS.split(',') : ['GET', 'HEAD'],
+      ALLOWED_ORIGINS:
+        typeof env.ALLOWED_ORIGINS === 'string' ? env.ALLOWED_ORIGINS.split(',') : ['*'],
+      MAX_PATH_LENGTH: parseInt(String(env.MAX_PATH_LENGTH), 10) || 2048
     },
     PLATFORMS
   };
@@ -163,14 +154,11 @@ export function createConfig(env = {}) {
  * This is a pre-instantiated configuration object using default values with no
  * environment overrides. In production (Cloudflare Workers), you should use
  * `createConfig(env)` instead to allow runtime configuration.
- *
  * @type {ApplicationConfig}
- *
  * @example
  * // Import default config
  * import { CONFIG } from './config/index.js';
  * console.log(CONFIG.TIMEOUT_SECONDS); // 30
- *
  * @example
  * // Check platform availability
  * if (CONFIG.PLATFORMS.npm) {

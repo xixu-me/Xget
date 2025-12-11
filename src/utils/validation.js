@@ -33,7 +33,6 @@ import { isGitLFSRequest, isGitRequest } from '../protocols/git.js';
  * - Registry API endpoints (/v2/...)
  * - Docker-specific User-Agent headers
  * - Docker/OCI manifest Accept headers
- *
  * @param {Request} request - The incoming request object
  * @param {URL} url - Parsed URL object
  * @returns {boolean} True if this is a container registry operation
@@ -85,7 +84,6 @@ export { isAIInferenceRequest, isGitLFSRequest, isGitRequest };
  * Different protocols have different allowed methods:
  * - Regular requests: GET, HEAD (configurable via SECURITY.ALLOWED_METHODS)
  * - Git/LFS/Docker/AI: GET, HEAD, POST, PUT, PATCH
- *
  * @param {Request} request - The incoming request object
  * @param {URL} url - Parsed URL object
  * @param {import('../config/index.js').ApplicationConfig} config - Configuration object

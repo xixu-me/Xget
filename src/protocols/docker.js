@@ -28,7 +28,6 @@ import { createErrorResponse } from '../utils/security.js';
  *
  * Extracts authentication realm and service information from the Bearer
  * authentication challenge header returned by container registries.
- *
  * @param {string} authenticateStr - The WWW-Authenticate header value
  * @returns {{realm: string, service: string}} Parsed authentication info with realm URL and service name
  * @throws {Error} If the header format is invalid or missing required fields
@@ -53,7 +52,6 @@ export function parseAuthenticate(authenticateStr) {
  *
  * Requests a Bearer token from the registry's authentication service,
  * optionally including scope (repository permissions) and authorization credentials.
- *
  * @param {{realm: string, service: string}} wwwAuthenticate - Authentication info from WWW-Authenticate header
  * @param {string} scope - The scope for the token (e.g., "repository:library/nginx:pull")
  * @param {string} authorization - Authorization header value (optional, for authenticated access)
@@ -79,7 +77,6 @@ export async function fetchToken(wwwAuthenticate, scope, authorization) {
  *
  * Generates a Docker/OCI registry-compliant 401 response with a WWW-Authenticate
  * header that directs clients to the token authentication endpoint.
- *
  * @param {URL} url - Request URL used to construct authentication realm
  * @returns {Response} Unauthorized response with WWW-Authenticate header
  */
@@ -96,7 +93,6 @@ export function responseUnauthorized(url) {
  * Handles the special /v2/auth endpoint for Docker authentication.
  *
  * Proxies generation of auth tokens by negotiating with the upstream registry.
- *
  * @param {Request} request - The incoming request
  * @param {URL} url - The parsed URL
  * @param {import('../config/index.js').ApplicationConfig} config - App configuration

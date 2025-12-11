@@ -25,10 +25,8 @@ import { handleRequest } from './src/index.js';
  *
  * This is the entry point for Deno Deploy deployments. It uses the
  * standard Deno.serve() API to handle incoming HTTP requests.
- *
  * @param {Request} request - Standard Web API Request object
  * @returns {Promise<Response>} Standard Web API Response
- *
  * @example
  * // Deno Deploy invokes automatically:
  * // Deno.serve((request) => handler(request))

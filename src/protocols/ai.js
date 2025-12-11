@@ -27,7 +27,6 @@
  * - AI provider path prefix (/ip/{provider}/...)
  * - Common AI API endpoints (chat, completions, embeddings, etc.)
  * - AI-specific URL patterns with JSON POST requests
- *
  * @param {Request} request - The incoming request object
  * @param {URL} url - Parsed URL object
  * @returns {boolean} True if this is an AI inference request
@@ -74,7 +73,6 @@ export function isAIInferenceRequest(request, url) {
  * Configures headers for AI protocol requests.
  *
  * Sets Content-Type and User-Agent headers for AI inference requests.
- *
  * @param {Headers} headers - The headers object to modify
  * @param {Request} request - The original request
  */

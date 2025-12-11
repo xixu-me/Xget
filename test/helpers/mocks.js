@@ -5,7 +5,7 @@
 /**
  * Create a mock request with default options
  * @param {string} url - Request URL
- * @param {Object} options - Request options
+ * @param {object} options - Request options
  * @returns {Request} Mock request object
  */
 export function createMockRequest(url, options = {}) {
@@ -23,7 +23,7 @@ export function createMockRequest(url, options = {}) {
 /**
  * Create a mock response with default options
  * @param {string} body - Response body
- * @param {Object} options - Response options
+ * @param {object} options - Response options
  * @returns {Response} Mock response object
  */
 export function createMockResponse(body = 'OK', options = {}) {
@@ -80,7 +80,7 @@ export function createDockerRequest(url, options = {}) {
 /**
  * Mock fetch function for testing
  * @param {string} url - Request URL
- * @param {Object} _options - Fetch options
+ * @param {object} _options - Fetch options
  * @returns {Promise<Response>} Mock response
  */
 export function mockFetch(url, _options = {}) {
@@ -101,7 +101,7 @@ export function mockFetch(url, _options = {}) {
  * Create a mock npm registry response
  * @param {string} packageName - Package name
  * @param {string} version - Package version
- * @returns {Object} Mock npm registry response
+ * @returns {object} Mock npm registry response
  */
 export function createMockNpmRegistryResponse(packageName, version = '1.0.0') {
   return {

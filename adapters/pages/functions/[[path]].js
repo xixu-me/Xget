@@ -16,7 +16,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* eslint-disable no-undef */
+
 
 import { handleRequest } from '../src/index.js';
 
@@ -31,21 +31,18 @@ import { handleRequest } from '../src/index.js';
  * The [[path]] syntax in the filename creates a catch-all route that matches
  * any path, allowing this single function to handle all requests to the Pages
  * application.
- *
- * @param {Object} context - Pages Function context
+ * @param {object} context - Pages Function context
  * @param {Request} context.request - The incoming HTTP request
- * @param {Object} context.env - Environment variables and bindings (KV, secrets, etc.)
- * @param {Object} context.params - Route parameters (path segments from [[path]])
- * @param {Function} context.waitUntil - Extend function execution for background tasks
- * @param {Function} context.next - Call next middleware in chain (not used here)
- * @param {Object} context.data - Shared data between functions
+ * @param {object} context.env - Environment variables and bindings (KV, secrets, etc.)
+ * @param {object} context.params - Route parameters (path segments from [[path]])
+ * @param {(promise: Promise<unknown>) => void} context.waitUntil - Extend function execution for background tasks
+ * @param {() => Promise<Response>} context.next - Call next middleware in chain (not used here)
+ * @param {object} context.data - Shared data between functions
  * @returns {Promise<Response>} The HTTP response to return to the client
- *
  * @example
  * // This is called automatically by Pages
  * // Runtime invokes: onRequest(context)
  * // Returns: Response with package data
- *
  * @example
  * // Environment variables usage
  * // wrangler.toml: [vars] TIMEOUT_SECONDS = "60"
@@ -58,7 +55,7 @@ export async function onRequest(context) {
 
   // Create a minimal ExecutionContext-like object for compatibility
   const ctx = {
-    waitUntil: waitUntil,
+    waitUntil,
     passThroughOnException: () => {
       // Pages doesn't support passThroughOnException, so this is a no-op
       console.warn('passThroughOnException is not supported in Pages Functions');

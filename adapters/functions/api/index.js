@@ -16,25 +16,22 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* eslint-disable no-undef, no-unused-vars */
+
 
 import { handleRequest } from '../src/index.js';
 
 /**
  * Edge Function handler.
- *
  * @param {Request} request - Standard Web API Request object
- * @param {Object} [context] - Platform-specific context (Netlify only)
- * @param {Object} [context.geo] - Geolocation data (Netlify)
+ * @param {object} [context] - Platform-specific context (Netlify only)
+ * @param {object} [context.geo] - Geolocation data (Netlify)
  * @param {string} [context.ip] - Client IP address (Netlify)
- * @param {Object} [context.env] - Environment variables (Netlify)
- * @param {Function} [context.waitUntil] - Background task extension (Netlify)
+ * @param {object} [context.env] - Environment variables (Netlify)
+ * @param {(promise: Promise<unknown>) => void} [context.waitUntil] - Background task extension (Netlify)
  * @returns {Promise<Response>} Standard Web API Response
- *
  * @example
  * // Netlify invokes with context
  * handler(request, { geo: {...}, ip: '1.2.3.4', env: {...}, waitUntil: fn })
- *
  * @example
  * // Vercel invokes without context
  * handler(request)
@@ -70,7 +67,7 @@ export default async function handler(request, context) {
   const ctx = {
     waitUntil: isNetlify && context.waitUntil
       ? (promise) => context.waitUntil(promise)
-      : (promise) => {
+      : (_promise) => {
           // No-op on Vercel: background tasks not supported
           // Cache writes will run synchronously instead
           console.warn('waitUntil is not supported in Vercel Edge Runtime');

@@ -24,9 +24,8 @@ import { isDockerRequest, validateRequest } from './utils/validation.js';
 
 /**
  * Main request handler with comprehensive caching, retry logic, and security measures.
- *
  * @param {Request} request - The incoming HTTP request
- * @param {Object} env - Cloudflare Workers environment variables for runtime config overrides
+ * @param {object} env - Cloudflare Workers environment variables for runtime config overrides
  * @param {ExecutionContext} ctx - Cloudflare Workers execution context for background tasks
  * @returns {Promise<Response>} The HTTP response with appropriate headers and body
  */
@@ -130,8 +129,8 @@ async function handleRequest(request, env, ctx) {
                 /** @type {Cache | null} */
                 // @ts-ignore - Cloudflare Workers cache API
                 const cache =
-                  typeof caches !== 'undefined' && /** @type {any} */ (caches).default
-                    ? /** @type {any} */ (caches).default
+                  typeof caches !== 'undefined' && /** @type {any} */ (caches).default // eslint-disable-line jsdoc/reject-any-type
+                    ? /** @type {any} */ (caches).default // eslint-disable-line jsdoc/reject-any-type
                     : null;
 
                 if (cache && !isGit && !isGitLFS && !isDocker && !isAI) {
@@ -602,8 +601,9 @@ async function handleRequest(request, env, ctx) {
 
 export default {
   /**
+   * Main Worker entry point.
    * @param {Request} request
-   * @param {Object} env
+   * @param {object} env
    * @param {ExecutionContext} ctx
    */
   fetch(request, env, ctx) {

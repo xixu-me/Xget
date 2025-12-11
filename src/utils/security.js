@@ -30,7 +30,6 @@
  * - Referrer-Policy (referrer information control)
  * - Content-Security-Policy (resource loading restrictions)
  * - Permissions-Policy (privacy-invasive feature restrictions)
- *
  * @param {Headers} headers - Headers object to modify (mutates in place)
  * @returns {Headers} Modified headers object (same reference)
  */
@@ -49,7 +48,6 @@ export function addSecurityHeaders(headers) {
  *
  * Generates an HTTP error response with appropriate content type and security headers.
  * Can return either plain text or detailed JSON error format.
- *
  * @param {string} message - Error message to display
  * @param {number} status - HTTP status code (e.g., 400, 404, 500)
  * @param {boolean} includeDetails - Whether to include detailed JSON error information

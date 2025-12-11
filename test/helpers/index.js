@@ -18,9 +18,9 @@ export class PerformanceTestHelper {
 
   /**
    * Measure execution time of an async function
-   * @param {Function} fn - Async function to measure
+   * @param {() => Promise<unknown>} fn - Async function to measure
    * @param {string} name - Measurement name
-   * @returns {Promise<any>} Function result
+   * @returns {Promise<unknown>} Function result
    */
   async measure(fn, name = 'operation') {
     const start = performance.now();

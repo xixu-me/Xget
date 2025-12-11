@@ -28,7 +28,6 @@
  * - Git User-Agent headers
  * - Git service query parameters
  * - Git-specific Content-Type headers
- *
  * @param {Request} request - The incoming request object
  * @param {URL} url - Parsed URL object
  * @returns {boolean} True if this is a Git operation
@@ -72,7 +71,6 @@ export function isGitRequest(request, url) {
  * - LFS object storage paths (SHA-256 hash patterns)
  * - Git LFS Accept/Content-Type headers
  * - Git LFS User-Agent
- *
  * @param {Request} request - The incoming request object
  * @param {URL} url - Parsed URL object
  * @returns {boolean} True if this is a Git LFS operation
@@ -116,7 +114,6 @@ export function isGitLFSRequest(request, url) {
  * Configures headers for Git protocol requests.
  *
  * Sets User-Agent and Content-Type headers required by Git and Git LFS protocols.
- *
  * @param {Headers} headers - The headers object to modify
  * @param {Request} request - The original request
  * @param {URL} url - The parsed URL
