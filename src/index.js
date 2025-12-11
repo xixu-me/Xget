@@ -128,7 +128,6 @@ async function handleRequest(request, env, ctx) {
 
                 // Check cache first (skip cache for Git, Git LFS, Docker, and AI inference operations)
                 /** @type {Cache | null} */
-                /** @type {Cache | null} */
                 // @ts-ignore - Cloudflare Workers cache API
                 const cache =
                   typeof caches !== 'undefined' && /** @type {any} */ (caches).default
@@ -442,54 +441,7 @@ async function handleRequest(request, env, ctx) {
                     );
                   } else if (!response.ok && response.status !== 206) {
                     if (isDocker && response.status === 401) {
-                      // If response is already an error response (e.g. from responseUnauthorized), use it.
-                      // otherwise construct one.
-                      // responseUnauthorized returns a Response, so we should check if it's already properly formatted?
-                      // Actually responseUnauthorized returns a JSON response. The original code returned it directly.
-                      // Here we might have broken out of loop with it.
-                      // We need to check if the body is already consumed or if it is our custom response.
-                      // responseUnauthorized creates a new Response, so it's fine.
-
-                      // BUT, if we just broke out of the loop because of 401 and didn't construct a new response (e.g. token fetch failed), `response` is still the upstream 401.
-                      // In original code: `return responseUnauthorized(url);`
-                      // Here if we successfully retried, response is 200.
-                      // If we failed to get token, we set response = responseUnauthorized(url) and break.
-                      // So check if response is our custom one?
-                      // Actually, if we hit the `isDocker && response.status === 401` block:
-                      // If we succeed retry: response = retryResponse (200), break. -> fall through to next checks (ok)
-                      // If we fail retry/token: response = responseUnauthorized(url), break. -> fall through.
-
-                      // Only if we didn't handle 401 (e.g. no WWW-Auth header?) would we reach here with upstream 401?
-                      // Wait, if upstream 401 has proper headers, we enter the block. If we fail, we replace `response`.
-                      // So `response` acts as the final result.
-
-                      // However, we still have this block:
-                      // if (!response.ok && response.status !== 206) {
-                      //   if (isDocker && response.status === 401) { ... }
-                      // }
-                      // This block seems to be for cases where it failed and we didn't already handle it?
-                      // In the original code, this block was AFTER the loop.
-                      // The loop `return`s on success, or `return`s `responseUnauthorized` on docker 401 failure.
-                      // So this block was only reachable if:
-                      // 1. Loop finished max retries (but that returns 500 earlier)
-                      // 2. Client error (4xx) break -> response is upstream 4xx
-                      // 3. Upstream 500 error ? -> loop retries, then 500 error response.
-
-                      // Wait, the client error (400-499) break in the loop:
-                      // `if (response.status >= 400 && response.status < 500) { ... break; }`
-                      // Then it hits `if (!response.ok ...)`
-                      // If Docker 401 was NOT handled (e.g. no WWW-Auth), it hits here.
-                      // We should preserve this logic.
-
-                      // If response is the one created by responseUnauthorized, it has body '{"message": "UNAUTHORIZED"}'.
-                      // We should probably just let it pass through if it's already formatted?
-                      // But `responseUnauthorized` sets status 401. So `response.ok` is false.
-                      // The original code returned `responseUnauthorized` IMMEDIATELY.
-                      // My new code assigns it to `response` and breaks.
-                      // So it reaches here.
-                      // We should allow it to pass if it looks like our custom response (e.g. has specific headers?).
-                      // OR we just ensuring we don't double-wrap it?
-
+                      // Handle Docker 401 responses that might not have been caught by the retry loop
                       const isCustomError =
                         response.headers.get('content-type') === 'application/json' &&
                         (await response.clone().text()).includes('UNAUTHORIZED');
