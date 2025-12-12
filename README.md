@@ -56,8 +56,8 @@
 [![arXiv](https://img.shields.io/badge/arXiv-B31B1B?logo=arxiv&logoColor=white)](#arxiv-论文下载)
 [![F-Droid](https://img.shields.io/badge/F--Droid-1976D2?logo=f-droid&logoColor=white)](#f-droid-存储库镜像)
 [![Jenkins](https://img.shields.io/badge/Jenkins-D24939?logo=jenkins&logoColor=white)](#jenkins-插件下载)
-[![容器注册表](https://img.shields.io/badge/容器注册表-%23007EC6.svg?logo=docker&logoColor=white)](#容器注册表)
-[![AI 推理提供商](https://img.shields.io/badge/AI%20推理提供商-412991?logo=openai&logoColor=white)](#ai-推理提供商)
+[![容器注册表](https://img.shields.io/badge/容器注册表-262261?logo=opencontainersinitiative&logoColor=white)](#容器注册表)
+[![AI 推理提供商](https://img.shields.io/badge/AI%20推理提供商-94A3B8?logo=openrouter&logoColor=white)](#ai-推理提供商)
 
 面向开发者资源的超高性能、安全、一体化加速引擎，其性能显著优于传统解决方案，为代码存储库、模型和数据集中心、软件包注册表、容器注册表、AI 推理提供商等提供统一、高效的加速。
 
