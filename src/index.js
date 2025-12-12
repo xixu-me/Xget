@@ -12,10 +12,11 @@ import { CONFIG, createConfig } from './config/index.js';
 import { SORTED_PLATFORMS, transformPath } from './config/platforms.js';
 import { configureAIHeaders, isAIInferenceRequest } from './protocols/ai.js';
 import {
-  fetchToken,
-  handleDockerAuth,
-  parseAuthenticate,
-  responseUnauthorized
+    fetchToken,
+    getScopeFromUrl,
+    handleDockerAuth,
+    parseAuthenticate,
+    responseUnauthorized
 } from './protocols/docker.js';
 import { configureGitHeaders, isGitLFSRequest, isGitRequest } from './protocols/git.js';
 import { PerformanceMonitor, addPerformanceHeaders } from './utils/performance.js';
@@ -336,35 +337,14 @@ async function handleRequest(request, env, ctx) {
                         monitor.mark('docker_auth_challenge');
 
                         const authenticateStr = response.headers.get('WWW-Authenticate');
+                        let scope = '';
+
+                        // Calculate scope first so we can use it for both token fetch and unauthorized response
+                        scope = getScopeFromUrl(url, effectivePath, platform);
+
                         if (authenticateStr) {
                           try {
                             const wwwAuthenticate = parseAuthenticate(authenticateStr);
-
-                            // Infer scope from the request path for container registry requests
-                            let scope = '';
-                            const pathParts = url.pathname.split('/');
-                            if (pathParts.length >= 4 && pathParts[1] === 'v2') {
-                              const platformPrefix = `/${platform.replace(/-/g, '/')}/`;
-                              if (effectivePath.startsWith(platformPrefix)) {
-                                const repoPathFull = effectivePath.slice(platformPrefix.length);
-                                const repoParts = repoPathFull.split('/');
-                                if (repoParts.length >= 1) {
-                                  let repoName = repoParts.slice(0, -2).join('/'); // Remove /manifests/tag or /blobs/sha
-
-                                  if (
-                                    platform === 'cr-docker' &&
-                                    repoName &&
-                                    !repoName.includes('/')
-                                  ) {
-                                    repoName = `library/${repoName}`;
-                                  }
-
-                                  if (repoName) {
-                                    scope = `repository:${repoName}:pull`;
-                                  }
-                                }
-                              }
-                            }
 
                             // Try to get a token for public access (without authorization)
                             const tokenResponse = await fetchToken(
@@ -396,7 +376,7 @@ async function handleRequest(request, env, ctx) {
                           }
                         }
 
-                        response = responseUnauthorized(url);
+                        response = responseUnauthorized(url, scope);
                         break;
                       }
 
