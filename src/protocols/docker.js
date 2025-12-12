@@ -131,16 +131,12 @@ export function getScopeFromUrl(url, effectivePath, platform) {
  * Generates a Docker/OCI registry-compliant 401 response with a WWW-Authenticate
  * header that directs clients to the token authentication endpoint.
  * @param {URL} url - Request URL used to construct authentication realm
- * @param {string} [scope] - Optional scope to include in the challenge
+ * @param {URL} url - Request URL used to construct authentication realm
  * @returns {Response} Unauthorized response with WWW-Authenticate header
  */
-export function responseUnauthorized(url, scope) {
+export function responseUnauthorized(url) {
   const headers = new Headers();
-  let authHeader = `Bearer realm="https://${url.hostname}/v2/auth",service="Xget"`;
-  if (scope) {
-    authHeader += `,scope="${scope}"`;
-  }
-  headers.set('WWW-Authenticate', authHeader);
+  headers.set('WWW-Authenticate', `Bearer realm="https://${url.hostname}/v2/auth",service="Xget"`);
   return new Response(JSON.stringify({ 
     errors: [{
       code: 'UNAUTHORIZED',

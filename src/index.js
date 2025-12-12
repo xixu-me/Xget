@@ -265,6 +265,11 @@ async function handleRequest(request, env, ctx) {
                         signal: controller.signal
                       };
 
+                      // Special handling for Docker redirects to avoid leaking Auth headers to S3 (blobs)
+                      if (isDocker) {
+                        finalFetchOptions.redirect = 'manual';
+                      }
+
                       // Special handling for HEAD requests to ensure Content-Length header
                       if (request.method === 'HEAD') {
                         response = await fetch(targetUrl, finalFetchOptions);
@@ -327,6 +332,24 @@ async function handleRequest(request, env, ctx) {
 
                       clearTimeout(timeoutId);
 
+                      // Handle manual redirect for Docker
+                      if (isDocker && (response.status === 301 || response.status === 302 || response.status === 307)) {
+                         const location = response.headers.get('Location');
+                         if (location) {
+                            // Fetch the new location without Authorization header
+                            // Cloudflare Workers fetch should follow this automatically if we used 'follow',
+                            // but we used 'manual' to strip headers.
+                            const redirectHeaders = new Headers(finalFetchOptions.headers);
+                            redirectHeaders.delete('Authorization');
+                            
+                            response = await fetch(location, {
+                              ...finalFetchOptions,
+                              headers: redirectHeaders,
+                              redirect: 'follow' // Follow subsequent redirects normally
+                            });
+                         }
+                      }
+
                       if (response.ok || response.status === 206) {
                         monitor.mark('success');
                         break;
@@ -337,22 +360,9 @@ async function handleRequest(request, env, ctx) {
                         monitor.mark('docker_auth_challenge');
 
                         const authenticateStr = response.headers.get('WWW-Authenticate');
-                        let scope = '';
-
-                        // Calculate scope first so we can use it for both token fetch and unauthorized response
-                        scope = getScopeFromUrl(url, effectivePath, platform);
-
-                        // Construct client scope (with platform prefix) for the unauthorized response
-                        // This ensures the client asks for a token with a scope that Xget can route
-                        let clientScope = scope;
-                        if (platform.startsWith('cr-') && scope.startsWith('repository:')) {
-                          const parts = scope.split(':');
-                          if (parts.length >= 3) {
-                            const repoName = parts[1];
-                            const prefix = platform.replace(/-/g, '/');
-                            clientScope = `repository:${prefix}/${repoName}:${parts.slice(2).join(':')}`;
-                          }
-                        }
+                        
+                        // Calculate scope for upstream token fetch
+                        let scope = getScopeFromUrl(url, effectivePath, platform);
 
                         if (authenticateStr) {
                           try {
@@ -370,11 +380,33 @@ async function handleRequest(request, env, ctx) {
                               if (tokenData.token) {
                                 const retryHeaders = new Headers(requestHeaders);
                                 retryHeaders.set('Authorization', `Bearer ${tokenData.token}`);
-
-                                const retryResponse = await fetch(targetUrl, {
+                                
+                                const retryOptions = {
                                   ...finalFetchOptions,
                                   headers: retryHeaders
-                                });
+                                };
+                                
+                                // Also use manual redirect for retry
+                                if (isDocker) {
+                                  retryOptions.redirect = 'manual';
+                                }
+
+                                let retryResponse = await fetch(targetUrl, retryOptions);
+
+                                // Handle manual redirect for retry
+                                if (isDocker && (retryResponse.status === 301 || retryResponse.status === 302 || retryResponse.status === 307)) {
+                                  const location = retryResponse.headers.get('Location');
+                                  if (location) {
+                                     const redirectHeaders = new Headers(retryOptions.headers);
+                                     redirectHeaders.delete('Authorization');
+                                     
+                                     retryResponse = await fetch(location, {
+                                       ...retryOptions,
+                                       headers: redirectHeaders,
+                                       redirect: 'follow'
+                                     });
+                                  }
+                                }
 
                                 if (retryResponse.ok) {
                                   response = retryResponse;
@@ -388,7 +420,7 @@ async function handleRequest(request, env, ctx) {
                           }
                         }
 
-                        response = responseUnauthorized(url, clientScope);
+                        response = responseUnauthorized(url);
                         break;
                       }
 
