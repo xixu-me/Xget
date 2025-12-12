@@ -342,6 +342,18 @@ async function handleRequest(request, env, ctx) {
                         // Calculate scope first so we can use it for both token fetch and unauthorized response
                         scope = getScopeFromUrl(url, effectivePath, platform);
 
+                        // Construct client scope (with platform prefix) for the unauthorized response
+                        // This ensures the client asks for a token with a scope that Xget can route
+                        let clientScope = scope;
+                        if (platform.startsWith('cr-') && scope.startsWith('repository:')) {
+                          const parts = scope.split(':');
+                          if (parts.length >= 3) {
+                            const repoName = parts[1];
+                            const prefix = platform.replace(/-/g, '/');
+                            clientScope = `repository:${prefix}/${repoName}:${parts.slice(2).join(':')}`;
+                          }
+                        }
+
                         if (authenticateStr) {
                           try {
                             const wwwAuthenticate = parseAuthenticate(authenticateStr);
@@ -376,7 +388,7 @@ async function handleRequest(request, env, ctx) {
                           }
                         }
 
-                        response = responseUnauthorized(url, scope);
+                        response = responseUnauthorized(url, clientScope);
                         break;
                       }
 
