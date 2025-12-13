@@ -20,7 +20,7 @@
 [![Docker](https://img.shields.io/badge/Docker-2496ED?&logo=docker&logoColor=white)](#self-hosted-deployment)
 [![Podman](https://img.shields.io/badge/Podman-892CA0?&logo=podman&logoColor=white)](#self-hosted-deployment)
 
-**English** | [汉语（简体）](README.zh-Hans.md) | [汉语（繁体）](README.zh-Hant.md)
+**English** | [汉语（简体）](README.zh-Hans.md) | [漢語（繁體）](README.zh-Hant.md)
 
 </div>
 
@@ -2727,3 +2727,5 @@ This repository is licensed under the GPL-3.0 License - see the [LICENSE](LICENS
 Made with ❤️ by [Xi Xu](https://xi-xu.me)
 
 </div>
+
+[![Powered by DartNode](https://dartnode.com/branding/DN-Open-Source-sm.png)](https://dartnode.com "Powered by DartNode - Free VPS for Open Source")

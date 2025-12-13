@@ -20,7 +20,7 @@
 [![Docker](https://img.shields.io/badge/Docker-2496ED?&logo=docker&logoColor=white)](#自托管部署)
 [![Podman](https://img.shields.io/badge/Podman-892CA0?&logo=podman&logoColor=white)](#自托管部署)
 
-[English](README.md) | **汉语（简体）** | [汉语（繁体）](README.zh-Hant.md)
+[English](README.md) | **汉语（简体）** | [漢語（繁體）](README.zh-Hant.md)
 
 </div>
 
@@ -2728,5 +2728,3 @@ npx wrangler dev --log-level debug
 Made with ❤️ by [Xi Xu](https://xi-xu.me)
 
 </div>
-
-[![Powered by DartNode](https://dartnode.com/branding/DN-Open-Source-sm.png)](https://dartnode.com "Powered by DartNode - Free VPS for Open Source")
