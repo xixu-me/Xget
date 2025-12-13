@@ -20,7 +20,7 @@
 [![Docker](https://img.shields.io/badge/Docker-2496ED?&logo=docker&logoColor=white)](#自托管部署)
 [![Podman](https://img.shields.io/badge/Podman-892CA0?&logo=podman&logoColor=white)](#自托管部署)
 
-***[English](README.md) | **汉语（简体）** | [汉语（繁体）](README.zh-Hant.md)***
+[English](README.md) | **汉语（简体）** | [汉语（繁体）](README.zh-Hant.md)
 
 </div>
 
@@ -62,15 +62,6 @@
 面向开发者资源的超高性能、安全、一体化加速引擎，其性能显著优于传统解决方案，为代码存储库、模型和数据集中心、软件包注册表、容器注册表、AI 推理提供商等提供统一、高效的加速。
 
 技术深度解析文章已发布：**[《深入剖析 Xget：一个高性能、多协议、高安全性的开发者资源加速引擎》](https://blog.xi-xu.me/2025/10/07/deep-dive-into-xget-technology.html)**。
-
-## 💡 存储库初衷
-
-本存储库的初衷是为了加速在中国大陆境内访问不违反相关法律法规的平台上的开发者资源，从而为广大开发者提供一个稳定、合法的加速体验。我们致力于：
-
-- **🌍 消除地理限制**：帮助中国大陆开发者快速访问海外开发者资源
-- **⚖️ 合规合法**：严格遵守相关法律法规，仅加速合法资源
-- **🚀 提升效率**：显著提高开发者的工作效率和开发体验
-- **🆓 普惠开源**：为开源社区贡献力量，促进技术交流与发展
 
 ## 🎯 快速使用
 

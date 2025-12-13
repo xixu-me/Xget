@@ -20,7 +20,7 @@
 [![Docker](https://img.shields.io/badge/Docker-2496ED?&logo=docker&logoColor=white)](#self-hosted-deployment)
 [![Podman](https://img.shields.io/badge/Podman-892CA0?&logo=podman&logoColor=white)](#self-hosted-deployment)
 
-*****English** | [汉语（简体）](README.zh-Hans.md) | [汉语（繁体）](README.zh-Hant.md)***
+**English** | [汉语（简体）](README.zh-Hans.md) | [汉语（繁体）](README.zh-Hant.md)
 
 </div>
 
