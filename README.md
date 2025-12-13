@@ -20,9 +20,9 @@
 [![Docker](https://img.shields.io/badge/Docker-2496ED?&logo=docker&logoColor=white)](#self-hosted-deployment)
 [![Podman](https://img.shields.io/badge/Podman-892CA0?&logo=podman&logoColor=white)](#self-hosted-deployment)
 
-</div>
-
 *****English** | [汉语（简体）](README.zh-Hans.md) | [汉语（繁体）](README.zh-Hant.md)***
+
+</div>
 
 [![GitHub](https://img.shields.io/badge/GitHub-181717?&logo=github&logoColor=white)](#github)
 [![GitLab](https://img.shields.io/badge/GitLab-FC6D26?&logo=gitlab&logoColor=white)](#gitlab)
