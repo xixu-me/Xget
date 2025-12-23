@@ -138,6 +138,83 @@ In-depth technical analysis article published: ***[Deep Dive into Xget: A High-P
 - **Download Tool Compatibility**: Perfect support for wget, cURL, aria2, IDM, and other mainstream download tools
 - **CI/CD Integration**: Can be used directly in GitHub Actions, GitLab CI, and other environments
 
+## 🏗️ System Architecture
+
+### Request Processing Flow
+
+```mermaid
+graph TD
+    Request[User Request / User-Agent] --> Identify{Identify Platform}
+    Identify -->|Invalid| Error[Return Error]
+    Identify -->|Valid| Transform[Transform Path]
+    
+    Transform --> CheckProtocol{Check Protocol}
+    
+    CheckProtocol -->|Git| GitHandler[Git Protocol Adapter]
+    CheckProtocol -->|Docker| DockerHandler[Docker Protocol Adapter]
+    CheckProtocol -->|AI| AIHandler[AI Inference Adapter]
+    CheckProtocol -->|Standard| StdHandler[Standard Adapter]
+    
+    GitHandler --> Upstream[Fetch Upstream]
+    DockerHandler --> Upstream
+    AIHandler --> Upstream
+    
+    StdHandler --> CacheCheck{Check Cache}
+    CacheCheck -->|Hit| ReturnCache[Return Cached Response]
+    CacheCheck -->|Miss| Upstream
+    
+    Upstream -->|Success| ProcessResponse[Process Response]
+    Upstream -->|Failure| Retry{Retry?}
+    
+    Retry -->|Yes| Wait[Wait (Backoff)] --> Upstream
+    Retry -->|No| Error
+    
+    ProcessResponse --> Finalize[Add Headers & Return]
+    Finalize --> Response[Response]
+```
+
+### Component Architecture
+
+```mermaid
+classDiagram
+    class Worker {
+        +handleRequest(request)
+    }
+    class Config {
+        +PLATFORMS
+        +transformPath()
+    }
+    class Validation {
+        +validateRequest()
+        +isDockerRequest()
+    }
+    class GitProtocol {
+        +configureGitHeaders()
+        +isGitRequest()
+    }
+    class DockerProtocol {
+        +handleDockerAuth()
+        +fetchToken()
+    }
+    class AIProtocol {
+        +configureAIHeaders()
+    }
+    class Security {
+        +addSecurityHeaders()
+    }
+    class Performance {
+        +monitor()
+    }
+
+    Worker --> Config
+    Worker --> Validation
+    Worker --> GitProtocol
+    Worker --> DockerProtocol
+    Worker --> AIProtocol
+    Worker --> Security
+    Worker --> Performance
+```
+
 ## 📖 URL Conversion Rules
 
 Using the pre-deployed instance **`xget.xi-xu.me`** or your own deployed instance, simply replace the domain and add the platform prefix:
