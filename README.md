@@ -166,7 +166,7 @@ graph TD
     Upstream -->|Success| ProcessResponse[Process Response]
     Upstream -->|Failure| Retry{Retry?}
     
-    Retry -->|Yes| Wait[Wait (Backoff)] --> Upstream
+    Retry -->|Yes| Wait["Wait (Backoff)"] --> Upstream
     Retry -->|No| Error
     
     ProcessResponse --> Finalize[Add Headers & Return]

@@ -166,7 +166,7 @@ graph TD
     Upstream -->|成功| ProcessResponse[处理响应]
     Upstream -->|失败| Retry{重试?}
     
-    Retry -->|是| Wait[等待 (退避)] --> Upstream
+    Retry -->|是| Wait["等待 (退避)"] --> Upstream
     Retry -->|否| Error
     
     ProcessResponse --> Finalize[添加标头并返回]
